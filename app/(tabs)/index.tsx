@@ -40,15 +40,15 @@ export default class TabOneScreen extends Component<Props, State> {
   }
 
   render() {
-    return (
+    return (  
       <View style={styles.container}>
-        <Text style={styles.title}>Tab One</Text>
+        <Text style={styles.title}>ygyg three</Text>
         <Text style={styles.title}>{this.state.paste}</Text>
         <Text style={styles.title}>Hello {this.state.name}</Text>
         <TextInput style={{height: 40, width: 200, borderColor: 'gray', borderWidth: 1, color: "white"}}
                    value={this.state.text} 
                    onChangeText={(text) => this.setState({text})}/>
-        <Button title='Update' 
+        <Button title='ifjdijdf' 
                 onPress={()=>{
                 app.put({paste:this.state.paste + "\n" + this.state.text})
                 this.setState({text:''})
