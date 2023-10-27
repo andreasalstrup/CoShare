@@ -4,7 +4,6 @@ import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { Button } from 'react-native';
 import { Component } from 'react';
-// import { Password } from 'primereact/password';
 import useGun from '../../hooks/useGun';
 import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
@@ -87,7 +86,8 @@ export default class CreateAccountScreen extends Component<Props, State> {
           }
         }
         else{
-            console.log("Newly created user cannot be authenticated, something went wrong with the database"); //Not sure how this should be handled
+            console.log("Newly created user cannot be authenticated, something went wrong with the database"); 
+            //  Not sure how this should be handled
         }
       }
       validatePhone = () => {        
@@ -118,13 +118,12 @@ export default class CreateAccountScreen extends Component<Props, State> {
       render() {
         return (
           <View style={styles.container}>
-            {this.state.error && <Text style={styles.error}> {this.state.error} </Text>}
+            {this.state.error != "" && <Text style={styles.error}> {this.state.error} </Text>}
             <Text style={styles.descriptiveText}>Phone Number*</Text>
             <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
                       value={this.state.phoneNumber}
                       onChangeText={(phoneNumber) =>{                      
-                      this.setState({phoneNumber});
-                      console.log(gun)                   
+                      this.setState({phoneNumber});       
                     }                  
             }          
             onEndEditing={() => this.toggleSubmitButton()}         
@@ -166,6 +165,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
                       }
                       onEndEditing = {() => {
                         this.passwordsMatch()
+                        console.log("No more editing")
                         this.toggleSubmitButton()
                       }
                     }
