@@ -1,13 +1,11 @@
-import { StyleSheet } from 'react-native';
-
+import styles from './styles'
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { Button } from 'react-native';
 import { Component } from 'react';
-// import { Password } from 'primereact/password';
 import useGun from '../../hooks/useGun';
-import { Redirect } from 'expo-router';
+import { Redirect, Link } from 'expo-router';
 import { router } from 'expo-router';
 const { gun, app, user, SEA } = useGun();
 
@@ -37,7 +35,9 @@ export default class loginScreen extends Component<Props, State> {
     });
   }
 
-  checkSuccesfulLogin = (ack: any) => {    
+  checkSuccesfulLogin = (ack: any) => {
+    console.log(ack)
+    console.log(typeof(ack))
     if (!ack.err){            
         if (user.is){
             let newUser = gun.user(ack.pub)
@@ -46,7 +46,7 @@ export default class loginScreen extends Component<Props, State> {
                 console.log("Redirect to ShoppingListScreen")
                 router.replace('../(tabs)/ShoppingListScreen')
             }else{
-                console.log("Redirect to ShoppingListScreen")
+                console.log("Redirect to GroupScreen")
                 router.replace('/GroupScreen')             
             }
         }else{
@@ -60,23 +60,25 @@ export default class loginScreen extends Component<Props, State> {
   render() {
     return (          
       <View style={styles.container}>
-        <Text style={styles.title}>Login</Text>
-        <TextInput style={{height: 40, width: 200, borderColor: 'gray', borderWidth: 1, color: "white"}}
+        <Text style={styles.descriptiveText}>Phone Number</Text>
+        <TextInput style={styles.inputField}
                    value={this.state.phoneNumber} 
-                   placeholder='Phone number'
                    onChangeText={(phoneNumber) => this.setState({phoneNumber})}                   
                    />
-        <TextInput secureTextEntry={true} style={{height: 40, width: 200, borderColor: 'gray', borderWidth: 1, color: "white"}}
+        <Text style={styles.descriptiveText}>Password</Text>
+        <TextInput secureTextEntry={true} style={styles.inputField}
                     value={this.state.password}
-                    placeholder='Password'
                     onChangeText={(password) => this.setState({password})}
                     />        
         <Button title='Login' 
                 onPress={()=>{
-                user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)                              
+                  console.log(gun.get("hello"))
+                //user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
+                //user.create(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
+                gun.get("test")
                 }}/>
         {this.state.wrongCredentials && <Text style={styles.error}> Wrong phone number or password</Text>}
-        <link href="(/CreateAccountScreen"> Create account </link>
+        <Text><Link href={"/CreateAccountScreen"}> Create new account</Link></Text>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />    
         <EditScreenInfo path="app/index.tsx" />
       </View>
@@ -84,23 +86,4 @@ export default class loginScreen extends Component<Props, State> {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  error: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
+
