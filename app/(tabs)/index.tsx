@@ -9,6 +9,17 @@ import { Component } from 'react';
 import useGun from '../../hooks/useGun';
 const { gun, app, user, SEA } = useGun();
 
+// import { useLocalSearchParams } from 'expo-router';
+// const { slug } = useLocalSearchParams();
+// import { View } from 'react-native';
+// import { Link } from 'expo-router';
+import { router, useRootNavigation, Redirect } from 'expo-router';
+import { Route } from 'expo-router/build/Route';
+//const rootNavigation = useRootNavigation();
+
+//import { Link, useRouter } from 'expo-router';
+//const router = useRouter();
+
 type Props = {
   text: any
 }
@@ -32,6 +43,7 @@ export default class TabOneScreen extends Component<Props, State> {
   $user = user.create('test', 'testtest', () => {})
 
   componentDidMount(): void {
+
     this.$user;
     app.on((data: any) => {
       console.log('data', data);
@@ -40,6 +52,7 @@ export default class TabOneScreen extends Component<Props, State> {
   }
 
   render() {
+    return <Redirect href="/(tabs)/list" />;
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Tab One</Text>
