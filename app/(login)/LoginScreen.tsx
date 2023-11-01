@@ -7,7 +7,8 @@ import { Component } from 'react';
 import useGun from '../../hooks/useGun';
 import { Redirect, Link } from 'expo-router';
 import { router } from 'expo-router';
-const { gun, app, user, SEA } = useGun();
+
+const { gun, app, user, SEA} = useGun();
 
 type Props = {
   text: any
@@ -34,20 +35,35 @@ export default class loginScreen extends Component<Props, State> {
       console.log('data', data);      
     });
   }
-
+  
   checkSuccesfulLogin = (ack: any) => {
-    console.log(ack)
-    console.log(typeof(ack))
+    console.log(ack)    
     if (!ack.err){            
         if (user.is){
             let newUser = gun.user(ack.pub)
-            let group = newUser.get("group").map()            
-            if (group){
+            let inGroup = true            
+            // console.log((newUser.get("monkas").map())
+            
+            newUser.get("group", function(ack: any){
+              if(ack.err){
+                console.log("its all wrong brother")
+              } else
+              if(!ack.put){
+                console.log("Group not found")
+                inGroup = false
+                // not found
+              } else {
+                console.log("Group found")
+                // data!
+              }
+            })
+
+            if (inGroup){                
                 console.log("Redirect to ShoppingListScreen")
                 router.replace('../(tabs)/ShoppingListScreen')
-            }else{
+            }else{              
                 console.log("Redirect to GroupScreen")
-                router.replace('/GroupScreen')             
+                router.replace('/GroupScreen')          
             }
         }else{
             console.log("User somehow doesn't exist");
@@ -73,9 +89,9 @@ export default class loginScreen extends Component<Props, State> {
         <Button title='Login' 
                 onPress={()=>{
                   console.log(gun.get("hello"))
-                //user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
-                //user.create(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
-                gun.get("test")
+                  user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
+                  user.create(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
+                  gun.get("test")
                 }}/>
         {this.state.wrongCredentials && <Text style={styles.error}> Wrong phone number or password</Text>}
         <Text><Link href={"/CreateAccountScreen"}> Create new account</Link></Text>

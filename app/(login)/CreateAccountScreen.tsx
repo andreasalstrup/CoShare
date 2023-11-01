@@ -139,7 +139,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
                             this.setState({password})               
                           }                          
                         }
-                        onEndEditing = {() => {
+                        onBlur = {() => {
                           this.passwordsMatch()
                           this.toggleSubmitButton()
                         }      
@@ -163,7 +163,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
                           this.setState({repeatPassword})
                         }                        
                       }
-                      onEndEditing = {() => {
+                      onBlur = {() => {
                         this.passwordsMatch()
                         console.log("No more editing")
                         this.toggleSubmitButton()
