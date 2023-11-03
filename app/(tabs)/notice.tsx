@@ -1,14 +1,22 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../../components/EditScreenInfo';
+import React, { useState } from 'react';
+import { StyleSheet, TextInput, useColorScheme } from 'react-native';
 import { Text, View } from '../../components/Themed';
 
 export default function NoticeScreen() {
+  const [houseRules, setHouseRules] = useState('');
+const colorScheme = useColorScheme();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Notice Board</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/notice.tsx" />
+      <Text style={styles.title}>Household Rules</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="There are no rules"
+        value={houseRules}
+        onChangeText={(text) => setHouseRules(text)}
+        editable
+        multiline
+      />
+      <Text style={styles.title}>Contact Information</Text>
     </View>
   );
 }
@@ -16,16 +24,25 @@ export default function NoticeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    borderColor: 'gray',
+    padding: 10,
+    margin: 0,
+    width: '100%',
+    color: 'white',
+    backgroundColor: '#5CBCA9',
+    borderTopWidth: 1,
+    borderBotWidth: 1,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  input: {
+    width: '100%',
+    maxHeight: '50%',
+    borderColor: 'gray',
+    padding: 10,
+    margin: 0,
+    borderTopWidth: 1,
   },
 });
