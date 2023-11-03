@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View, } from '../../components/Themed';
+import EditScreenInfo from '../../../components/EditScreenInfo';
+import { Text, View, } from '../../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { Button } from 'react-native';
 import { Component } from 'react';
 
-import useGun from '../../hooks/useGun';
+import useGun from '../../../hooks/useGun';
 const { gun, app, user, SEA } = useGun();
 
 type Props = {
@@ -19,7 +19,7 @@ type State = {
   paste: string
 }
 
-export default class ListScreen extends Component<Props, State> {
+export default class ToBeBoughtScreen extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -54,7 +54,7 @@ export default class ListScreen extends Component<Props, State> {
                 this.setState({text:''})
                 }}/>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <EditScreenInfo path="app/(tabs)/index.tsx" />
+        <EditScreenInfo path="app/(tabs)/index/index.tsx" />
       </View>
     );
   }
