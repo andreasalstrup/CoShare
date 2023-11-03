@@ -4,11 +4,10 @@ import { Text, View } from '../../components/Themed';
 
 export default function NoticeScreen() {
   const [houseRules, setHouseRules] = useState('');
-const colorScheme = useColorScheme();
-const users = [
-  { name: 'Test Bruger', phone: '12 34 56 78', email: 'testbruger42@gmail.com' },
-  { name: 'Andreas Alstrup', phone: '87 65 43 21', email: 'andreas.alstrup@gmail.com' },
-];
+  const users = [
+    { name: 'Test Bruger', phone: '12 34 56 78', email: 'testbruger42@gmail.com' },
+    { name: 'Andreas Alstrup', phone: '87 65 43 21', email: 'andreas.alstrup@gmail.com' },
+  ];
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
