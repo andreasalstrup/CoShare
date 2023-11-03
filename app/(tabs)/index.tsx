@@ -30,7 +30,7 @@ type State = {
   paste: string
 }
 
-export default class TabOneScreen extends Component<Props, State> {
+export default class ListScreen extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -55,7 +55,7 @@ export default class TabOneScreen extends Component<Props, State> {
     return <Redirect href="/(tabs)/list" />;
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Tab One</Text>
+        <Text style={styles.title}>List</Text>
         <Text style={styles.title}>{this.state.paste}</Text>
         <Text style={styles.title}>Hello {this.state.name}</Text>
         <TextInput style={{height: 40, width: 200, borderColor: 'gray', borderWidth: 1, color: "white"}}
