@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Text, View, } from '../../components/Themed';
+import { Text, View, } from '../../../components/Themed';
 import { Component } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -86,7 +86,7 @@ function swipeHandler(dir: 'left' | 'right') {
   }
 }
 
-export default class ListScreen extends Component {
+export default class ToBeBoughtScreen extends Component {
   render() {
     return (
       <FlatList
