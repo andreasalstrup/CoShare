@@ -9,6 +9,8 @@ import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import Storage from 'react-native-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { gun, app, user, SEA } = useGun();
 
 type Props = {
@@ -25,6 +27,8 @@ type State = {
   email: string,
   error: string,
   submitActive: boolean,
+  
+  gunState: any
 }
 
 export default class CreateAccountScreen extends Component<Props, State> {
@@ -40,18 +44,25 @@ export default class CreateAccountScreen extends Component<Props, State> {
           email: '',
           error: '',
           submitActive: false,
+          gunState: gun,
         };
       }
     
       componentDidMount(): void {
-        app.on((data: any) => {
-          console.log('data', data);      
-        });
+        // app.on((data: any) => {
+        //   console.log('data', data);      
+        // });
+        console.log('CAS gun' + gun)
+        console.log('CAS user' + user)
+        console.log('gunSTATE' + this.state.gunState)
       }          
       
       createAccount = (ack : any) => {
         console.log("Creating account")
-        if (ack.err){
+        console.log(ack)
+        // console.log('Ack' + ack)
+        if (ack?.err){
+          console.log("Some error on user creation")
           if (ack.err == "User already created!"){
               this.setState({
                 error: ack.error
@@ -62,16 +73,16 @@ export default class CreateAccountScreen extends Component<Props, State> {
           }
         }
         else{
-          console.log("about to use ack")
-          console.log(typeof(ack))
-          let newUser = gun.user(ack.pub)          
-          let fullName = this.state.fullName
-          let email = this.state.email
-          console.log("Typeof newUser", typeof(newUser))
-          newUser.get("PhoneNumber").put(this.state.phoneNumber)
-          fullName && newUser.get('fullName').put(fullName)
-          email && newUser.get('email').put(email)
-          user.auth(this.state.phoneNumber,this.state.password,this.login)
+          // console.log("about to use ack")
+          // console.log(typeof(ack))
+          // let newUser = gun.user(ack.pub)          
+          // let fullName = this.state.fullName
+          // let email = this.state.email
+          // console.log("Typeof newUser", typeof(newUser))
+          // newUser.get("PhoneNumber").put(this.state.phoneNumber)
+          // fullName && newUser.get('fullName').put(fullName)
+          // email && newUser.get('email').put(email)
+          // user.auth(this.state.phoneNumber,this.state.password,this.login)
         }
       }
       login = (ack : any) => {    
@@ -181,12 +192,13 @@ export default class CreateAccountScreen extends Component<Props, State> {
                         value={this.state.email}
                         onChangeText={(email) => this.setState({email})}
                         />
-            <Button title='Login' 
-                    disabled={!this.state.submitActive}
-                    onPress={()=>{
-                      console.log(this.state.phoneNumber)
-                      console.log(this.state.password)                      
-                      user.create(this.state.phoneNumber, this.state.password, this.createAccount)                       
+            <Button title='Create acount' 
+                    // disabled={this.state.submitActive}
+                    onPress={()=>{   
+                      let userFunc = this.state.gunState.user() 
+                      userFunc.create('tester', 'password')//, this.createAccount)                                     
+                      // userFunc.create(this.state.phoneNumber, this.state.password, this.createAccount)
+                      console.log('Create account finished')                       
                     }}/>
             
             <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />    

@@ -7,6 +7,9 @@ import { Component } from 'react';
 import useGun from '../../hooks/useGun';
 import { Redirect, Link } from 'expo-router';
 import { router } from 'expo-router';
+import Storage from 'react-native-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const { gun, app, user, SEA} = useGun();
 
@@ -17,7 +20,7 @@ type Props = {
 type State = {
   phoneNumber: string
   password: string,
-  wrongCredentials: Boolean,
+  wrongCredentials: boolean,  
 }
 
 export default class loginScreen extends Component<Props, State> {
@@ -26,24 +29,26 @@ export default class loginScreen extends Component<Props, State> {
     this.state = {
       phoneNumber: '',
       password: '',
-      wrongCredentials: false,
+      wrongCredentials: false,      
     };
   }
 
   componentDidMount(): void {
-    app.on((data: any) => {
-      console.log('data', data);      
-    });
+    // console.log("Mounted")
+    // app.on((data: any) => {
+    //   console.log('data', data);      
+    // });
+    console.log('LOGIN gun' + gun)
+    console.log('LOGIN user' + user)    
   }
   
   checkSuccesfulLogin = (ack: any) => {
-    console.log(ack)    
+    console.log('Login ack: ')    
+    console.log(ack)
     if (!ack.err){            
         if (user.is){
             let newUser = gun.user(ack.pub)
-            let inGroup = true            
-            // console.log((newUser.get("monkas").map())
-            
+            let inGroup = true                        
             newUser.get("group", function(ack: any){
               if(ack.err){
                 console.log("its all wrong brother")
@@ -86,12 +91,29 @@ export default class loginScreen extends Component<Props, State> {
                     value={this.state.password}
                     onChangeText={(password) => this.setState({password})}
                     />        
-        <Button title='Login' 
+        <Button title='Login'   
                 onPress={()=>{
-                  console.log(gun.get("hello"))
-                  user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
+                  console.log('Login gun:' + gun)
+                  // user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
                   user.create(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
                   gun.get("test")
+
+
+                  // ###
+                  function logCurrentStorage() {
+                    AsyncStorage.getAllKeys().then((keyArray : any) => {
+                      AsyncStorage.multiGet(keyArray).then((keyValArray : any) => {
+                        let myStorage: any = {};
+                        for (let keyVal of keyValArray) {
+                          myStorage[keyVal[0]] = keyVal[1]
+                        }
+                  
+                        console.log('CURRENT STORAGE: ', myStorage);
+                      })
+                    });
+                  }
+                  logCurrentStorage()
+                  //
                 }}/>
         {this.state.wrongCredentials && <Text style={styles.error}> Wrong phone number or password</Text>}
         <Text><Link href={"/CreateAccountScreen"}> Create new account</Link></Text>
