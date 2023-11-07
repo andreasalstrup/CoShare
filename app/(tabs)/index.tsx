@@ -112,13 +112,11 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 35,
-    fontWeight: 'regular',
     color: "black",
     flexDirection: 'row',
   },
   itemPrice: {
     fontSize: 35,
-    fontWeight: 'regular',
     color: "black",
     flexDirection: 'row',
     justifyContent: 'flex-end'
