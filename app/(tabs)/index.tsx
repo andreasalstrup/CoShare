@@ -1,78 +1,145 @@
 import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View, } from '../../components/Themed';
-import { TextInput } from 'react-native-gesture-handler';
-import { Button } from 'react-native';
 import { Component } from 'react';
+import { FlatList } from 'react-native-gesture-handler';
+import { FontAwesome5 } from '@expo/vector-icons';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-import useGun from '../../hooks/useGun';
-const { gun, app, user, SEA } = useGun();
+const DATA = [
+  {
+    name: 'Bananas',
+    data: [{user: "Test bruger", date: "2020.11.01", price: 3}],
+  },
+  {
+    name: 'Chorizo',
+    data: [{user: "Andreas", date: "2020.11.01", price: 35}],
+  },
+  {
+    name: 'Beans',
+    data: [{user: "Mike", date: "2020.11.01", price: 2}],
+  },
+  {
+    name: 'Apple',
+    data: [{user: "Emil", date: "2020.11.01", price: 2.5}],
+  },
+  {
+    name: 'Chocolate',
+    data: [{user: "Martin", date: "2020.11.01", price: 13.95}],
+  },
+]
 
-type Props = {
-  text: any
+type ListData = { 
+  name: string, 
+  data: { user: string, date: string, price: number }[]
 }
 
-type State = {
-  text: string
-  name: string,
-  paste: string
+function renderItem({item, index}: { item: ListData, index: number}) {
+  return (
+    <Swipeable
+      friction={3}
+      renderLeftActions={leftSwipeAction}
+      renderRightActions={rightSwipeAction}
+      onSwipeableOpen={swipeHandler}>
+      <View style={[styles.container, 
+        {backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3'}]}>
+        <View style={styles.item}>
+          <Text style={styles.itemText}>{item.name}</Text>
+          <Text style={styles.itemPrice}>{item.data[0].price} kr.</Text>        
+        </View>
+        <Text style={styles.infoText}>Added by {item.data[0].user} {item.data[0].date}</Text>
+      </View>
+    </Swipeable>
+  )
 }
 
-export default class ListScreen extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      text: 'Whats your name?',
-      name: '',
-      paste: '',
-    };
+function leftSwipeAction() {
+  return (
+    <View style={styles.leftSwipe}>
+      <FontAwesome5
+        name="arrow-alt-circle-right" 
+        size={32} 
+        color="white"
+        style={styles.swipeIcon}
+        />
+    </View>
+  )
+}
+
+function rightSwipeAction() {
+  return (
+    <View style={styles.rightSwipe}>
+      <FontAwesome5
+        name="trash-alt" 
+        size={32} 
+        color="white"
+        style={styles.swipeIcon}
+        />
+    </View>
+  )
+}
+
+function swipeHandler(dir: 'left' | 'right') {
+  if (dir == "left") {
+      console.log(dir);
+  } else {
+      console.log(dir);
   }
+}
 
-  $user = user.create('test', 'testtest', () => {})
-
-  componentDidMount(): void {
-    this.$user;
-    app.on((data: any) => {
-      console.log('data', data);
-      this.setState({paste: data.paste});
-    });
-  }
-
+export default class ListScreen extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>List</Text>
-        <Text style={styles.title}>{this.state.paste}</Text>
-        <Text style={styles.title}>Hello {this.state.name}</Text>
-        <TextInput style={{height: 40, width: 200, borderColor: 'gray', borderWidth: 1, color: "white"}}
-                   value={this.state.text} 
-                   onChangeText={(text) => this.setState({text})}/>
-        <Button title='Update' 
-                onPress={()=>{
-                app.put({paste:this.state.paste + "\n" + this.state.text})
-                this.setState({text:''})
-                }}/>
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <EditScreenInfo path="app/(tabs)/index.tsx" />
-      </View>
+      <FlatList
+        data={DATA}
+        renderItem={renderItem}
+      />
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderBottomColor: '#000000',
+    padding: 2,
   },
-  title: {
-    fontSize: 20,
+  item: {
+    backgroundColor: 'transparent',
+    borderBottomColor: '#000000',
+    borderBottomWidth: 0,
+    padding: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  itemText: {
+    fontSize: 35,
+    color: 'black',
+    flexDirection: 'row',
+  },
+  itemPrice: {
+    fontSize: 35,
+    color: 'black',
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
+  },
+  infoText: {
+    fontSize: 12,
     fontWeight: 'bold',
+    color: 'black',
+    marginLeft: 10,
+    marginBottom: 5,
+    marginTop: -5,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  leftSwipe: {
+    backgroundColor: '#5CBCA9',
+    justifyContent: 'center',
+    alignItems: 'flex-end'
   },
+  rightSwipe: {
+    backgroundColor: '#E35F52',
+    justifyContent: 'center',
+    alignItems: 'flex-end'
+  },
+  swipeIcon: {
+    padding: 20,
+  }
 });
