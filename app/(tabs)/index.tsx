@@ -112,19 +112,19 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 35,
-    color: "black",
+    color: 'black',
     flexDirection: 'row',
   },
   itemPrice: {
     fontSize: 35,
-    color: "black",
+    color: 'black',
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
   infoText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: "black",
+    color: 'black',
     marginLeft: 10,
     marginBottom: 5,
     marginTop: -5,
