@@ -54,12 +54,12 @@ function renderItem({item, index}: { item: ListData, index: number}) {
 
 function leftSwipeAction() {
   return (
-    <View style={{backgroundColor: '#5CBCA9', justifyContent: 'center', alignItems: 'flex-end'}}>
+    <View style={styles.leftSwipe}>
       <FontAwesome5
         name="arrow-alt-circle-right" 
         size={32} 
         color="white"
-        style={styles.swipe}
+        style={styles.swipeIcon}
         />
     </View>
   )
@@ -67,12 +67,12 @@ function leftSwipeAction() {
 
 function rightSwipeAction() {
   return (
-    <View style={{backgroundColor: '#E35F52', justifyContent: 'center', alignItems: 'flex-end'}}>
+    <View style={styles.rightSwipe}>
       <FontAwesome5
         name="trash-alt" 
         size={32} 
         color="white"
-        style={styles.swipe}
+        style={styles.swipeIcon}
         />
     </View>
   )
@@ -129,7 +129,17 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     marginTop: -5,
   },
-  swipe: {
+  leftSwipe: {
+    backgroundColor: '#5CBCA9',
+    justifyContent: 'center',
+    alignItems: 'flex-end'
+  },
+  rightSwipe: {
+    backgroundColor: '#E35F52',
+    justifyContent: 'center',
+    alignItems: 'flex-end'
+  },
+  swipeIcon: {
     padding: 20,
   }
 });
