@@ -80,9 +80,9 @@ function rightSwipeAction() {
 
 function swipeHandler(dir: 'left' | 'right') {
   if (dir == "left") {
-      alert(dir);
+      console.log(dir);
   } else {
-      alert(dir);
+      console.log(dir);
   }
 }
 
