@@ -99,9 +99,9 @@ export default class ListScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
-      borderBottomColor: '#000000',
-      padding: 2,
-    },
+    borderBottomColor: '#000000',
+    padding: 2,
+  },
   item: {
     backgroundColor: 'transparent',
     borderBottomColor: '#000000',
