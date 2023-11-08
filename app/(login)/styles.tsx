@@ -1,21 +1,23 @@
 import { StyleSheet } from 'react-native';
+import {Dimensions} from 'react-native';
 const styles = StyleSheet.create({
     container: {
       flex: 1,
       alignItems: 'center',
-      justifyContent: 'flex-start',
+      justifyContent: 'center',
     },
     title: {
       fontSize: 20,
       fontWeight: 'bold',
     },
     error: {
-      fontSize: 20,
+      fontSize: 14,
       fontWeight: 'bold',
+      color: "red",
     },
     descriptiveText: {
-      fontSize: 10,
-      justifyContent: 'space-between',
+      fontSize: 13,    
+      color: "white",
     },
     separator: {
       marginVertical: 30,
@@ -25,18 +27,44 @@ const styles = StyleSheet.create({
     inputField: {
       height: 40, 
       width: 200, 
-      borderColor: 'gray', 
-      borderWidth: 1, 
-      color: "white"
+      
+      justifyContent: 'center',
+      color: "white",      
     },
     eye: {
       marginLeft: -24,
       color:"#aaa",
     },
-    passwordBox: {
+    inputBox: {
       flexDirection: 'row', 
-      alignItems: 'center',       
-    }
+      alignItems: 'center',    
+      backgroundColor: 'black',
+      opacity: 0.7,
+      borderRadius: 4,
+      color: "white",      
+    },
+    backgroundImage: {    
+      justifyContent: 'center',
+      width: Dimensions.get('window').width,
+      height: Dimensions.get('window').height,
+      alignItems: 'center',  
+      resizeMode: 'cover',
+    },
+    button: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 32,
+      borderRadius: 4,
+      elevation: 3,
+      width: 0.6 * Dimensions.get('window').width,      
+      backgroundColor: '#5CBCA9',
+    },
+    buttonText: {
+      color: "white",
+      fontSize: 15,
+      fontWeight: "bold",
+    },    
   });
 
   export default styles

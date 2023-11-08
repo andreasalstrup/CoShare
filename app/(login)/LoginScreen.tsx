@@ -2,15 +2,14 @@ import styles from './styles'
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
-import { Button } from 'react-native';
+import { Button, ImageBackground, Image, Pressable } from 'react-native';
 import { Component } from 'react';
 import useGun from '../../hooks/useGun';
 import { Redirect, Link } from 'expo-router';
 import { router } from 'expo-router';
-import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LogoAndName } from '../../components/LogoAndName';
 const { gun, app, user, SEA} = useGun();
 
 type Props = {
@@ -21,6 +20,7 @@ type State = {
   phoneNumber: string
   password: string,
   wrongCredentials: boolean,  
+  hidePassword: boolean,
 }
 
 export default class loginScreen extends Component<Props, State> {
@@ -29,7 +29,8 @@ export default class loginScreen extends Component<Props, State> {
     this.state = {
       phoneNumber: '',
       password: '',
-      wrongCredentials: false,      
+      wrongCredentials: false,   
+      hidePassword: true,   
     };
   }
 
@@ -38,10 +39,14 @@ export default class loginScreen extends Component<Props, State> {
     // app.on((data: any) => {
     //   console.log('data', data);      
     // });
-    console.log('LOGIN gun' + gun)
-    console.log('LOGIN user' + user)    
+    console.log('LOGIN gun: ' + gun)
+    console.log('LOGIN user: ' + user)    
   }
   
+  toggleHidePassword = () => {
+    this.setState({hidePassword:!this.state.hidePassword})    
+  }
+
   checkSuccesfulLogin = (ack: any) => {
     console.log('Login ack: ')    
     console.log(ack)
@@ -77,48 +82,51 @@ export default class loginScreen extends Component<Props, State> {
         this.setState({wrongCredentials: true});
     }
   }
-
+  
   render() {
-    return (          
+    return (   
       <View style={styles.container}>
-        <Text style={styles.descriptiveText}>Phone Number</Text>
-        <TextInput style={styles.inputField}
-                   value={this.state.phoneNumber} 
-                   onChangeText={(phoneNumber) => this.setState({phoneNumber})}                   
-                   />
+      <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>                         
+        <LogoAndName source={require('../../assets/images/accountScreensImage.png')}/>
+        <Text style={styles.descriptiveText}>Phone Number</Text>      
+        <View style={styles.inputBox}>
+          <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
+                        value={this.state.phoneNumber}
+                        onChangeText={(phoneNumber) =>{                      
+                        this.setState({phoneNumber});       
+                      }                  
+              }
+            />
+          </View>            
+        
         <Text style={styles.descriptiveText}>Password</Text>
-        <TextInput secureTextEntry={true} style={styles.inputField}
+        <View style={styles.inputBox}>
+          <TextInput secureTextEntry={this.state.hidePassword} style={styles.inputField}
+                    autoCapitalize='none'
                     value={this.state.password}
                     onChangeText={(password) => this.setState({password})}
-                    />        
-        <Button title='Login'   
-                onPress={()=>{
-                  console.log('Login gun:' + gun)
-                  // user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
-                  user.create(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)
-                  gun.get("test")
-
-
-                  // ###
-                  function logCurrentStorage() {
-                    AsyncStorage.getAllKeys().then((keyArray : any) => {
-                      AsyncStorage.multiGet(keyArray).then((keyValArray : any) => {
-                        let myStorage: any = {};
-                        for (let keyVal of keyValArray) {
-                          myStorage[keyVal[0]] = keyVal[1]
-                        }
-                  
-                        console.log('CURRENT STORAGE: ', myStorage);
-                      })
-                    });
-                  }
-                  logCurrentStorage()
-                  //
-                }}/>
-        {this.state.wrongCredentials && <Text style={styles.error}> Wrong phone number or password</Text>}
-        <Text><Link href={"/CreateAccountScreen"}> Create new account</Link></Text>
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />    
-        <EditScreenInfo path="app/index.tsx" />
+                    />
+                    
+          <MaterialCommunityIcons 
+                    name={this.state.hidePassword ? 'eye' : 'eye-off'} 
+                    size={24} 
+                    color="#aaa"
+                    style={styles.eye} 
+                    onPress={this.toggleHidePassword}
+              />
+        </View>
+        {this.state.wrongCredentials && <Text style={styles.error}> Wrong credentials</Text>}
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        
+        <Pressable 
+          style={styles.button} 
+          onPress={()=>{                  
+            user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)                                  
+          }}>
+            <Text style={styles.buttonText}> Sign in</Text>
+        </Pressable>                    
+        <Text style={styles.descriptiveText}><Link href={"/CreateAccountScreen"}> Create new account</Link></Text>        
+      </ImageBackground>
       </View>
     );
   }
