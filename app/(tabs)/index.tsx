@@ -7,8 +7,8 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 const DATA = [
   {
-      name: 'Bananas',
-      data: [{user: "Test bruger", date: "2020.11.01", price: 3}],
+    name: 'Bananas',
+    data: [{user: "Test bruger", date: "2020.11.01", price: 3}],
   },
   {
     name: 'Chorizo',
