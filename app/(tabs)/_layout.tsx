@@ -26,6 +26,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          headerShown: false,
           title: 'List',
           tabBarIcon: ({ color }) => <TabBarIcon name="list-ul" color={color} />,
           headerRight: () => (
@@ -47,6 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="expenses"
         options={{
+          headerShown: false,
           title: 'Expenses',
           tabBarIcon: ({ color }) => <TabBarIcon name="dollar-sign" color={color} />,
         }}
@@ -54,6 +56,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="meal"
         options={{
+          headerShown: false,
           title: 'Meal Plan',
           tabBarIcon: ({ color }) => <TabBarIcon name="hamburger" color={color} />,
         }}
@@ -61,6 +64,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="notice"
         options={{
+          headerShown: false,
           title: 'Notice Board',
           tabBarIcon: ({ color }) => <TabBarIcon name="info-circle" color={color} />,
         }}
@@ -68,6 +72,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
+          headerShown: false,
           title: 'Settings',
           tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
         }}
