@@ -19,9 +19,9 @@ type Transaction = {
 };
 
 const DATA: Expense[] = [
-  { user: 'user 1', amount: 90 },
-  { user: 'user 2', amount: 30 },
-  { user: 'user 3', amount: 0 },
+  { user: 'Martin', amount: 90 },
+  { user: 'Andreas', amount: 30 },
+  { user: 'Bisgaard', amount: 0 },
 ];
 
 const calculatedExpenses = calculateExpenses(DATA);
@@ -87,28 +87,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderBottomColor: '#000000',
     borderBottomWidth: 0,
-    padding: 8,
+    padding: 12,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   itemText: {
-    fontSize: 35,
+    fontSize: 24,
     color: 'black',
     flexDirection: 'row',
   },
   itemAmount: {
-    fontSize: 35,
+    fontSize: 24,
     color: 'black',
     flexDirection: 'row',
     justifyContent: 'flex-end'
-  },
-  infoText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: 'black',
-    marginLeft: 10,
-    marginBottom: 5,
-    marginTop: -5,
   },
   leftSwipe: {
     backgroundColor: '#5CBCA9',
@@ -116,6 +108,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   },
   swipeIcon: {
-    padding: 20,
+    padding: 10,
+  },
+  longBoi: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
   }
 });
