@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet } from 'react-native';
 import {Image, View, Text} from 'react-native';
 
 export function LogoAndName(
-  props: Omit<React.ComponentProps<typeof Image>,'source'> & {source: String})
+  props: Omit<React.ComponentProps<typeof Image>,'source'> )
 {
   return (
     <View style={styles.container}>
@@ -13,17 +13,6 @@ export function LogoAndName(
   );
 }
 
-// export function LogoAndName()  
-// {  
-//   return (
-//     <View>
-//       <Image style={styles.logo} source={require('../../assets/images/coshareLogo.png')}>
-//         <Text></Text>
-//       </Image>
-//     </View>
-//   );
-// }
-
 const styles = StyleSheet.create({
   logo: {
     width: 0.3 * Dimensions.get('window').width,
@@ -31,8 +20,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 50,
-    color: "white",
-    fontFamily: "normal",
+    color: "white",//Could use different font but it is hard to import in Expo
   },
   container: {    
     alignItems: 'center',

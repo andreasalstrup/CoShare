@@ -34,13 +34,7 @@ export default class loginScreen extends Component<Props, State> {
     };
   }
 
-  componentDidMount(): void {
-    // console.log("Mounted")
-    // app.on((data: any) => {
-    //   console.log('data', data);      
-    // });
-    console.log('LOGIN gun: ' + gun)
-    console.log('LOGIN user: ' + user)    
+  componentDidMount(): void {   
   }
   
   toggleHidePassword = () => {
@@ -86,14 +80,14 @@ export default class loginScreen extends Component<Props, State> {
   render() {
     return (   
       <View style={styles.container}>
-      <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>                         
-        <LogoAndName source={require('../../assets/images/accountScreensImage.png')}/>
+      <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
+        <LogoAndName/>
         <Text style={styles.descriptiveText}>Phone Number</Text>      
         <View style={styles.inputBox}>
           <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
                         value={this.state.phoneNumber}
                         onChangeText={(phoneNumber) =>{                      
-                        this.setState({phoneNumber});       
+                        this.setState({phoneNumber});
                       }                  
               }
             />
@@ -108,15 +102,14 @@ export default class loginScreen extends Component<Props, State> {
                     />
                     
           <MaterialCommunityIcons 
-                    name={this.state.hidePassword ? 'eye' : 'eye-off'} 
-                    size={24} 
-                    color="#aaa"
-                    style={styles.eye} 
+                    name={this.state.hidePassword ? 'eye' : 'eye-off'}                   
+                    style={styles.eye}
+                    size={24}
                     onPress={this.toggleHidePassword}
               />
         </View>
         {this.state.wrongCredentials && <Text style={styles.error}> Wrong credentials</Text>}
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        <View style={styles.separator}/>
         
         <Pressable 
           style={styles.button} 

@@ -1,3 +1,4 @@
+import 'gun-asyncstorage';
 import "gun/lib/mobile";
 // import 'expo-crypto';
 import 'react-native-webview-crypto'
@@ -17,7 +18,7 @@ const useGun = () => {
 const asyncStore = asyncsStore({AsyncStorage});
 
 let gun = Gun({
-  peers: ['https://mvp-gun.herokuapp.com/gun'],
+  peers: ['https://gun-manhattan.herokuapp.com/gun'],
   store: asyncStore,
   radisk: true,
   localStorage: false,
@@ -25,6 +26,9 @@ let gun = Gun({
 const app = gun.get("test"); // This is legacy
 const user = gun.user()
 
+const testUser = user.create("testuser123","password",() => {console.log(testUser)})
+const pair = SEA.pair()
+console.log(pair)
 return { gun, app, user, SEA}
 }
 

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     separator: {
       marginVertical: 30,
       height: 1,
-      width: '80%',
+      width: '80%',      
     },
     inputField: {
       height: 40, 
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     },
     eye: {
       marginLeft: -24,
-      color:"#aaa",
+      color:"#aaa",      
     },
     inputBox: {
       flexDirection: 'row', 
@@ -59,6 +59,16 @@ const styles = StyleSheet.create({
       elevation: 3,
       width: 0.6 * Dimensions.get('window').width,      
       backgroundColor: '#5CBCA9',
+    },
+    disabledButton: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 32,
+      borderRadius: 4,
+      elevation: 3,
+      width: 0.6 * Dimensions.get('window').width,      
+      backgroundColor: 'grey',
     },
     buttonText: {
       color: "white",

@@ -2,7 +2,7 @@ import styles from './styles'
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
-import { Button } from 'react-native';
+import { Button, ImageBackground, Pressable } from 'react-native';
 import { Component } from 'react';
 import useGun from '../../hooks/useGun';
 import { Redirect } from 'expo-router';
@@ -27,8 +27,7 @@ type State = {
   email: string,
   error: string,
   submitActive: boolean,
-  
-  gunState: any
+  creatingUser: boolean,
 }
 
 export default class CreateAccountScreen extends Component<Props, State> {
@@ -44,24 +43,18 @@ export default class CreateAccountScreen extends Component<Props, State> {
           email: '',
           error: '',
           submitActive: false,
-          gunState: gun,
+          creatingUser: false,
         };
       }
     
       componentDidMount(): void {
-        // app.on((data: any) => {
-        //   console.log('data', data);      
-        // });
-        console.log('CAS gun' + gun)
-        console.log('CAS user' + user)
-        console.log('gunSTATE' + this.state.gunState)
       }          
       
       createAccount = (ack : any) => {
-        console.log("Creating account")
         console.log(ack)
-        // console.log('Ack' + ack)
+        console.log("Ack" + ack)
         if (ack?.err){
+          this.setState({creatingUser: false });
           console.log("Some error on user creation")
           if (ack.err == "User already created!"){
               this.setState({
@@ -73,24 +66,27 @@ export default class CreateAccountScreen extends Component<Props, State> {
           }
         }
         else{
-          // console.log("about to use ack")
-          // console.log(typeof(ack))
-          // let newUser = gun.user(ack.pub)          
-          // let fullName = this.state.fullName
-          // let email = this.state.email
-          // console.log("Typeof newUser", typeof(newUser))
-          // newUser.get("PhoneNumber").put(this.state.phoneNumber)
-          // fullName && newUser.get('fullName').put(fullName)
-          // email && newUser.get('email').put(email)
-          // user.auth(this.state.phoneNumber,this.state.password,this.login)
+          let newUser = gun.user(ack.pub)          
+          let fullName : string = this.state.fullName
+          let email : string = this.state.email        
+          newUser.get("PhoneNumber").put(this.state.phoneNumber)
+          if (fullName != null){
+            newUser.get('fullName').put(fullName)
+          }
+          if (email != null) {
+            newUser.get('email').put(email)
+          } 
+          console.log("auth")
+          this.setState({showWrongPasswords: false });
+          user.auth(this.state.phoneNumber,this.state.password,this.login)
         }
       }
       login = (ack : any) => {    
-        console.log("Typeof ack", typeof(ack))
-        if (!ack.err){            
+        console.log("Hello")
+        if (!ack.err){    
           if (user.is){            
                   console.log("Redirect to GroupScreen")
-                  router.replace('/GroupScreen')             
+                  router.replace('/GroupScreen')            
           }
           else{
               console.log("User somehow doesn't exist");
@@ -129,16 +125,19 @@ export default class CreateAccountScreen extends Component<Props, State> {
       render() {
         return (
           <View style={styles.container}>
+            <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
             {this.state.error != "" && <Text style={styles.error}> {this.state.error} </Text>}
             <Text style={styles.descriptiveText}>Phone Number*</Text>
-            <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
-                      value={this.state.phoneNumber}
-                      onChangeText={(phoneNumber) =>{                      
-                      this.setState({phoneNumber});       
-                    }                  
-            }          
-            onEndEditing={() => this.toggleSubmitButton()}         
-                      />
+            <View style={styles.inputBox}>
+              <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
+                        value={this.state.phoneNumber}
+                        onChangeText={(phoneNumber) =>{                      
+                        this.setState({phoneNumber});       
+                      }                  
+              }          
+              onEndEditing={() => this.toggleSubmitButton()}         
+                        />
+            </View>
             <Text style={styles.descriptiveText}>Password*</Text>
             <View style={styles.inputBox}>
               <TextInput secureTextEntry={this.state.hidePassword} 
@@ -148,7 +147,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
                         onChangeText={
                           (password) =>{
                             this.setState({password})               
-                          }                          
+                          }                  
                         }
                         onBlur = {() => {
                           this.passwordsMatch()
@@ -158,51 +157,56 @@ export default class CreateAccountScreen extends Component<Props, State> {
             />
             <MaterialCommunityIcons 
                     name={this.state.hidePassword ? 'eye' : 'eye-off'} 
-                    size={24} 
-                    color="#aaa"
                     style={styles.eye} 
+                    size={24}
                     onPress={this.toggleHidePassword}
               />
               </View>
-            {!this.validatePass() && <Text style={styles.descriptiveText}>Password needs to have at least 7 characters</Text>}
+            {!this.validatePass() && <Text style={styles.descriptiveText}>Password needs at least 7 characters</Text>}
             <Text style={styles.descriptiveText}>Repeat Password*</Text>
-            <TextInput  autoCapitalize='none'
-                        secureTextEntry={this.state.hidePassword} 
-                        style={styles.inputField}
-                        value={this.state.repeatPassword}
-                        onChangeText={(repeatPassword) => {
-                          this.setState({repeatPassword})
-                        }                        
+            <View style={styles.inputBox}>
+              <TextInput  autoCapitalize='none'
+                          secureTextEntry={this.state.hidePassword} 
+                          style={styles.inputField}
+                          value={this.state.repeatPassword}
+                          onChangeText={(repeatPassword) => {
+                            this.setState({repeatPassword})
+                          }                        
+                        }
+                        onBlur = {() => {
+                          this.passwordsMatch()                          
+                          this.toggleSubmitButton()
+                        }
                       }
-                      onBlur = {() => {
-                        this.passwordsMatch()
-                        console.log("No more editing")
-                        this.toggleSubmitButton()
-                      }
-                    }
-            />
+              />
+            </View>
             {this.state.showWrongPasswords && <Text style={styles.error}> Passwords do not match</Text>}
             <Text style={styles.descriptiveText}>Full Name</Text>
+            <View style={styles.inputBox}>
             <TextInput autoComplete={'name'} style={styles.inputField}
                         value={this.state.fullName}
                         onChangeText={(fullName) => this.setState({fullName})}
                         />
+            </View>
             <Text style={styles.descriptiveText}>E-mail</Text>
-            <TextInput inputMode='email' autoComplete={'email'} style={styles.inputField}
-                        value={this.state.email}
-                        onChangeText={(email) => this.setState({email})}
-                        />
-            <Button title='Create acount' 
-                    // disabled={this.state.submitActive}
-                    onPress={()=>{   
-                      let userFunc = this.state.gunState.user() 
-                      userFunc.create('tester', 'password')//, this.createAccount)                                     
-                      // userFunc.create(this.state.phoneNumber, this.state.password, this.createAccount)
-                      console.log('Create account finished')                       
-                    }}/>
             
-            <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-          </View>    
+            <View style={styles.inputBox}>
+              <TextInput inputMode='email' autoComplete={'email'} style={styles.inputField}
+                          value={this.state.email}
+                          onChangeText={(email) => this.setState({email})}
+            />
+            </View>
+            <View style={styles.separator}/>
+            <Pressable style={this.state.submitActive ? styles.button : styles.disabledButton } 
+                    onPress={this.state.submitActive && !this.state.creatingUser ? () =>{   
+                      console.log("Active ")  
+                      this.setState({creatingUser: true });                                                    
+                      user.create(this.state.phoneNumber, this.state.password, this.createAccount)                                            
+                    } : () => {console.log("Not active")}}>
+                      <Text style={styles.buttonText}> Create account </Text>
+            </Pressable>
+            </ImageBackground>            
+          </View>  
         );
       }
 }
