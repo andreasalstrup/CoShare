@@ -48,7 +48,6 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors[colorScheme ?? 'light'].background }}>
         <Stack>
@@ -57,6 +56,5 @@ function RootLayoutNav() {
         </Stack>
       </SafeAreaView>
     </ThemeProvider>
-    
   );
 }
