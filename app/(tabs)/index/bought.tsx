@@ -15,6 +15,7 @@ export default function BoughtScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 48,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

@@ -15,6 +15,7 @@ export default function BalanceScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 48,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

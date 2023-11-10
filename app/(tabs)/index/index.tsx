@@ -90,6 +90,7 @@ export default class ToBeBoughtScreen extends Component {
   render() {
     return (
       <FlatList
+        style={{marginTop: 48}}
         data={DATA}
         renderItem={renderItem}
       />
