@@ -24,7 +24,7 @@ export default function TabLayout() {
         tabBarActiveBackgroundColor: Colors[colorScheme ?? 'light'].tabIconSelectedBackground,
       }}>
       <Tabs.Screen
-        name="index"
+        name="(index)"
         options={{
           title: 'List',
           tabBarIcon: ({ color }) => <TabBarIcon name="list-ul" color={color} />,
