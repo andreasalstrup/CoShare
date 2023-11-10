@@ -36,7 +36,8 @@ type ListData = {
 function renderItem({item, index}: { item: ListData, index: number}) {
   return (
     <Swipeable
-      friction={3}
+      friction={1.5}
+      overshootFriction={8}
       renderLeftActions={leftSwipeAction}
       renderRightActions={rightSwipeAction}
       onSwipeableOpen={swipeHandler}>
