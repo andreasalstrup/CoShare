@@ -36,9 +36,9 @@ function renderItem({item, index}: { item: Transaction, index: number}) {
       <View style={[styles.container, 
         {backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3'}]}>
         <View style={styles.item}>
-          <Text style={styles.itemText}>{item.from}</Text>
+          <Text style={styles.itemTextFrom}>{item.from}</Text>
           <Text style={styles.itemAmount}>{item.amount} kr.</Text>
-          <Text style={styles.itemText}>{item.to}</Text>
+          <Text style={styles.itemTextTo}>{item.to}</Text>
         </View>
       </View>
     </Swipeable>
@@ -91,9 +91,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
-  itemText: {
+  itemTextFrom: {
     fontSize: 24,
-    color: 'black',
+    color: '#E35F52',
+    flexDirection: 'row',
+  },
+  itemTextTo: {
+    fontSize: 24,
+    color: '#5CBCA9',
     flexDirection: 'row',
   },
   itemAmount: {
