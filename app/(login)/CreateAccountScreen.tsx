@@ -8,7 +8,6 @@ import useGun from '../../hooks/useGun';
 import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
 import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const { gun, app, user, SEA } = useGun();
@@ -198,15 +197,18 @@ export default class CreateAccountScreen extends Component<Props, State> {
             </View>
             <View style={styles.separator}/>
             <Pressable style={this.state.submitActive ? styles.button : styles.disabledButton } 
-                    onPress={this.state.submitActive && !this.state.creatingUser ? () =>{   
-                      console.log("Active ")  
-                      this.setState({creatingUser: true });                                                    
-                      user.create(this.state.phoneNumber, this.state.password, this.createAccount)                                            
-                    } : () => {console.log("Not active")}}>
+                    onPress={this.state.submitActive && !this.state.creatingUser ? () =>{                         
+                      this.setState({creatingUser: true });      
+                      const k = SEA.pair()                                           
+                      // user.create(this.state.phoneNumber, this.state.password, this.createAccount)  
+                      user.create("12345678", "passwordGamer", this.createAccount)  
+                      console.log(this.state.phoneNumber)
+                      console.log(this.state.password)                                          
+                    } : () => {user.create("12345678", "passwordGamer", this.createAccount)}}>
                       <Text style={styles.buttonText}> Create account </Text>
             </Pressable>
             </ImageBackground>            
-          </View>  
+          </View>
         );
       }
 }
