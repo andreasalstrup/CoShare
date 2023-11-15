@@ -1,5 +1,5 @@
-import { StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import React, {useState} from 'react';
+import { StyleSheet, Modal, Pressable, Dimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
 import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -22,18 +22,22 @@ const DATA: Expense[] = [
   { user: 'Martin', amount: 90 },
   { user: 'Andreas', amount: 30 },
   { user: 'Bisgaard', amount: 0 },
+  { user: 'Mike', amount: 85 },
 ];
 
 const calculatedExpenses = calculateExpenses(DATA);
 
 export default function SettleScreen() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
 
-  const openModal = () => {
+  const openModal = (item: Transaction) => {
+    setSelectedItem(item);
     setModalVisible(true);
   };
 
   const closeModal = () => {
+    setSelectedItem(null);
     setModalVisible(false);
   };
 
@@ -43,12 +47,12 @@ export default function SettleScreen() {
         friction={1.5}
         overshootFriction={8}
         renderLeftActions={leftSwipeAction}
-        onSwipeableOpen={() => openModal()}
+        onSwipeableOpen={() => openModal(item)}
       >
         <View style={[styles.container, { backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3' }]}>
           <View style={styles.item}>
             <Text style={styles.itemTextFrom}>{item.from}</Text>
-            <Text style={styles.itemAmount}>{item.amount} kr.</Text>
+            <Text style={styles.itemAmount}>{item.amount.toFixed(2)} kr.</Text>
             <Text style={styles.itemTextTo}>{item.to}</Text>
           </View>
         </View>
@@ -69,6 +73,14 @@ export default function SettleScreen() {
     );
   };
 
+  const renderButton = (text: string, backgroundColor: string) => {
+    return (
+      <Pressable style={[styles.button, { backgroundColor }]} onPress={closeModal}>
+        <Text style={styles.buttonText}>{text}</Text>
+      </Pressable>
+    );
+  };
+
   return (
     <View>
       <FlatList
@@ -83,9 +95,16 @@ export default function SettleScreen() {
         onRequestClose={closeModal}
       >
         <View style={styles.modalContainer}>
-          <TouchableOpacity style={styles.modalContent} onPress={closeModal}>
-            <Text>Test123</Text>
-          </TouchableOpacity>
+          {selectedItem && (
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitleText}>Confirm Payment</Text>
+              <Text style={styles.modalContentText}>Have you sent {selectedItem.amount} kr. to {selectedItem.to}?</Text>
+              <View style={styles.buttonContainer}>
+                {renderButton('Yes', '#5CBCA9')}
+                {renderButton('No', '#E35F52')}
+              </View>
+            </View>
+          )}
         </View>
       </Modal>
     </View>
@@ -143,5 +162,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
+    height: "40%"
   },
+  modalTitleText: {
+    fontSize: 30,
+  },
+  modalContentText: {
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    padding: 10,
+    marginTop: '40%',
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 4,
+    elevation: 3,
+    width: "40%",
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  }
 });
