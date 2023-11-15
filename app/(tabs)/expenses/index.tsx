@@ -1,7 +1,6 @@
-import { StyleSheet, Modal, Pressable, Alert } from 'react-native';
+import { StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import React, {useState} from 'react';
 import { Text, View, } from '../../../components/Themed';
-import { Component } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -27,88 +26,70 @@ const DATA: Expense[] = [
 
 const calculatedExpenses = calculateExpenses(DATA);
 
-function renderModal() {
+export default function SettleScreen() {
   const [modalVisible, setModalVisible] = useState(false);
-  return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const renderItem = ({ item, index }: { item: Transaction; index: number }) => {
+    return (
+      <Swipeable
+        friction={1.5}
+        overshootFriction={8}
+        renderLeftActions={leftSwipeAction}
+        onSwipeableOpen={() => openModal()}
+      >
+        <View style={[styles.container, { backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3' }]}>
+          <View style={styles.item}>
+            <Text style={styles.itemTextFrom}>{item.from}</Text>
+            <Text style={styles.itemAmount}>{item.amount} kr.</Text>
+            <Text style={styles.itemTextTo}>{item.to}</Text>
           </View>
         </View>
-      </Modal>
-      <Pressable
-        style={[styles.button, styles.buttonOpen]}
-        onPress={() => setModalVisible(true)}>
-        <Text style={styles.textStyle}>Show Modal</Text>
-      </Pressable>
-    </View>
-  );
-};
+      </Swipeable>
+    );
+  };
 
-function renderItem({item, index}: { item: Transaction, index: number}) {
-  return (
-    <Swipeable
-      friction={1.5}
-      overshootFriction={8}
-      renderLeftActions={leftSwipeAction}
-      onSwipeableOpen={swipeHandler}>
-      <View style={[styles.container, 
-        {backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3'}]}>
-        <View style={styles.item}>
-          <Text style={styles.itemTextFrom}>{item.from}</Text>
-          <Text style={styles.itemAmount}>{item.amount} kr.</Text>
-          <Text style={styles.itemTextTo}>{item.to}</Text>
-        </View>
-      </View>
-    </Swipeable>
-  )
-}
-
-function leftSwipeAction() {
-  return (
-    <View style={styles.leftSwipe}>
-      <FontAwesome5
-        name="arrow-alt-circle-right" 
-        size={32} 
-        color="white"
-        style={styles.swipeIcon}
-        />
-    </View>
-  )
-}
-
-function swipeHandler(dir: 'left' | 'right') {
-  if (dir == "left") {
-      console.log(dir);
-  } else {
-      console.log(dir);
-  }
-}
-export default class SettleScreen extends Component {
-  render() {
+  const leftSwipeAction = () => {
     return (
+      <View style={styles.leftSwipe}>
+        <FontAwesome5
+          name="arrow-alt-circle-right"
+          size={32}
+          color="white"
+          style={styles.swipeIcon}
+        />
+      </View>
+    );
+  };
+
+  return (
+    <View>
       <FlatList
         style={{marginTop: 48}}
         data={calculatedExpenses}
         renderItem={renderItem}
-        renderModal={renderModal}
       />
-    );
-  }
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.modalContent} onPress={closeModal}>
+            <Text>Test123</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -152,45 +133,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
-  centeredView: {
+    modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
   },
 });
