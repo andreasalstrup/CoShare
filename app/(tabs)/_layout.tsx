@@ -15,13 +15,13 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tabIconSelected,
-        tabBarActiveBackgroundColor: Colors[colorScheme ?? 'light'].tabIconSelectedBackground,
+        tabBarActiveTintColor: Colors[colorScheme ].tabIconSelected,
+        tabBarActiveBackgroundColor: Colors[colorScheme].tabIconSelectedBackground,
       }}>
       <Tabs.Screen
         name="(index)"
