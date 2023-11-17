@@ -5,10 +5,10 @@ import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { Button } from 'react-native';
 import { Component } from 'react';
-import useGun from '../../hooks/useGun';
+import useGun from '../../hooks/initiateGun';
 
 import { useRootNavigationState, Redirect, router } from 'expo-router';
-const { gun, app, user, SEA } = useGun();
+const { gun, user, SEA } = useGun();
 
 
 const RedirectBasedOnLoginState = () => {

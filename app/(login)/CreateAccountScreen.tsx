@@ -8,10 +8,8 @@ import useGun from '../../hooks/useGun';
 import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Storage from 'react-native-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-const { gun, app, user, SEA } = useGun();
-
+const { gun, user, SEA } = useGun();
+import WebviewCrypto from 'react-native-webview-crypto';
 type Props = {
   text: any
 }
@@ -47,6 +45,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
       }
     
       componentDidMount(): void {
+        console.log(crypto)
       }          
       
       createAccount = (ack : any) => {
@@ -124,6 +123,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
       render() {
         return (
           <View style={styles.container}>
+            {/* <WebviewCrypto/> */}
             <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
             {this.state.error != "" && <Text style={styles.error}> {this.state.error} </Text>}
             <Text style={styles.descriptiveText}>Phone Number*</Text>
@@ -199,7 +199,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
             <Pressable style={this.state.submitActive ? styles.button : styles.disabledButton } 
                     onPress={this.state.submitActive && !this.state.creatingUser ? () =>{                         
                       this.setState({creatingUser: true });      
-                      const k = SEA.pair()                                           
+                    //   const k = SEA.pair()                                           
                       // user.create(this.state.phoneNumber, this.state.password, this.createAccount)  
                       user.create("12345678", "passwordGamer", this.createAccount)  
                       console.log(this.state.phoneNumber)
