@@ -8,7 +8,6 @@ import useGun from '../../hooks/useGun';
 import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-const { gun, user, SEA } = useGun;
 import WebviewCrypto from 'react-native-webview-crypto';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -46,11 +45,11 @@ export default class CreateAccountScreen extends Component<Props, State> {
           creatingUser: false,
         };
       }
-      useEffect () : void {
-        setTimeout(() => {console.log("Waited"); SplashScreen.hideAsync},5000)
-      }
       componentDidMount(): void {        
-        setTimeout(() => {console.log("Waited"); SplashScreen.hideAsync},5000)
+        // setTimeout(() => {console.log("Waited"); SplashScreen.hideAsync},5000)
+        const gun = global.gun
+        const SEA = global.SEA
+        const user = global.user
       }          
       
       createAccount = (ack : any) => {
@@ -59,7 +58,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
           console.log("Some error on user creation")
           if (ack.err == "User already created!"){
               this.setState({
-                error: ack.error
+                error: "User already exists"
               });
           }
           else{//The other possible error is:  "User is already being created or authenticated!" which probably means the user has clicked create user multiple times
@@ -97,7 +96,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
         }
       }
       validatePhone = () => {        
-        let phone : string = this.state.phoneNumber
+        let phone : string = this.state.phoneNumber        
         return phone.length == 8 // Danish phonenumbers only atm        
       }
       validatePass = () => {
@@ -105,24 +104,19 @@ export default class CreateAccountScreen extends Component<Props, State> {
         return (pass.length > 6) //Multiple constraints can be placed on pass        
         }
 
-      passwordsMatch = () => {
+      passwordsMatch = () => {        
         let pass : string = this.state.password
         let repPass : string = this.state.repeatPassword
-        let equal = pass == repPass
-        return equal
-      }
-      passwordsMatchErrorMessage = () => {
-        let pass : string = this.state.password
-        let repPass : string = this.state.repeatPassword
-        let equal = pass == repPass
+        let equal : boolean = pass == repPass
         let value : boolean = (pass != '' && repPass != '') && (!equal)
-        this.setState({showWrongPasswords: value });
+        this.setState({showWrongPasswords: value });        
+        return equal
       }
 
       toggleHidePassword = () => {
         this.setState({hidePassword:!this.state.hidePassword})
       }
-      toggleSubmitButton = () => {
+      toggleSubmitButton = () => {    
         let submitActive = this.passwordsMatch() && this.validatePhone() && this.validatePass()
         this.setState({submitActive: submitActive})
       }
@@ -136,12 +130,11 @@ export default class CreateAccountScreen extends Component<Props, State> {
             <View style={styles.inputBox}>
               <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
                         value={this.state.phoneNumber}
-                        onChangeText={(phoneNumber) =>{                      
-                        this.setState({phoneNumber});       
+                        onChangeText={
+                          (phoneNumber) =>{                      
+                            this.setState({phoneNumber},this.toggleSubmitButton);       
                       }                  
-              }          
-              onEndEditing={() => this.toggleSubmitButton()}         
-                        />
+              }/>
             </View>            
             <Text style={styles.descriptiveText}>Password*</Text>
             <View style={styles.inputBox}>
@@ -151,18 +144,13 @@ export default class CreateAccountScreen extends Component<Props, State> {
                         autoCapitalize='none'
                         onChangeText={
                           (password) =>{
-                            this.setState({password})    
-                            this.toggleSubmitButton()           
+                            this.setState({password},this.toggleSubmitButton)                                       
                           }                  
-                        }
-                        onBlur = {() => {
-                          this.passwordsMatchErrorMessage()                          
-                        }      
-                      }                               
+                        }                                                                
             />
             <MaterialCommunityIcons 
                     name={this.state.hidePassword ? 'eye' : 'eye-off'} 
-                    style={styles.eye} 
+                    style={styles.eye}
                     size={24}
                     onPress={this.toggleHidePassword}
               />
@@ -175,14 +163,9 @@ export default class CreateAccountScreen extends Component<Props, State> {
                           style={styles.inputField}
                           value={this.state.repeatPassword}
                           onChangeText={(repeatPassword) => {
-                            this.setState({repeatPassword})
-                            this.toggleSubmitButton()
+                            this.setState({repeatPassword}, this.toggleSubmitButton)                          
                           }                        
-                        }
-                        onBlur = {() => {
-                          this.passwordsMatchErrorMessage()                                    
-                        }
-                      }
+                        }                      
               />
             </View>
             {this.state.showWrongPasswords && <Text style={styles.error}> Passwords do not match</Text>}

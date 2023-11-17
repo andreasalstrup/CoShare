@@ -8,7 +8,7 @@ import { Redirect, Link, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
 import WebviewCrypto from 'react-native-webview-crypto';
-const { gun, user, SEA} = useGun;
+// const { gun, user, SEA} = global.DBTriple;
 
 type Props = {
   text: any
@@ -37,6 +37,9 @@ export default class loginScreen extends Component<Props, State> {
   
 
   componentDidMount(): void {   
+    const gun = global.gun
+    const SEA = global.SEA
+    const user = global.user
   }
   
   toggleHidePassword = () => {
@@ -70,9 +73,6 @@ export default class loginScreen extends Component<Props, State> {
     }else{     
         this.setState({wrongCredentials: true, authing: false});        
     }
-  }
-  redirectToCreateAccount =  () => {
-    router.push("/(login)/CreateAccountScreen")
   }
   render() {
     return (         
@@ -112,9 +112,8 @@ export default class loginScreen extends Component<Props, State> {
           style={styles.button} 
           onPress={()=>{   
             if (!this.state.authing){
-              // this.setState({authing: true})
-              // user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)       
-              this.redirectToCreateAccount()     
+              this.setState({authing: true})
+              user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)                       
             }
           }}>
             <Text style={styles.buttonText}> Sign in</Text>
