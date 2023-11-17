@@ -8,8 +8,11 @@ import useGun from '../../hooks/useGun';
 import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-const { gun, user, SEA } = useGun();
+const { gun, user, SEA } = useGun;
 import WebviewCrypto from 'react-native-webview-crypto';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 type Props = {
   text: any
 }
@@ -43,14 +46,14 @@ export default class CreateAccountScreen extends Component<Props, State> {
           creatingUser: false,
         };
       }
-    
-      componentDidMount(): void {
-        console.log(crypto)
+      useEffect () : void {
+        setTimeout(() => {console.log("Waited"); SplashScreen.hideAsync},5000)
+      }
+      componentDidMount(): void {        
+        setTimeout(() => {console.log("Waited"); SplashScreen.hideAsync},5000)
       }          
       
       createAccount = (ack : any) => {
-        console.log(ack)
-        console.log("Ack" + ack)
         if (ack?.err){
           this.setState({creatingUser: false });
           console.log("Some error on user creation")
@@ -73,14 +76,12 @@ export default class CreateAccountScreen extends Component<Props, State> {
           }
           if (email != null) {
             newUser.get('email').put(email)
-          } 
-          console.log("auth")
+          }           
           this.setState({showWrongPasswords: false });
           user.auth(this.state.phoneNumber,this.state.password,this.login)
         }
       }
-      login = (ack : any) => {    
-        console.log("Hello")
+      login = (ack : any) => {            
         if (!ack.err){    
           if (user.is){            
                   console.log("Redirect to GroupScreen")
@@ -108,9 +109,14 @@ export default class CreateAccountScreen extends Component<Props, State> {
         let pass : string = this.state.password
         let repPass : string = this.state.repeatPassword
         let equal = pass == repPass
+        return equal
+      }
+      passwordsMatchErrorMessage = () => {
+        let pass : string = this.state.password
+        let repPass : string = this.state.repeatPassword
+        let equal = pass == repPass
         let value : boolean = (pass != '' && repPass != '') && (!equal)
         this.setState({showWrongPasswords: value });
-        return equal
       }
 
       toggleHidePassword = () => {
@@ -123,7 +129,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
       render() {
         return (
           <View style={styles.container}>
-            {/* <WebviewCrypto/> */}
+            <WebviewCrypto/>
             <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
             {this.state.error != "" && <Text style={styles.error}> {this.state.error} </Text>}
             <Text style={styles.descriptiveText}>Phone Number*</Text>
@@ -136,7 +142,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
               }          
               onEndEditing={() => this.toggleSubmitButton()}         
                         />
-            </View>
+            </View>            
             <Text style={styles.descriptiveText}>Password*</Text>
             <View style={styles.inputBox}>
               <TextInput secureTextEntry={this.state.hidePassword} 
@@ -145,12 +151,12 @@ export default class CreateAccountScreen extends Component<Props, State> {
                         autoCapitalize='none'
                         onChangeText={
                           (password) =>{
-                            this.setState({password})               
+                            this.setState({password})    
+                            this.toggleSubmitButton()           
                           }                  
                         }
                         onBlur = {() => {
-                          this.passwordsMatch()
-                          this.toggleSubmitButton()
+                          this.passwordsMatchErrorMessage()                          
                         }      
                       }                               
             />
@@ -170,11 +176,11 @@ export default class CreateAccountScreen extends Component<Props, State> {
                           value={this.state.repeatPassword}
                           onChangeText={(repeatPassword) => {
                             this.setState({repeatPassword})
+                            this.toggleSubmitButton()
                           }                        
                         }
                         onBlur = {() => {
-                          this.passwordsMatch()                          
-                          this.toggleSubmitButton()
+                          this.passwordsMatchErrorMessage()                                    
                         }
                       }
               />
@@ -197,14 +203,10 @@ export default class CreateAccountScreen extends Component<Props, State> {
             </View>
             <View style={styles.separator}/>
             <Pressable style={this.state.submitActive ? styles.button : styles.disabledButton } 
-                    onPress={this.state.submitActive && !this.state.creatingUser ? () =>{                         
-                      this.setState({creatingUser: true });      
-                    //   const k = SEA.pair()                                           
-                      // user.create(this.state.phoneNumber, this.state.password, this.createAccount)  
-                      user.create("12345678", "passwordGamer", this.createAccount)  
-                      console.log(this.state.phoneNumber)
-                      console.log(this.state.password)                                          
-                    } : () => {user.create("12345678", "passwordGamer", this.createAccount)}}>
+                    onPress={(this.state.submitActive && !this.state.creatingUser) ? () =>{                                             
+                      this.setState({creatingUser: true });                                                             
+                      user.create(this.state.phoneNumber, this.state.password, this.createAccount)                                                            
+                    } : () => {}}>
                       <Text style={styles.buttonText}> Create account </Text>
             </Pressable>
             </ImageBackground>            

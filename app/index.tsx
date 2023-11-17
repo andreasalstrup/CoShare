@@ -6,7 +6,9 @@ import { useRootNavigationState, Redirect, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { registerRootComponent } from 'expo';
 
-SplashScreen.preventAutoHideAsync(); //Not  needed now but might be when doing checks
+SplashScreen.preventAutoHideAsync()
+  .catch(() => { console.log("splash error") });
+
 export default class RedirectBasedOnLoginState extends Component<{}, {}> {
   
   render() {

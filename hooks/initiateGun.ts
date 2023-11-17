@@ -9,21 +9,26 @@ import 'gun/lib/store.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const asyncsStore = require('gun/lib/ras.js')
 
-const initiateGun = () => {
+const initiateGun = () => { // This technique still does not work
+  
+  // asyncStore.get("gun", ((ack : any, num : any) => { Using async for storing the db does not look promising
+  //   console.log(ack);
+  //   console.log(num)
+  //   })
+  // )
+  
   console.log("Initting gun")
   //rad asyncstorage adapter, on Android asyncstorage has 6mb limit by default
   const asyncStore = asyncsStore({AsyncStorage});
-  // console.log(crypto.pair())
   let gun = Gun({
     peers: ['https://gun-manhattan.herokuapp.com/gun'],
     store: asyncStore,
     radisk: true,
     localStorage: false,
   });
-
-
   // For testing 
-  AsyncStorage.clear()
+  // AsyncStorage.clear()
+  
   const user = gun.user()
   return { gun, user, SEA}
 }
