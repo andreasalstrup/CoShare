@@ -3,12 +3,10 @@ import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { Button, ImageBackground, Image, Pressable } from 'react-native';
 import { Component } from 'react';
-import useGun from '../../hooks/useGun';
 import { Redirect, Link, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
 import WebviewCrypto from 'react-native-webview-crypto';
-// const { gun, user, SEA} = global.DBTriple;
 
 type Props = {
   text: any

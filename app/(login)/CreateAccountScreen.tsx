@@ -4,7 +4,6 @@ import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { Button, ImageBackground, Pressable } from 'react-native';
 import { Component } from 'react';
-import useGun from '../../hooks/useGun';
 import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
