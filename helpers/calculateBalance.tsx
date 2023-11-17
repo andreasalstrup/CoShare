@@ -6,9 +6,10 @@ type Expense = {
 export const calculateBalance = (expenses: Expense[]) => {
     const totalSpent: { [name: string]: number } = {};
     const userCount: { [name: string]: number } = {};
-    expenses.forEach((expense) => {
-        totalSpent[expense.user] = (totalSpent[expense.user] || 0) + expense.amount;
-        userCount[expense.user] = (userCount[expense.user] || 0) + 1;
+
+    expenses.forEach(({ user, amount }) => {
+        totalSpent[user] = (totalSpent[user] || 0) + amount;
+        userCount[user] = (userCount[user] || 0) + 1;
     });
 
     const users = Object.keys(totalSpent);
@@ -24,6 +25,6 @@ export const calculateBalance = (expenses: Expense[]) => {
         user,
         amount,
     }));
-
+    
     return calculatedBalancesArray;
 };

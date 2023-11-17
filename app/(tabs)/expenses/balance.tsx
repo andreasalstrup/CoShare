@@ -26,7 +26,9 @@ export default function BalanceScreen() {
       <View style={[styles.container, { backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3' }]}>
         <View style={styles.item}>
           <Text style={styles.itemText}>{item.user}</Text>
-          <Text style={styles.itemAmount}>{item.amount.toFixed(2)} kr.</Text>
+          <Text style={[styles.itemAmount, { color: item.amount >= 0 ? (item.amount == 0 ? 'black' : '#5CBCA9') : '#E35F52' }]}>
+            {item.amount > 0 ? "+" + item.amount.toFixed(2) : item.amount.toFixed(2)} kr.
+          </Text>
         </View>
       </View>
     );
@@ -63,7 +65,6 @@ const styles = StyleSheet.create({
   },
   itemAmount: {
     fontSize: 24,
-    color: 'black',
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
