@@ -1,5 +1,7 @@
-import { StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { Text, View } from '../../components/Themed';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 
 const getCurrentWeek = () => {
@@ -32,19 +34,65 @@ const getCurrentWeekDays = () => {
 };
 
 export default function MealScreen() {
+  const [editableDay, setEditableDay] = useState(null);
+  const [dayTexts, setDayTexts] = useState('');
+
+  const handleDayClick = (index: Number) => {
+    setEditableDay(index);
+  };
+
+  const handleTextChange = (text: string) => {
+    if (editableDay !== null) {
+      const updatedTexts = [...dayTexts];
+      updatedTexts[editableDay] = text;
+      setDayTexts(updatedTexts);
+    }
+  };
+
+  const renderDays = () => {
+    return getCurrentWeekDays().map((day, index) => (
+      <TouchableOpacity
+        key={index}
+        onPress={() => handleDayClick(index)}
+        style={[
+          styles.dayContainer,
+          { backgroundColor: index % 2 === 0 ? '#eeeeee' : '#D3D3D3' },
+        ]}
+      >
+        <Text style={[styles.weekdaysText, { fontWeight: 'bold' }]}>{day}</Text>
+        {editableDay === index ? (
+          <TextInput
+            style={[styles.weekdaysText, { fontStyle: 'italic' }]}
+            value={dayTexts[index]}
+            onChangeText={handleTextChange}
+            onBlur={() => setEditableDay(null)}
+            autoFocus
+          />
+        ) : (
+          <Text style={styles.weekdaysText}>{dayTexts[index]}</Text>
+        )}
+      </TouchableOpacity>
+    ));
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
+        <FontAwesome5
+          name="arrow-left"
+          size={32} 
+          color="black"
+          style={styles.arrowButtons}
+        />
         <Text style={styles.headerText}>Week {getCurrentWeek()}</Text>
+        <FontAwesome5
+          name="arrow-right"
+          size={32} 
+          color="black"
+          style={styles.arrowButtons}
+        />
       </View>
-      <View style={styles.weekdaysContainer}>
-        {getCurrentWeekDays().map((day, index) => (
-          <View key={index} style={[styles.dayContainer, { backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3' }]}>
-            <Text>{day}</Text>
-            <Text>{/* user.name */}</Text>
-          </View>
-        ))}
-      </View>
+      <View style={styles.weekdaysContainer}>{renderDays()}</View>
     </View>
   );
 }
@@ -55,13 +103,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#eeeeee',
   },
   headerContainer: {
+    flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'center',
+    justifyContent: 'space-between',
     elevation: 3,
   },
   headerText: {
     fontSize: 24,
-    padding: 10,
+    padding: 20,
     fontWeight: 'bold',
   },
   weekdaysContainer: {
@@ -74,8 +124,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 5,
+    justifyContent: 'space-between',
+    padding: 20,
     borderBottomWidth: 1,
   },
+  weekdaysText: {
+    fontSize: 18,
+  },
+  arrowButtons: {
+    paddingLeft: 20,
+    paddingRight: 20,
+  }
 });
