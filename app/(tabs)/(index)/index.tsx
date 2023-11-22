@@ -200,7 +200,8 @@ export default function ToBeBoughtScreen() {
               <CheckBox
                 style={{ marginRight: 10 }}
                 color={'#5CBCA9'}
-                value={selected}
+                value={selected}                
+                pointerEvents='none'
               />
             </View>}
             data={usersDropdown}
