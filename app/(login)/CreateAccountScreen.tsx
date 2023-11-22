@@ -1,8 +1,7 @@
 import styles from './styles'
-import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
-import { Button, ImageBackground, Pressable } from 'react-native';
+import { ImageBackground, Pressable } from 'react-native';
 import { Component } from 'react';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

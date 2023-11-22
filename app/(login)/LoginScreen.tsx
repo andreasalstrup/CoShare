@@ -1,9 +1,9 @@
 import styles from './styles'
 import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
-import { Button, ImageBackground, Image, Pressable } from 'react-native';
+import { ImageBackground, Pressable } from 'react-native';
 import { Component } from 'react';
-import { Redirect, Link, router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
 
