@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { Redirect, Link, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
-import WebviewCrypto from 'react-native-webview-crypto';
 
 type Props = {
   text: any
@@ -37,7 +36,7 @@ export default class loginScreen extends Component<Props, State> {
   componentDidMount(): void {   
     const gun = global.gun
     const SEA = global.SEA
-    const user = global.user
+    const user = global.user    
   }
   
   toggleHidePassword = () => {
@@ -52,19 +51,12 @@ export default class loginScreen extends Component<Props, State> {
             newUser.get("group").once((ack) =>{              
               if(ack == undefined){
                 console.log("Group not found")                
-                inGroup = false
+                router.replace('/GroupScreen')
               } else {
-                console.log("Group found")                
+                console.log("Group found")
+                router.replace('../(tabs)/ShoppingList/index')                              
               }
-            })
-
-            if (inGroup){                
-                console.log("Redirect to ShoppingListScreen")
-                router.replace('../(tabs)/ShoppingListScreen')
-            }else{              
-                console.log("Redirect to GroupScreen")
-                router.replace('/GroupScreen')          
-            }
+            })          
         }else{
             console.log("User somehow doesn't exist");
         }
@@ -74,9 +66,8 @@ export default class loginScreen extends Component<Props, State> {
   }
   render() {
     return (         
-      <View style={styles.container}>
-      <WebviewCrypto/>
-      <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>      
+      <View style={styles.container}>      
+      <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>     
         <LogoAndName/>
         <Text style={styles.descriptiveText}>Phone Number</Text>      
         <View style={styles.inputBox}>
@@ -116,7 +107,7 @@ export default class loginScreen extends Component<Props, State> {
           }}>
             <Text style={styles.buttonText}> Sign in</Text>
         </Pressable>                    
-        <Text style={styles.descriptiveText}><Link replace={true} href={"/CreateAccountScreen"}> Create new account</Link></Text>        
+        <Text style={styles.descriptiveText}><Link href={"/CreateAccountScreen"}> Create new account</Link></Text>        
       </ImageBackground>
       
       </View>

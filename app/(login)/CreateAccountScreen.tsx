@@ -4,13 +4,10 @@ import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { Button, ImageBackground, Pressable } from 'react-native';
 import { Component } from 'react';
-import { Redirect } from 'expo-router';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import WebviewCrypto from 'react-native-webview-crypto';
-import * as SplashScreen from 'expo-splash-screen';
+import { LogoAndName } from '../../components/LogoAndName';
 
-SplashScreen.preventAutoHideAsync();
 type Props = {
   text: any
 }
@@ -45,7 +42,6 @@ export default class CreateAccountScreen extends Component<Props, State> {
         };
       }
       componentDidMount(): void {        
-        // setTimeout(() => {console.log("Waited"); SplashScreen.hideAsync},5000)
         const gun = global.gun
         const SEA = global.SEA
         const user = global.user
@@ -122,8 +118,9 @@ export default class CreateAccountScreen extends Component<Props, State> {
       render() {
         return (
           <View style={styles.container}>
-            <WebviewCrypto/>
+            
             <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
+            <LogoAndName/>
             {this.state.error != "" && <Text style={styles.error}> {this.state.error} </Text>}
             <Text style={styles.descriptiveText}>Phone Number*</Text>
             <View style={styles.inputBox}>

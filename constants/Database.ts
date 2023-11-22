@@ -21,24 +21,13 @@ radisk: true,
 localStorage: false,
 });
 
-declare global {
-    var DBTriple : {
-        gun: IGunInstance<any>;
-        SEA: ISEA;
-        user: IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>;
-    }
+declare global {    
     var gun : IGunInstance<any>;
     var user :IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>;
     var SEA : ISEA;
 }
-let user = gun.user()
-global.DBTriple = {gun, SEA, user}
 global.gun = gun
-global.user = user
+global.user = gun.user()
 global.SEA = SEA
-
-
-const auth = user.auth
-console.log(typeof(gun))
 
 
