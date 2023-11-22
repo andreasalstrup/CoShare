@@ -194,6 +194,15 @@ export default function ToBeBoughtScreen() {
           <Text>Split expenses between</Text>
           <MultiSelect
             style={styles.dropdown}
+            renderItem={(item, selected) => 
+            <View style={[styles.dropdownItem, {marginBottom: selected ? -0.5 : 0}]}>
+              <Text style={styles.dropdownTextItem}>{item.label}</Text>
+              <CheckBox
+                style={{ marginRight: 10 }}
+                color={'#5CBCA9'}
+                value={selected}
+              />
+            </View>}
             data={usersDropdown}
             labelField="label"
             valueField="value"
@@ -307,6 +316,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 4,
     paddingLeft: 10
+  },
+  dropdownItem: {
+      padding: 17,
+      flexDirection: 'row',
+  },
+  dropdownTextItem: {
+      flex: 1,
+      fontSize: 16,
   },
   modalContainer: {
     justifyContent: 'center',
