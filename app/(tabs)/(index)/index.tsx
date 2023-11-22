@@ -121,7 +121,6 @@ export default function ToBeBoughtScreen() {
     setProducts(products => [...products, newProduct])
     
     handleModalAddItem()
-    clearProduct()
   }
 
   function swipeHandler(dir: 'left' | 'right', index: number) {
@@ -181,7 +180,7 @@ export default function ToBeBoughtScreen() {
         data={products}
         renderItem={renderItem}
       />
-      <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddItemVisible} onBackdropPress={handleModalAddItem}>
+      <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddItemVisible} onBackdropPress={handleModalAddItem} onModalHide={clearProduct}>
         <View style={ styles.addItemModal }>
           <Text>Product</Text>
           <TextInput
