@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Pressable } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
 
@@ -12,12 +12,12 @@ const getCurrentWeek = () => {
   return currentWeek;
 };
 
-const getCurrentWeekDays = () => {
+const getCurrentWeekDays = (weekNumber: number) => {
   const currentDate = new Date();
-  const startOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay());
+  const startOfWeek = new Date(currentDate.getFullYear(), 0, 1 + (weekNumber - 1) * 7);
   const days = [];
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const getDayName = (dayIndex: number) => {return daysOfWeek[dayIndex]};
+  const getDayName = (dayIndex: number) => daysOfWeek[dayIndex];
 
   for (let i = 0; i < 7; i++) {
     const date = new Date(startOfWeek);
@@ -35,9 +35,10 @@ const getCurrentWeekDays = () => {
 
 export default function MealScreen() {
   const [editableDay, setEditableDay] = useState(null);
-  const [dayTexts, setDayTexts] = useState('');
+  const [dayTexts, setDayTexts] = useState(['', '', '', '', '', '', '']);
+  const [currentWeek, setCurrentWeek] = useState(getCurrentWeek());
 
-  const handleDayClick = (index: Number) => {
+  const handleDayClick = (index: number) => {
     setEditableDay(index);
   };
 
@@ -49,8 +50,17 @@ export default function MealScreen() {
     }
   };
 
+  const showPreviousWeek = () => {
+    setCurrentWeek(prevWeek => prevWeek - 1);
+  };
+
+  const showNextWeek = () => {
+    setCurrentWeek(prevWeek => prevWeek + 1);
+  };
+
   const renderDays = () => {
-    return getCurrentWeekDays().map((day, index) => (
+    const weekDays = getCurrentWeekDays(currentWeek);
+    return weekDays.map((day, index) => (
       <TouchableOpacity
         key={index}
         onPress={() => handleDayClick(index)}
@@ -78,19 +88,23 @@ export default function MealScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <FontAwesome5
-          name="arrow-left"
-          size={32} 
-          color="black"
-          style={styles.arrowButtons}
-        />
-        <Text style={styles.headerText}>Week {getCurrentWeek()}</Text>
-        <FontAwesome5
-          name="arrow-right"
-          size={32} 
-          color="black"
-          style={styles.arrowButtons}
-        />
+        <Pressable onPress={showPreviousWeek}>
+          <FontAwesome5
+            name="chevron-left"
+            size={24} 
+            color="black"
+            style={styles.arrowButtons}
+          />
+        </Pressable>
+        <Text style={styles.headerText}>Week {currentWeek}</Text>
+        <Pressable onPress={showNextWeek}>
+          <FontAwesome5
+            name="chevron-right"
+            size={24} 
+            color="black"
+            style={styles.arrowButtons}
+          />
+        </Pressable>
       </View>
       <View style={styles.weekdaysContainer}>{renderDays()}</View>
     </View>
