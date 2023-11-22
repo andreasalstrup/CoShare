@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, useColorScheme, SafeAreaView, ScrollView } from 'react-native';
 import { Text, View } from '../../components/Themed';
+import Colors from '../../constants/Colors';
 
 export default function NoticeScreen() {
+  const colorScheme = useColorScheme() ?? 'light';
   const [houseRules, setHouseRules] = useState('');
   const users = [
     { name: 'Test Bruger', phone: '12 34 56 78', email: 'testbruger42@gmail.com' },
     { name: 'Andreas Alstrup', phone: '87 65 43 21', email: 'andreas.alstrup@gmail.com' },
   ];
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: Colors[colorScheme].background}]}>
       <ScrollView>
         <View>
           <Text style={styles.title}>Household Rules</Text>
@@ -38,7 +40,6 @@ export default function NoticeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   title: {
     fontSize: 20,

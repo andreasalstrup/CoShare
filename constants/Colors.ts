@@ -14,6 +14,8 @@ export default {
     tabIconSelectedBackground: tintColorTurquoise,
     accentColor: accentColorTurquoise,
     topNavBarIndicatorColorTurquoise: topNavBarIndicatorColorTurquoise,
+    listBackgroundColor1: '#eeeeee',
+    listBackgroundColor2: '#D3D3D3',
   },
   dark: {
     text: '#fff',
@@ -23,5 +25,7 @@ export default {
     tabIconSelected: tintColorLight,
     tabIconSelectedBackground: tintColorTurquoise,
     topNavBarIndicatorColorTurquoise: topNavBarIndicatorColorTurquoise,
+    listBackgroundColor1: '#282828',
+    listBackgroundColor2: '#404040',
   },
 };
