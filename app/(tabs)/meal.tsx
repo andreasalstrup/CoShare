@@ -36,7 +36,7 @@ const getCurrentWeekDays = (weekNumber: number) => {
 
 
 export default function MealScreen() {
-  const [editableDay, setEditableDay] = useState(null);
+  const [editableDay, setEditableDay] = useState<number | null>(null);
   const [weekTexts, setWeekTexts] = useState<{ [key: number]: DayInfo[] }>({});
   const [currentWeek, setCurrentWeek] = useState(getCurrentWeek());
 
