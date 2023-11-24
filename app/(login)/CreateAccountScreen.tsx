@@ -95,7 +95,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
       }
       validatePass = () => {
         let pass : string = this.state.password
-        return (pass.length > 6) //Multiple constraints can be placed on pass        
+        return (pass.length > 7) //Multiple constraints can be placed on pass        
         }
 
       passwordsMatch = () => {        
