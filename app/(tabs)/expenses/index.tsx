@@ -148,10 +148,6 @@ const styles = StyleSheet.create({
   swipeIcon: {
     padding: 10,
   },
-  longBoi: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end'
-  },
     modalContainer: {
     flex: 1,
     justifyContent: 'center',
