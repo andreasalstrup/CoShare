@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, TextInput, Pressable } from 'react-native
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
 
-
 const getCurrentWeek = () => {
   const currentDate = new Date();
   const startOfYear = new Date(currentDate.getFullYear(), 0, 0);
@@ -32,8 +31,6 @@ const getCurrentWeekDays = (weekNumber: number) => {
   }
   return days;
 };
-
-
 
 export default function MealScreen() {
   const [editableDay, setEditableDay] = useState<number | null>(null);
