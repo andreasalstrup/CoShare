@@ -3,14 +3,14 @@ import { useColorScheme } from "react-native";
 import Colors from "../../../constants/Colors";
 
 export default function ExpensesTabLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
 
   return (
     <TopTabs
       options={{swipeEnabled: false}}
       screenOptions={{
-        tabBarPressColor: Colors[colorScheme ?? 'light'].topNavBarIndicatorColorTurquoise,
-        tabBarIndicatorStyle: {backgroundColor: Colors[colorScheme ?? 'light'].topNavBarIndicatorColorTurquoise},
+        tabBarPressColor: Colors[colorScheme].topNavBarIndicatorColorTurquoise,
+        tabBarIndicatorStyle: {backgroundColor: Colors[colorScheme].topNavBarIndicatorColorTurquoise},
       }}>
       <TopTabs.Header>
       </TopTabs.Header>
