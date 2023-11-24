@@ -10,18 +10,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IGunInstance, IGunInstanceRoot, IGunUserInstance, ISEA } from 'gun/types';
 const asyncsStore = require('gun/lib/ras.js')
 
+AsyncStorage.clear()
 
-console.log("Constanting gun")
+
 //rad asyncstorage adapter, on Android asyncstorage has 6mb limit by default
 const asyncStore = asyncsStore({AsyncStorage});
 let gun = Gun({
-peers: ['https://gun-manhattan.herokuapp.com/gun'],
+peers: ['https://130.225.39.205:8080/gun'],
 store: asyncStore,
 radisk: true,
 localStorage: false,
 });
 
-declare global {    
+declare global {
     var gun : IGunInstance<any>;
     var user :IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>;
     var SEA : ISEA;
@@ -29,5 +30,3 @@ declare global {
 global.gun = gun
 global.user = gun.user()
 global.SEA = SEA
-
-

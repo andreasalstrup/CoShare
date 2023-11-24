@@ -23,20 +23,12 @@ export default class loginScreen extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      phoneNumber: '',
-      password: '',
+      phoneNumber: '12345678',
+      password: '12345678',
       wrongCredentials: false,   
       hidePassword: true,   
       authing: false,
     };
-  }
-
-  
-
-  componentDidMount(): void {   
-    const gun = global.gun
-    const SEA = global.SEA
-    const user = global.user    
   }
   
   toggleHidePassword = () => {

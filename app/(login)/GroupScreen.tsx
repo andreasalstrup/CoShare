@@ -1,11 +1,5 @@
-import { Text, View } from '../../components/Themed';
-import styles from './styles';
-
+import { Redirect } from 'expo-router';
 
 export default function GroupScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>This is where groups come true</Text>            
-    </View>
-  );
+  return <Redirect href='../(tabs)/shoppingList'/>
 }

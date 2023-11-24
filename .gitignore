@@ -4,7 +4,7 @@
 node_modules/
 
 # Expo
-.expo
+.expo/
 dist/
 web-build/
 
@@ -39,4 +39,3 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
-.expo/types/router.d.ts

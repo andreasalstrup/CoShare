@@ -40,12 +40,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
           creatingUser: false,
         };
       }
-      componentDidMount(): void {        
-        const gun = global.gun
-        const SEA = global.SEA
-        const user = global.user
-      }          
-      
+
       createAccount = (ack : any) => {
         if (ack?.err){
           this.setState({creatingUser: false });
@@ -74,6 +69,7 @@ export default class CreateAccountScreen extends Component<Props, State> {
           user.auth(this.state.phoneNumber,this.state.password,this.login)
         }
       }
+
       login = (ack : any) => {            
         if (!ack.err){    
           if (user.is){            
@@ -89,10 +85,12 @@ export default class CreateAccountScreen extends Component<Props, State> {
             //  Not sure how this should be handled
         }
       }
+
       validatePhone = () => {        
         let phone : string = this.state.phoneNumber        
         return phone.length == 8 // Danish phonenumbers only atm        
       }
+
       validatePass = () => {
         let pass : string = this.state.password
         return (pass.length > 7) //Multiple constraints can be placed on pass        
@@ -110,10 +108,12 @@ export default class CreateAccountScreen extends Component<Props, State> {
       toggleHidePassword = () => {
         this.setState({hidePassword:!this.state.hidePassword})
       }
+
       toggleSubmitButton = () => {    
         let submitActive = this.passwordsMatch() && this.validatePhone() && this.validatePass()
         this.setState({submitActive: submitActive})
       }
+
       render() {
         return (
           <View style={styles.container}>
