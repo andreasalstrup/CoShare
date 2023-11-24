@@ -87,7 +87,7 @@ export default function ToBeBoughtScreen() {
   const [alreadyBought, setAlreadyBought] = useState(false);
   const [price, setPrice] = useState('0');
 
-  const [itemToEdit, setItemToEdit] = useState(-1) 
+  const [itemToEdit, setItemToEdit] = useState<number | undefined>() 
   const [itemToDelete, setItemToDelete] = useState(0)
 
   const swipeableRows : Swipeable[] = []  
@@ -101,7 +101,7 @@ export default function ToBeBoughtScreen() {
     setSelectedUsers(usersDropdown.map((user) => user.value))
     setAlreadyBought(false)
     setPrice('0')
-    setItemToEdit(-1)
+    setItemToEdit(undefined)
   }
   
   const editProduct = (index : number) => {
@@ -111,7 +111,7 @@ export default function ToBeBoughtScreen() {
 
   const saveEditedProduct = () => {
     setProducts(products.map((product, index) => {
-      if (product === products[itemToEdit]) {
+      if (itemToEdit && product === products[itemToEdit]) {
         return { ...product, 
           name: productName,
           data: {
@@ -267,7 +267,7 @@ export default function ToBeBoughtScreen() {
             editable
           /> : null}
           
-          <Button color='#5CBCA9' title={itemToEdit === -1 ? "Add Product" : "Edit Product"} onPress={itemToEdit === -1 ? saveAddedProduct : saveEditedProduct} />
+          <Button color='#5CBCA9' title={itemToEdit ? "Edit Product" : "Add Product"} onPress={itemToEdit ? saveEditedProduct : saveAddedProduct} />
         </View>
       </Modal>
       <Modal
