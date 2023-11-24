@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Pressable } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ const getCurrentWeek = () => {
   const currentDate = new Date();
   const startOfYear = new Date(currentDate.getFullYear(), 0, 0);
   const oneWeek = 1000 * 60 * 60 * 24 * 7;
-  const currentWeek = Math.floor((Number(currentDate) - Number(startOfYear)) / oneWeek);
+  const currentWeek = Math.floor(1 + (Number(currentDate) - Number(startOfYear)) / oneWeek);
   return currentWeek;
 };
 
@@ -19,13 +19,13 @@ const getCurrentWeekDays = (weekNumber: number) => {
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const getDayName = (dayIndex: number) => daysOfWeek[dayIndex];
 
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(startOfWeek);
+  const date = new Date(startOfWeek);
+  for (let i = 1; i <= 7; i++) {
     date.setDate(startOfWeek.getDate() + i);
 
     const dayName = getDayName(date.getDay());
     const month = date.toLocaleString('default', { month: 'short' });
-    const day = date.getDate();
+    const day = date.getDate(); // Does not work correctly for 2024 (probably because 1. jan 2023 is a sunday)
 
     const formattedDate = `${dayName}, ${day} ${month}`;
     days.push(formattedDate);
@@ -33,10 +33,24 @@ const getCurrentWeekDays = (weekNumber: number) => {
   return days;
 };
 
+
+
 export default function MealScreen() {
   const [editableDay, setEditableDay] = useState(null);
-  const [dayTexts, setDayTexts] = useState(['', '', '', '', '', '', '']);
+  const [weekTexts, setWeekTexts] = useState<{ [key: number]: DayInfo[] }>({});
   const [currentWeek, setCurrentWeek] = useState(getCurrentWeek());
+
+  interface DayInfo {
+    text: string;
+  }
+  const initialDayInfo: DayInfo = { text: '' };
+
+  useEffect(() => { // Pending GunDB integration: This function should instead get the meal plan from GunDB
+    if (!weekTexts[currentWeek]) {
+      const initialTexts = Array(7).fill(initialDayInfo);
+      setWeekTexts(prevTexts => ({ ...prevTexts, [currentWeek]: initialTexts }));
+    }
+  }, [currentWeek, weekTexts]);
 
   const handleDayClick = (index: number) => {
     setEditableDay(index);
@@ -44,22 +58,30 @@ export default function MealScreen() {
 
   const handleTextChange = (text: string) => {
     if (editableDay !== null) {
-      const updatedTexts = [...dayTexts];
-      updatedTexts[editableDay] = text;
-      setDayTexts(updatedTexts);
+      setWeekTexts(prevTexts => {
+        const updatedTexts = { ...prevTexts };
+        updatedTexts[currentWeek][editableDay] = {
+          ...updatedTexts[currentWeek][editableDay],
+          text,
+        };
+        return updatedTexts;
+      });
+      // Pending GunDB integration: After having handled the text change, it should save the meal plan to GunDB
     }
   };
 
   const showPreviousWeek = () => {
-    setCurrentWeek(prevWeek => prevWeek - 1);
+    setCurrentWeek(prevWeek => (prevWeek === 1 ? 52 : prevWeek - 1));
   };
 
   const showNextWeek = () => {
-    setCurrentWeek(prevWeek => prevWeek + 1);
+    setCurrentWeek(prevWeek => (prevWeek === 52 ? 1 : prevWeek + 1));
   };
 
   const renderDays = () => {
     const weekDays = getCurrentWeekDays(currentWeek);
+    const textsForCurrentWeek = weekTexts[currentWeek] || Array(7).fill(initialDayInfo);
+
     return weekDays.map((day, index) => (
       <TouchableOpacity
         key={index}
@@ -73,13 +95,13 @@ export default function MealScreen() {
         {editableDay === index ? (
           <TextInput
             style={[styles.weekdaysText, { fontStyle: 'italic' }]}
-            value={dayTexts[index]}
+            value={textsForCurrentWeek[index].text}
             onChangeText={handleTextChange}
             onBlur={() => setEditableDay(null)}
             autoFocus
           />
         ) : (
-          <Text style={styles.weekdaysText}>{dayTexts[index]}</Text>
+          <Text style={styles.weekdaysText}>{textsForCurrentWeek[index].text}</Text>
         )}
       </TouchableOpacity>
     ));
@@ -91,7 +113,7 @@ export default function MealScreen() {
         <Pressable onPress={showPreviousWeek}>
           <FontAwesome5
             name="chevron-left"
-            size={24} 
+            size={24}
             color="black"
             style={styles.arrowButtons}
           />
@@ -100,7 +122,7 @@ export default function MealScreen() {
         <Pressable onPress={showNextWeek}>
           <FontAwesome5
             name="chevron-right"
-            size={24} 
+            size={24}
             color="black"
             style={styles.arrowButtons}
           />
