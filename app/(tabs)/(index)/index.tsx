@@ -1,4 +1,4 @@
-import { Button, Pressable, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { Button, Pressable, StyleSheet, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
 import Modal from "react-native-modal";
 import { Text, View, } from '../../../components/Themed';
 import { useState } from 'react';
@@ -196,13 +196,15 @@ export default function ToBeBoughtScreen() {
           editProduct(index)
           handleModalAddOrEditItem()
         })}>
-          <View style={[styles.container, 
-            {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2}]}>
-            <View style={styles.item}>
-              <Text style={styles.itemText}>{item.name}</Text>      
+          <TouchableOpacity
+            activeOpacity={0.5}>
+            <View style={[styles.container, {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2}]}>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>{item.name}</Text>      
+              </View>
+              <Text style={styles.infoText}>Added by {item.data.added.user} {item.data.added.date}</Text>
             </View>
-            <Text style={styles.infoText}>Added by {item.data.added.user} {item.data.added.date}</Text>
-          </View>
+          </TouchableOpacity>
         </GestureDetector>
       </Swipeable>
     )
