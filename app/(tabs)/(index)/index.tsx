@@ -10,9 +10,6 @@ import Colors from '../../../constants/Colors';
 import ActionButton from 'react-native-action-button';
 import { MultiSelect } from 'react-native-element-dropdown';
 import moment from 'moment';
-import { LogBox } from 'react-native';
-
-LogBox.ignoreLogs(['Warning: componentWillReceiveProps has been renamed']);
 
 const usersDropdown = [
   { label: 'Test bruger', value: 'Test bruger' },
