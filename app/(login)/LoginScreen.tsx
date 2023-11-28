@@ -2,40 +2,23 @@ import styles from './styles'
 import { Text, View, } from '../../components/Themed';
 import { TextInput } from 'react-native-gesture-handler';
 import { ImageBackground, Pressable } from 'react-native';
-import { Component } from 'react';
+import { useState } from 'react';
 import { Link, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
 
-type Props = {
-  text: any
-}
-
-type State = {
-  phoneNumber: string
-  password: string,
-  wrongCredentials: boolean,  
-  hidePassword: boolean,
-  authing: boolean
-}
-
-export default class loginScreen extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      phoneNumber: '12345678',
-      password: '12345678',
-      wrongCredentials: false,   
-      hidePassword: true,   
-      authing: false,
-    };
-  }
+export default function loginScreen () {
+  const [phoneNumber, setPhoneNumber] = useState('12345678')
+  const [password, setPassword] = useState('12345678')
+  const [wrongCredentials, setWrongCredentials] = useState(false)
+  const [hidePassword, setHidePassword] = useState(true)
+  const [authing, setAuthing] = useState(false)  
   
-  toggleHidePassword = () => {
-    this.setState({hidePassword:!this.state.hidePassword})    
+  function toggleHidePassword () {
+    setHidePassword(!hidePassword)
   }
 
-  checkSuccesfulLogin = (ack: any) => {
+  function checkSuccesfulLogin (ack: any) {
     if (!ack.err){            
         if (user.is){
             let newUser = gun.user(ack.pub)
@@ -53,10 +36,10 @@ export default class loginScreen extends Component<Props, State> {
             console.log("User somehow doesn't exist");
         }
     }else{     
-        this.setState({wrongCredentials: true, authing: false});        
+        setWrongCredentials(true)
+        setAuthing(false)
     }
   }
-  render() {
     return (         
       <View style={styles.container}>      
       <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>     
@@ -64,37 +47,37 @@ export default class loginScreen extends Component<Props, State> {
         <Text style={styles.descriptiveText}>Phone Number</Text>      
         <View style={styles.inputBox}>
           <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
-                        value={this.state.phoneNumber}
+                        value={phoneNumber}
                         onChangeText={(phoneNumber) =>{                      
-                        this.setState({phoneNumber});
+                        setPhoneNumber(phoneNumber)
                       }                  
               }
             />
           </View>                      
         <Text style={styles.descriptiveText}>Password</Text>
         <View style={styles.inputBox}>
-          <TextInput secureTextEntry={this.state.hidePassword} style={styles.inputField}
+          <TextInput secureTextEntry={hidePassword} style={styles.inputField}
                     autoCapitalize='none'
-                    value={this.state.password}
-                    onChangeText={(password) => this.setState({password})}
+                    value={password}
+                    onChangeText={(password) => setPassword(password)}
                     />
                     
           <MaterialCommunityIcons 
-                    name={this.state.hidePassword ? 'eye' : 'eye-off'}                   
+                    name={hidePassword ? 'eye' : 'eye-off'}                   
                     style={styles.eye}
                     size={24}
-                    onPress={this.toggleHidePassword}
+                    onPress={toggleHidePassword}
               />
         </View>
-        {this.state.wrongCredentials && <Text style={styles.error}> Wrong credentials</Text>}
+        {wrongCredentials && <Text style={styles.error}> Wrong credentials</Text>}
         <View style={styles.separator}/>
         
         <Pressable 
           style={styles.button} 
           onPress={()=>{   
-            if (!this.state.authing){
-              this.setState({authing: true})
-              user.auth(this.state.phoneNumber, this.state.password, this.checkSuccesfulLogin)                       
+            if (!authing){
+              setAuthing(true)
+              user.auth(phoneNumber,password, checkSuccesfulLogin)                       
             }
           }}>
             <Text style={styles.buttonText}> Sign in</Text>
@@ -104,5 +87,5 @@ export default class loginScreen extends Component<Props, State> {
       
       </View>
     );
-  }
-}
+ }
+
