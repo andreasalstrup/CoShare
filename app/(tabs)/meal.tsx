@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Pressable, ScrollView, useColorScheme } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
 import moment from 'moment';
+import Colors from '../../constants/Colors';
 
 
 function getCurrentWeekDays(weekNumber: number, yearNumber: number) {
@@ -67,14 +68,15 @@ export default function MealScreen() {
   const renderDays = () => {
     const weekDays = getCurrentWeekDays(currentWeek, currentYear);
     const textsForCurrentWeek = weekTexts[currentWeek] || Array(7).fill(initialDayInfo);
+    const colorScheme = useColorScheme() ?? 'light';
 
     return weekDays.map((day, index) => (
       <TouchableOpacity
         key={index}
         onPress={() => handleDayClick(index)}
         style={[
-          styles.dayContainer,
-          { backgroundColor: index % 2 === 0 ? '#eeeeee' : '#D3D3D3' },
+          styles.dayContainer, 
+          {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2},
         ]}
       >
         <Text style={[styles.weekdaysText, { fontWeight: 'bold' }]}>{day}</Text>
@@ -92,15 +94,16 @@ export default function MealScreen() {
       </TouchableOpacity>
     ));
   };
-
+  
+  const colorScheme = useColorScheme() ?? 'light';
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      <View style={[styles.headerContainer, {backgroundColor: Colors[colorScheme].background}]}>
         <Pressable onPress={showPreviousWeek}>
           <FontAwesome5
             name="chevron-left"
             size={24}
-            color="black"
+            color={Colors[colorScheme].text}
             style={styles.arrowButtons}
           />
         </Pressable>
@@ -109,7 +112,7 @@ export default function MealScreen() {
           <FontAwesome5
             name="chevron-right"
             size={24}
-            color="black"
+            color={Colors[colorScheme].text}
             style={styles.arrowButtons}
           />
         </Pressable>
@@ -124,11 +127,9 @@ export default function MealScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eeeeee',
   },
   headerContainer: {
     flexDirection: 'row',
-    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 3,
