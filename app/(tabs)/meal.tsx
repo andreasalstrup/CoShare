@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Pressable } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Pressable, ScrollView } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
 
@@ -125,7 +125,9 @@ export default function MealScreen() {
           />
         </Pressable>
       </View>
-      <View style={styles.weekdaysContainer}>{renderDays()}</View>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.weekdaysContainer}>{renderDays()}</View>
+      </ScrollView>
     </View>
   );
 }
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
   weekdaysContainer: {
     flex: 1,
     flexWrap: 'wrap',
-    top: 3,
+    top: 3, // Needed for showing the dropshadow of the header
   },
   dayContainer: {
     flex: 1,
@@ -167,5 +169,8 @@ const styles = StyleSheet.create({
   arrowButtons: {
     paddingLeft: 20,
     paddingRight: 20,
-  }
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
 });
