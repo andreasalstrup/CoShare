@@ -2,40 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Pressable, ScrollView } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
+import moment from 'moment';
 
-const getCurrentWeek = () => {
-  const currentDate = new Date();
-  const startOfYear = new Date(currentDate.getFullYear(), 0, 0);
-  const oneWeek = 1000 * 60 * 60 * 24 * 7;
-  const currentWeek = Math.floor(1 + (Number(currentDate) - Number(startOfYear)) / oneWeek);
-  return currentWeek;
-};
 
-const getCurrentWeekDays = (weekNumber: number) => {
-  const currentDate = new Date();
-  const startOfWeek = new Date(currentDate.getFullYear(), 0, 1 + (weekNumber - 1) * 7);
-  const days = [];
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const getDayName = (dayIndex: number) => daysOfWeek[dayIndex];
+function getCurrentWeekDays(weekNumber: number, yearNumber: number) {
+  const startOfWeek = moment().isoWeekYear(yearNumber).isoWeek(weekNumber).startOf('isoWeek');
+  const daysFormatted = [];
 
-  const date = new Date(startOfWeek);
-  for (let i = 1; i <= 7; i++) {
-    date.setDate(startOfWeek.getDate() + i);
-
-    const dayName = getDayName(date.getDay());
-    const month = date.toLocaleString('default', { month: 'short' });
-    const day = date.getDate(); // Does not work correctly for 2024 (probably because 1. jan 2023 is a sunday)
-
-    const formattedDate = `${dayName}, ${day} ${month}`;
-    days.push(formattedDate);
+  for (let i = 0; i < 7; i++) {
+    const formattedDay = startOfWeek.clone().add(i, 'days').format('ddd, D MMM');
+    daysFormatted.push(formattedDay);
   }
-  return days;
-};
+  return daysFormatted;
+}
 
 export default function MealScreen() {
   const [editableDay, setEditableDay] = useState<number | null>(null);
   const [weekTexts, setWeekTexts] = useState<{ [key: number]: DayInfo[] }>({});
-  const [currentWeek, setCurrentWeek] = useState(getCurrentWeek());
+  const [currentWeek, setCurrentWeek] = useState(moment().week());
+  const [currentYear, setCurrentYear] = useState(moment().year());
 
   interface DayInfo {
     text: string;
@@ -47,7 +32,8 @@ export default function MealScreen() {
       const initialTexts = Array(7).fill(initialDayInfo);
       setWeekTexts(prevTexts => ({ ...prevTexts, [currentWeek]: initialTexts }));
     }
-  }, [currentWeek, weekTexts]);
+
+  }, [currentWeek, weekTexts, setCurrentYear]);
 
   const handleDayClick = (index: number) => {
     setEditableDay(index);
@@ -69,14 +55,17 @@ export default function MealScreen() {
 
   const showPreviousWeek = () => {
     setCurrentWeek(prevWeek => (prevWeek === 1 ? 52 : prevWeek - 1));
+    setCurrentYear(prevYear => (currentWeek <= 1 ? prevYear - 1 : prevYear))
+    
   };
 
   const showNextWeek = () => {
     setCurrentWeek(prevWeek => (prevWeek === 52 ? 1 : prevWeek + 1));
+    setCurrentYear(prevYear => (currentWeek >= 52 ? prevYear + 1 : prevYear))
   };
 
   const renderDays = () => {
-    const weekDays = getCurrentWeekDays(currentWeek);
+    const weekDays = getCurrentWeekDays(currentWeek, currentYear);
     const textsForCurrentWeek = weekTexts[currentWeek] || Array(7).fill(initialDayInfo);
 
     return weekDays.map((day, index) => (
