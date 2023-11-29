@@ -16,9 +16,8 @@ export default function NoticeScreen() {
         <View>
           <Text style={styles.title}>Household Rules</Text>
           <TextInput
-            style={[styles.input, {color: Colors[colorScheme].text}]}
+            style={styles.input}
             placeholder="Click to make rules"
-            placeholderTextColor={'gray'}
             value={houseRules}
             onChangeText={(text) => setHouseRules(text)}
             editable

@@ -1,8 +1,8 @@
-import { Button, Pressable, StyleSheet, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
+import { Button, Pressable, StyleSheet, TextInput, useColorScheme } from 'react-native';
 import Modal from "react-native-modal";
 import { Text, View, } from '../../../components/Themed';
 import { useState } from 'react';
-import { FlatList, Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -10,6 +10,9 @@ import Colors from '../../../constants/Colors';
 import ActionButton from 'react-native-action-button';
 import { MultiSelect } from 'react-native-element-dropdown';
 import moment from 'moment';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Warning: componentWillReceiveProps has been renamed']);
 
 const usersDropdown = [
   { label: 'Test bruger', value: 'Test bruger' },
@@ -75,7 +78,7 @@ function rightSwipeAction() {
 
 export default function ToBeBoughtScreen() {
   const colorScheme = useColorScheme() ?? 'light';
-  const [isModalAddOrEditItemVisible, setIsModalAddOrEditItemVisible] = useState(false);
+  const [isModalAddItemVisible, setIsModalAddItemVisible] = useState(false);
   const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
   const [products, setProducts] = useState(seedData)
 
@@ -84,49 +87,20 @@ export default function ToBeBoughtScreen() {
   const [alreadyBought, setAlreadyBought] = useState(false);
   const [price, setPrice] = useState('0');
 
-  const [itemToEdit, setItemToEdit] = useState<number | undefined>() 
   const [itemToDelete, setItemToDelete] = useState(0)
 
   const swipeableRows : Swipeable[] = []  
 
-  const handleModalAddOrEditItem = () => { console.log(!isModalAddOrEditItemVisible); setIsModalAddOrEditItemVisible(() => !isModalAddOrEditItemVisible); }
+  const handleModalAddItem = () => setIsModalAddItemVisible(() => !isModalAddItemVisible);
   const handleModalDelete = () => setIsModalDeleteVisible(() => !isModalDeleteVisible);
   const handleCheckbox = () => setAlreadyBought(() => !alreadyBought);
-
   const clearProduct = () => {
     setProductName('')
     setSelectedUsers(usersDropdown.map((user) => user.value))
     setAlreadyBought(false)
     setPrice('0')
-    setItemToEdit(undefined)
   }
-  
-  const editProduct = (index : number) => {
-    setProductName(products[index].name)
-    setSelectedUsers(products[index].data.users.map((user) => user.name))
-  }
-
-  const saveEditedProduct = () => {
-    setProducts(products.map((product, index) => {
-      if (itemToEdit && product === products[itemToEdit]) {
-        return { ...product, 
-          name: productName,
-          data: {
-            ...product.data,
-            users: selectedUsers.map(user => ({name: user})),
-            bought: alreadyBought ? {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)} : undefined
-          }
-        }
-      } 
-      else {
-        return product;
-      }
-    }))
-
-    handleModalAddOrEditItem()
-  }
-
-  const saveAddedProduct = () => {
+  const addProduct = () => {
     const time = moment().format('YYYY.MM.DD');
     const newProduct = {
       name: productName,
@@ -136,17 +110,17 @@ export default function ToBeBoughtScreen() {
         bought: alreadyBought ? {user: "Me", date: time, price: Number(price)} : undefined
       }
     }
-    if(newProduct.data.bought === undefined) {
+    if(newProduct.data.bought === undefined){
       //Add to GUN here
       console.log(newProduct.name + ' added')
     }
-    else {
+    else{
       //Move to GUN bought list here
       console.log(newProduct.name + ' bought by ' + newProduct.data.bought.user)
     }
     setProducts(products => [...products, newProduct])
     
-    handleModalAddOrEditItem()
+    handleModalAddItem()
   }
 
   function swipeHandler(dir: 'left' | 'right', index: number) {
@@ -188,21 +162,13 @@ export default function ToBeBoughtScreen() {
         renderLeftActions={leftSwipeAction}
         renderRightActions={rightSwipeAction}
         onSwipeableOpen={(dir) => swipeHandler(dir, index)}>
-        <TouchableOpacity
-          activeOpacity={0.5}>
-          <GestureDetector gesture={Gesture.LongPress().onStart(e => {
-            setItemToEdit(index)
-            editProduct(index)
-            handleModalAddOrEditItem()
-          })}> 
-            <View style={[styles.container, {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2}]}>
-              <View style={styles.item}>
-                <Text style={styles.itemText}>{item.name}</Text>      
-              </View>
-              <Text style={styles.infoText}>Added by {item.data.added.user} {item.data.added.date}</Text>
-            </View>
-          </GestureDetector>
-        </TouchableOpacity>
+        <View style={[styles.container, 
+          {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2}]}>
+          <View style={styles.item}>
+            <Text style={styles.itemText}>{item.name}</Text>      
+          </View>
+          <Text style={styles.infoText}>Added by {item.data.added.user} {item.data.added.date}</Text>
+        </View>
       </Swipeable>
     )
   }
@@ -214,7 +180,7 @@ export default function ToBeBoughtScreen() {
         data={products}
         renderItem={renderItem}
       />
-      <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddOrEditItemVisible} onBackdropPress={() => setIsModalAddOrEditItemVisible(false)} onModalHide={clearProduct}>
+      <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddItemVisible} onBackdropPress={handleModalAddItem} onModalHide={clearProduct}>
         <View style={ styles.addItemModal }>
           <Text>Product</Text>
           <TextInput
@@ -266,7 +232,7 @@ export default function ToBeBoughtScreen() {
             editable
           /> : null}
           
-          <Button color='#5CBCA9' title={itemToEdit ? "Edit Product" : "Add Product"} onPress={itemToEdit ? saveEditedProduct : saveAddedProduct} />
+          <Button color='#5CBCA9' title="Add Product" onPress={addProduct} />
         </View>
       </Modal>
       <Modal
@@ -294,7 +260,7 @@ export default function ToBeBoughtScreen() {
           size={50} 
           color={Colors[colorScheme].background}
           />}}  
-        onPress={handleModalAddOrEditItem}
+        onPress={handleModalAddItem}
         buttonColor='#5CBCA9'
         position='center'
         size={70}/>

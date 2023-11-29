@@ -1,12 +1,10 @@
-import { StyleSheet, Pressable, Dimensions, useColorScheme } from 'react-native';
-import Modal from "react-native-modal";
+import { StyleSheet, Modal, Pressable, Dimensions } from 'react-native';
 import React, { useState, useRef } from 'react';
 import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { calculateExpenses } from '../../../helpers/calculateExpenses';
-import Colors from '../../../constants/Colors';
 
 
 type Expense = {
@@ -30,10 +28,8 @@ const DATA: Expense[] = [
 const calculatedExpenses = calculateExpenses(DATA);
 
 export default function SettleScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
-  const swipeableRows : Swipeable[] = [] 
 
   const openModal = (item: Transaction) => {
     setSelectedItem(item);
@@ -43,19 +39,17 @@ export default function SettleScreen() {
   const closeModal = () => {
     setSelectedItem(null);
     setModalVisible(false);
-    swipeableRows.map((row) => row.close())
   };
 
   const renderItem = ({ item, index }: { item: Transaction; index: number }) => {
     return (
       <Swipeable
-        ref={ref => ref != null ? swipeableRows[index] = ref : undefined}
         friction={1.5}
         overshootFriction={8}
         renderLeftActions={leftSwipeAction}
         onSwipeableOpen={() => openModal(item)}
       >
-        <View style={[styles.container, { backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2 }]}>
+        <View style={[styles.container, { backgroundColor: index % 2 == 0 ? '#eeeeee' : '#D3D3D3' }]}>
           <View style={styles.item}>
             <Text style={styles.itemTextFrom}>{item.from}</Text>
             <Text style={styles.itemAmount}>{item.amount.toFixed(2)} kr.</Text>
@@ -95,10 +89,10 @@ export default function SettleScreen() {
         renderItem={renderItem}
       />
       <Modal
-        animationIn='zoomIn'
-        animationOut='zoomOut'
-        isVisible={modalVisible}
-        onBackdropPress={closeModal}
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
       >
         <View style={styles.modalContainer}>
           {selectedItem && (
@@ -142,6 +136,7 @@ const styles = StyleSheet.create({
   },
   itemAmount: {
     fontSize: 24,
+    color: 'black',
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
@@ -154,12 +149,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
     modalContainer: {
+    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
+    height: "40%"
   },
   modalTitleText: {
     fontSize: 30,
