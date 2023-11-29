@@ -22,7 +22,7 @@ export default {
     background: '#000',
     tint: tintColorDark,
     tabIconDefault: '#ccc',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: tintColorDark,
     tabIconSelectedBackground: tintColorTurquoise,
     topNavBarIndicatorColorTurquoise: topNavBarIndicatorColorTurquoise,
     listBackgroundColor1: '#282828',
