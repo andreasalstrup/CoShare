@@ -89,7 +89,7 @@ export default function ToBeBoughtScreen() {
 
   const swipeableRows : Swipeable[] = []  
 
-  const handleModalAddOrEditItem = () => setIsModalAddOrEditItemVisible(() => !isModalAddOrEditItemVisible);
+  const handleModalAddOrEditItem = () => { console.log(!isModalAddOrEditItemVisible); setIsModalAddOrEditItemVisible(() => !isModalAddOrEditItemVisible); }
   const handleModalDelete = () => setIsModalDeleteVisible(() => !isModalDeleteVisible);
   const handleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
@@ -188,21 +188,21 @@ export default function ToBeBoughtScreen() {
         renderLeftActions={leftSwipeAction}
         renderRightActions={rightSwipeAction}
         onSwipeableOpen={(dir) => swipeHandler(dir, index)}>
-        <GestureDetector gesture={Gesture.LongPress().onStart(e => {
-          setItemToEdit(index)
-          editProduct(index)
-          handleModalAddOrEditItem()
-        })}>
-          <TouchableOpacity
-            activeOpacity={0.5}>
+        <TouchableOpacity
+          activeOpacity={0.5}>
+          <GestureDetector gesture={Gesture.LongPress().onStart(e => {
+            setItemToEdit(index)
+            editProduct(index)
+            handleModalAddOrEditItem()
+          })}> 
             <View style={[styles.container, {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2}]}>
               <View style={styles.item}>
                 <Text style={styles.itemText}>{item.name}</Text>      
               </View>
               <Text style={styles.infoText}>Added by {item.data.added.user} {item.data.added.date}</Text>
             </View>
-          </TouchableOpacity>
-        </GestureDetector>
+          </GestureDetector>
+        </TouchableOpacity>
       </Swipeable>
     )
   }
@@ -214,7 +214,7 @@ export default function ToBeBoughtScreen() {
         data={products}
         renderItem={renderItem}
       />
-      <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddOrEditItemVisible} onBackdropPress={handleModalAddOrEditItem} onModalHide={clearProduct}>
+      <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddOrEditItemVisible} onBackdropPress={() => setIsModalAddOrEditItemVisible(false)} onModalHide={clearProduct}>
         <View style={ styles.addItemModal }>
           <Text>Product</Text>
           <TextInput
