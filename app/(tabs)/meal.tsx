@@ -82,7 +82,7 @@ export default function MealScreen() {
         <Text style={[styles.weekdaysText, { fontWeight: 'bold' }]}>{day}</Text>
         {editableDay === index ? (
           <TextInput
-            style={[styles.weekdaysText, { fontStyle: 'italic' }]}
+            style={[styles.weekdaysText, { fontStyle: 'italic', color: Colors[colorScheme].text }]}
             value={textsForCurrentWeek[index].text}
             onChangeText={handleTextChange}
             onBlur={() => setEditableDay(null)}
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation: 3,
+    borderBottomWidth: 1,
   },
   headerText: {
     fontSize: 24,
@@ -142,7 +142,6 @@ const styles = StyleSheet.create({
   weekdaysContainer: {
     flex: 1,
     flexWrap: 'wrap',
-    top: 3, // Needed for showing the dropshadow of the header
   },
   dayContainer: {
     flex: 1,
