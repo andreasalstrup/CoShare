@@ -18,22 +18,24 @@ function getCurrentWeekDays(weekNumber: number, yearNumber: number) {
 
 export default function MealScreen() {
   const [editableDay, setEditableDay] = useState<number | null>(null);
-  const [weekTexts, setWeekTexts] = useState<{ [key: number]: DayInfo[] }>({});
+  const [weekTexts, setWeekTexts] = useState<{ [key: string]: DayInfo[] }>({});  
   const [currentWeek, setCurrentWeek] = useState(moment().week());
   const [currentYear, setCurrentYear] = useState(moment().year());
+  const [weekKey, setWeekKey] = useState(moment().week().toString() + moment().year().toString())
 
   interface DayInfo {
     text: string;
   }
+
   const initialDayInfo: DayInfo = { text: '' };
 
   useEffect(() => { // Pending GunDB integration: This function should instead get the meal plan from GunDB
-    if (!weekTexts[currentWeek]) {
+    if (!weekTexts[weekKey]) {
       const initialTexts = Array(7).fill(initialDayInfo);
-      setWeekTexts(prevTexts => ({ ...prevTexts, [currentWeek]: initialTexts }));
+      setWeekTexts(prevTexts => ({ ...prevTexts, [weekKey]: initialTexts }));
     }
 
-  }, [currentWeek, weekTexts, setCurrentYear]);
+  }, [weekKey, weekTexts, setCurrentYear]);
 
   const handleDayClick = (index: number) => {
     setEditableDay(index);
@@ -41,32 +43,32 @@ export default function MealScreen() {
 
   const handleTextChange = (text: string) => {
     if (editableDay !== null) {
-      setWeekTexts(prevTexts => {
-        const updatedTexts = { ...prevTexts };
-        updatedTexts[currentWeek][editableDay] = {
-          ...updatedTexts[currentWeek][editableDay],
-          text,
-        };
-        return updatedTexts;
-      });
+      let texts = weekTexts[weekKey]
+      texts[editableDay] = {text: text}      
+      setWeekTexts({[weekKey]: texts});
       // Pending GunDB integration: After having handled the text change, it should save the meal plan to GunDB
     }
   };
 
   const showPreviousWeek = () => {
-    setCurrentWeek(prevWeek => (prevWeek === 1 ? 52 : prevWeek - 1));
-    setCurrentYear(prevYear => (currentWeek <= 1 ? prevYear - 1 : prevYear))
-    
+    let newWeek = (currentWeek === 1 ? 52 : currentWeek - 1)
+    let newYear = (currentWeek <= 1 ? currentYear - 1 : currentYear)
+    setCurrentWeek(newWeek);
+    setCurrentYear(newYear)
+    setWeekKey(newWeek.toString() + newYear.toString())
   };
 
   const showNextWeek = () => {
-    setCurrentWeek(prevWeek => (prevWeek === 52 ? 1 : prevWeek + 1));
-    setCurrentYear(prevYear => (currentWeek >= 52 ? prevYear + 1 : prevYear))
+    let newWeek = currentWeek === 52 ? 1 : currentWeek + 1
+    let newYear = currentWeek >= 52 ? currentYear + 1 : currentYear
+    setCurrentWeek(newWeek);
+    setCurrentYear(newYear)
+    setWeekKey(newWeek.toString() + newYear.toString())
   };
 
   const renderDays = () => {
     const weekDays = getCurrentWeekDays(currentWeek, currentYear);
-    const textsForCurrentWeek = weekTexts[currentWeek] || Array(7).fill(initialDayInfo);
+    const textsForCurrentWeek = weekTexts[weekKey] || Array(7).fill(initialDayInfo);
 
     return weekDays.map((day, index) => (
       <TouchableOpacity
