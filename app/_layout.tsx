@@ -2,11 +2,11 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '../constants/Colors';
-
+import WebviewCrypto from 'react-native-webview-crypto';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -45,8 +45,12 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors[colorScheme ?? 'light'].background }}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <WebviewCrypto/>
+        <Stack
+        screenOptions={{
+           headerShown: false
+        }}>
+            <Stack.Screen name="index"/>
         </Stack>
       </SafeAreaView>
     </ThemeProvider>
