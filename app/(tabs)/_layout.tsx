@@ -20,45 +20,41 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: Colors[colorScheme ].tabIconSelected,
         tabBarActiveBackgroundColor: Colors[colorScheme].tabIconSelectedBackground,
       }}>
       <Tabs.Screen
-        name="(index)"
-        options={{
-          headerShown: false,
+        name="shoppingList"
+        options={{          
           title: 'List',
           tabBarIcon: ({ color }) => <TabBarIcon name="list-ul" color={color} />,
         }}
       />
       <Tabs.Screen
         name="expenses"
-        options={{
-          headerShown: false,
+        options={{          
           title: 'Expenses',
           tabBarIcon: ({ color }) => <TabBarIcon name="dollar-sign" color={color} />,
         }}
       />
       <Tabs.Screen
         name="meal"
-        options={{
-          headerShown: false,
+        options={{          
           title: 'Meal Plan',
           tabBarIcon: ({ color }) => <TabBarIcon name="hamburger" color={color} />,
         }}
       />
       <Tabs.Screen
         name="notice"
-        options={{
-          headerShown: false,
+        options={{          
           title: 'Notice Board',
           tabBarIcon: ({ color }) => <TabBarIcon name="info-circle" color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
-        options={{
-          headerShown: false,
+        options={{          
           title: 'Settings',
           tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
         }}
