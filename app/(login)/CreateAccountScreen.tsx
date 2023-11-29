@@ -18,6 +18,23 @@ export default function CreateAccountScreen () {
   const [hidePassword, setHidePassword] = useState(true)
   const [submitActive, setSubmitActive] = useState(false)
   const [creatingUser, setCreatingUser] = useState(false)
+  
+  const toggleHidePassword = () => setHidePassword(!hidePassword)
+  
+  const validatePhone = (phone : string) => phone.length == 8
+
+  const validatePass = (pass: string) => pass.length > 7
+
+  function passwordsMatch (pass : string, repPass : string) {
+    let equal : boolean = pass == repPass
+    let value : boolean = (pass != '' && repPass != '') && (!equal)
+    setShowWrongPasswords(value)
+    return equal
+  }
+
+  function toggleSubmitButton (phone : string, pass : string, repPass : string) { //We need params to mitigate the async updating
+    setSubmitActive(passwordsMatch(pass, repPass) && validatePhone(phone) && validatePass(pass))
+  }
 
   function createAccount(ack : any) {
     if (ack?.err){
@@ -58,30 +75,7 @@ export default function CreateAccountScreen () {
         //  Not sure how this should be handled
     }
   }
-
-  function validatePhone (phone : string) { 
-    return phone.length == 8 // Danish phonenumbers only atm        
-  }
-
-  function validatePass (pass : string) {    
-    return (pass.length > 7) //Multiple constraints can be placed on pass        
-    }
-
-  function passwordsMatch (pass : string, repPass : string) {
-    let equal : boolean = pass == repPass
-    let value : boolean = (pass != '' && repPass != '') && (!equal)
-    setShowWrongPasswords(value)
-    return equal
-  }
-
-  function toggleHidePassword () {
-    setHidePassword(!hidePassword)
-  }
-
-  function toggleSubmitButton (phone : string, pass : string, repPass : string) { //We need params to mitigate the async updating
-    setSubmitActive(passwordsMatch(pass, repPass) && validatePhone(phone) && validatePass(pass))
-  }
-
+    
   return (
     <>
       <View style={styles.container}>

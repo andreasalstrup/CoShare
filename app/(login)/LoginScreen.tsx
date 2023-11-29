@@ -14,9 +14,7 @@ export default function loginScreen () {
   const [hidePassword, setHidePassword] = useState(true)
   const [authing, setAuthing] = useState(false)  
   
-  function toggleHidePassword () {
-    setHidePassword(!hidePassword)
-  }
+  const toggleHidePassword = () => setHidePassword(!hidePassword)
 
   function checkSuccesfulLogin (ack: any) {
     if (!ack.err){            
