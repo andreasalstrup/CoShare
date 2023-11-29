@@ -6,8 +6,10 @@ import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
 import { useState } from 'react';
+import { useUser } from '../../hooks/useUser';
 
 export default function CreateAccountScreen () {
+  const user = useUser(gun)
   const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
@@ -36,125 +38,100 @@ export default function CreateAccountScreen () {
     setSubmitActive(passwordsMatch(pass, repPass) && validatePhone(phone) && validatePass(pass))
   }
 
-  function createAccount(ack : any) {
-    if (ack?.err){
-      setCreatingUser(false);
-      console.log("Some error on user creation")
-      if (ack.err == "User already created!"){
-          setError("User already exists")
-      }
-      else{//The other possible error is:  "User is already being created or authenticated!" which probably means the user has clicked create user multiple times
-        return
-      }
+  function redirect (ack: any): boolean {       
+    if (ack.err == undefined) { 
+      router.replace('/GroupScreen')
+      return true;
     }
-    else{
-      let newUser = gun.user(ack.pub)
-      if (fullName != ''){
-        newUser.get('fullName').put(fullName)
-      }
-      if (email != '') {
-        newUser.get('email').put(email)
-      }           
-      setShowWrongPasswords(false)
-      user.auth(phoneNumber,password, login)
+    
+    if (ack.err == "User already created!") {
+      setError("User already exists")
     }
+
+    setCreatingUser(false);
+    
+    return false;
   }
 
-  function login (ack : any) {            
-    if (!ack.err){    
-      if (user.is){            
-              console.log("Redirect to GroupScreen")
-              router.replace('/GroupScreen')            
-      }
-      else{
-          console.log("User somehow doesn't exist");
-      }
-    }
-    else{
-        console.log("Newly created user cannot be authenticated, something went wrong with the database"); 
-        //  Not sure how this should be handled
+  function onSubmit(submitActive: Boolean, creatingUser: Boolean): void {
+    if (submitActive && !creatingUser) {
+      setCreatingUser(true);
+      user.create(fullName, email, phoneNumber, password, redirect);
     }
   }
     
   return (
-    <>
-      <View style={styles.container}>
-        
-        <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
-        <LogoAndName/>
-        {error != "" && <Text style={styles.error}> {error} </Text>}
-        <Text style={styles.descriptiveText}>Phone Number*</Text>
-        <View style={styles.inputBox}>
-          <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
-                    value={phoneNumber}
-                    onChangeText={
-                      (newPhoneNumber) =>{
-                        setPhoneNumber(newPhoneNumber)             
-                        toggleSubmitButton(newPhoneNumber, password, repeatPassword)       
-                  }
-          }/>
-        </View>            
-        <Text style={styles.descriptiveText}>Password*</Text>
-        <View style={styles.inputBox}>
-          <TextInput secureTextEntry={hidePassword} 
-                    style={styles.inputField}
-                    value={password}
-                    autoCapitalize='none'
-                    onChangeText={
-                      (newPassword) =>{
-                        setPassword(newPassword)
-                        toggleSubmitButton(phoneNumber, newPassword, repeatPassword)                                                     
-                      }      
-                    }                                                              
-        />
-        <MaterialCommunityIcons 
-                name={hidePassword ? 'eye' : 'eye-off'}
-                style={styles.eye}
-                size={24}
-                onPress={toggleHidePassword}
+    <View style={styles.container}>
+      <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
+      <LogoAndName/>
+      {error != "" && <Text style={styles.error}> {error} </Text>}
+      <Text style={styles.descriptiveText}>Phone Number*</Text>
+      <View style={styles.inputBox}>
+        <TextInput 
+          maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
+          value={phoneNumber}
+          onChangeText={
+            (newPhoneNumber) =>{
+              setPhoneNumber(newPhoneNumber)             
+              toggleSubmitButton(newPhoneNumber, password, repeatPassword)}}
           />
-          </View>
-        {!validatePass(password) && <Text style={styles.descriptiveText}>Password needs at least 7 characters</Text>}
-        <Text style={styles.descriptiveText}>Repeat Password*</Text>
-        <View style={styles.inputBox}>
-          <TextInput  autoCapitalize='none'
-                      secureTextEntry={hidePassword}
-                      style={styles.inputField}
-                      value={repeatPassword}
-                      onChangeText={(newRepeatPassword) => {
-                        setRepeatPassword(newRepeatPassword)
-                        toggleSubmitButton(phoneNumber, password, newRepeatPassword)
-                      }         
-                    }                      
+      </View>            
+      <Text style={styles.descriptiveText}>Password*</Text>
+      <View style={styles.inputBox}>
+        <TextInput 
+          secureTextEntry={hidePassword} 
+          style={styles.inputField}
+          value={password}
+          autoCapitalize='none'
+          onChangeText={
+            (newPassword) =>{
+              setPassword(newPassword)
+              toggleSubmitButton(phoneNumber, newPassword, repeatPassword)}}
           />
-        </View>
-        {showWrongPasswords && <Text style={styles.error}> Passwords do not match</Text>}
-        <Text style={styles.descriptiveText}>Full Name</Text>
-        <View style={styles.inputBox}>
-        <TextInput autoComplete={'name'} style={styles.inputField}
-                    value={fullName}
-                    onChangeText={(fullName) => setFullName(fullName)}
-                    />
-        </View>
-        <Text style={styles.descriptiveText}>E-mail</Text>
-        
-        <View style={styles.inputBox}>
-          <TextInput inputMode='email' autoComplete={'email'} style={styles.inputField}
-                      value={email}
-                      onChangeText={(email) => setEmail(email)}
-        />
-        </View>
-        <View style={styles.separator}/>
-        <Pressable style={submitActive ? styles.button : styles.disabledButton } 
-                onPress={(submitActive && !creatingUser) ? () =>{                                             
-                  setCreatingUser(true);                          
-                  user.create(phoneNumber, password, createAccount)                                         
-                } : () => {}}>
-                  <Text style={styles.buttonText}> Create account </Text>
-        </Pressable>
-        </ImageBackground>
+      <MaterialCommunityIcons 
+          name={hidePassword ? 'eye' : 'eye-off'}
+          style={styles.eye}
+          size={24}
+          onPress={toggleHidePassword}
+          />
       </View>
-    </>
-  )
-      
+      {!validatePass(password) && <Text style={styles.descriptiveText}>Password needs at least 7 characters</Text>}
+      <Text style={styles.descriptiveText}>Repeat Password*</Text>
+      <View style={styles.inputBox}>
+        <TextInput
+          autoCapitalize='none'
+          secureTextEntry={hidePassword}
+          style={styles.inputField}
+          value={repeatPassword}
+          onChangeText={(newRepeatPassword) => {
+            setRepeatPassword(newRepeatPassword)
+            toggleSubmitButton(phoneNumber, password, newRepeatPassword)}}
+          />
+      </View>
+      {showWrongPasswords && <Text style={styles.error}> Passwords do not match</Text>}
+      <Text style={styles.descriptiveText}>Full Name</Text>
+      <View style={styles.inputBox}>
+      <TextInput 
+        autoComplete={'name'} style={styles.inputField}
+        value={fullName}
+        onChangeText={(fullName) => setFullName(fullName)}
+        />
+      </View>
+      <Text style={styles.descriptiveText}>E-mail</Text>
+      <View style={styles.inputBox}>
+        <TextInput 
+          inputMode='email' autoComplete={'email'} style={styles.inputField}
+          value={email}
+          onChangeText={(email) => setEmail(email)}
+          />
+      </View>
+      <View style={styles.separator}/>
+      <Pressable 
+        style={submitActive ? styles.button : styles.disabledButton } 
+        onPress={() => {onSubmit(submitActive, creatingUser)}}>
+      <Text style={styles.buttonText}> Create account </Text>
+      </Pressable>
+      </ImageBackground>
+    </View>
+  );
 }
