@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-    modalContent: {
+  modalContent: {
     padding: 20,
     borderRadius: 10,
     height: 250
