@@ -1,9 +1,9 @@
-type Expense = {
+export type Expense = {
     user: string;
     amount: number;
 };
 
-type Transaction = {
+export type Transaction = {
     from: string;
     to: string;
     amount: number;
@@ -38,6 +38,5 @@ export const calculateExpenses = (expenses: Expense[]): Transaction[] => {
             });
         }
     });
-
     return transactions;
 };
