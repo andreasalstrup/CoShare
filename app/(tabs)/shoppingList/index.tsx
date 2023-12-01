@@ -212,7 +212,7 @@ export default function ToBeBoughtScreen() {
         renderLeftActions={leftSwipeAction}
         renderRightActions={rightSwipeAction}
         onSwipeableOpen={(dir) => swipeHandler(dir, index)}>
-        <GestureDetector gesture={Gesture.LongPress().onStart(e => {
+        <GestureDetector gesture={Gesture.LongPress().minDuration(300).onStart(e => {
           setItemToEdit(index)
           editProduct(index)
           toggleModalAddOrEditItem()
