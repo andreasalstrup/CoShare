@@ -1,24 +1,67 @@
-import { calculateExpenses } from '../../helpers/calculateExpenses';
+import { calculateExpenses, Expense, Transaction } from '../../helpers/calculateExpenses';
 
-type Expense = {
-    user: string;
-    amount: number;
-};
+describe('calculateExpenses', () => {
+    it('should handle no expenses', () => {
+        const result = calculateExpenses([]);
+        expect(result).toEqual([]);
+    });
 
-type Transaction = {
-    from: string;
-    to: string;
-    amount: number;
-};
+    it('should handle a single expense', () => {
+        const expenses = [{ user: 'Alice', amount: 50 }];
+        const result = calculateExpenses(expenses);
+        expect(result).toEqual([]);
+    });
+    
+    it('should correctly calculate the transaction between 2 people', () => {
+        const expenses: Expense[] = [
+            { user: 'Alice', amount: 100 },
+            { user: 'Bob', amount: 0 },
+        ];
+        const expectedTransactions: Transaction[] = [
+            { from: 'Bob', to: 'Alice', amount: 50 },
+        ];
+        const result = calculateExpenses(expenses);
+        expect(result).toEqual(expect.arrayContaining(expectedTransactions));
+    });
 
-const testData: Expense[] = [
-    { user: 'Test User1', amount: 100 },
-    { user: 'Test User2', amount: 0 },
-  ];
-  
-  const calculatedExpenses = calculateExpenses(testData);
+    it('should correctly calculate the transaction between more than 2 people', () => {
+        const expenses: Expense[] = [
+            { user: 'Alice', amount: 90 },
+            { user: 'Bob', amount: 45 },
+            { user: 'Charlie', amount: 30 },
+        ];
+        const expectedTransactions: Transaction[] = [
+            { from: 'Bob', to: 'Alice', amount: 10 },
+            { from: 'Charlie', to: 'Alice', amount: 25 },
+        ];
+        const result = calculateExpenses(expenses);
+        expect(result).toEqual(expect.arrayContaining(expectedTransactions));
+    });
 
-test('Correct amount', () => {
-    console.log(calculatedExpenses)
-    //expect(calculatedExpenses).toBe;
+    it('should correctly calculate transactions when decimals are involved', () => {
+        const expenses: Expense[] = [
+            { user: 'Alice', amount: 49.95 },
+            { user: 'Bob', amount: 0 },
+        ];
+        const expectedTransactions: Transaction[] = [
+            { from: 'Bob', to: 'Alice', amount: 24.975 },
+        ];
+        const result = calculateExpenses(expenses);
+        expect(result).toEqual(expect.arrayContaining(expectedTransactions));
+    });
+
+    it('should handle rounded numbers with 2 decimals', () => {
+        const expenses: Expense[] = [
+            { user: 'Alice', amount: 100 },
+            { user: 'Bob', amount: 0 },
+            { user: 'Charlie', amount: 0 },
+
+        ];
+        const expectedTransactions: Transaction[] = [
+            { from: 'Bob', to: 'Alice', amount: 100/3 }, //33.33 repeating of course
+            { from: 'Charlie', to: 'Alice', amount: 100/3 },
+        ];
+        const result = calculateExpenses(expenses);
+        result.forEach((transaction, i) => expect(transaction.amount).toBeCloseTo(expectedTransactions[i].amount, 2));
+    });
 });
