@@ -5,11 +5,12 @@ import { ImageBackground, Pressable } from 'react-native';
 import { Link, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
-import { useState } from 'react';
-import { useUser } from '../../hooks/useUser';
+import { useRef, useState } from 'react';
+import { userHandle } from '../../handlers/user';
 
 export default function loginScreen () {
-  const user = useUser(gun);
+  const user = useRef(userHandle(gun));
+  
   const [phoneNumber, setPhoneNumber] = useState('12345678')
   const [password, setPassword] = useState('12345678')
   const [wrongCredentials, setWrongCredentials] = useState(false)
@@ -68,7 +69,7 @@ export default function loginScreen () {
           onPress={()=>{   
             if (!authing){
               setAuthing(true)
-              user.login(phoneNumber, password, succesfulLogin)                    
+              user.current.login(phoneNumber, password, succesfulLogin)                    
             }
           }}>
             <Text style={styles.buttonText}> Sign in</Text>

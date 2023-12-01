@@ -1,9 +1,9 @@
-interface IUser {
+interface IAuth {
     create(fullName: string, email: string, phoneNumber: string, password: string, login: (ack: any) => Boolean): Boolean;
     login(phoneNumber: string, password: string, success: (ack: any, user: UserGunDB) => Boolean): Boolean;
 }
 
-class User implements IUser {
+class UserHandle implements IAuth {
     readonly user: UserGunDB;
 
     constructor(private gun: Gun) {
@@ -41,6 +41,6 @@ class User implements IUser {
     }
 }
 
-export function useUser(gun: Gun): IUser {
-    return new User(gun);
+export function userHandle(gun: Gun): IAuth {
+    return new UserHandle(gun);
 }

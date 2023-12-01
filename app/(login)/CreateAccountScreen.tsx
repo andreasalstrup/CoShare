@@ -5,11 +5,12 @@ import { ImageBackground, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
-import { useState } from 'react';
-import { useUser } from '../../hooks/useUser';
+import { useState, useRef } from 'react';
+import { userHandle } from '../../handlers/user';
 
 export default function CreateAccountScreen () {
-  const user = useUser(gun)
+  const user = useRef(userHandle(gun));
+
   const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
@@ -56,7 +57,7 @@ export default function CreateAccountScreen () {
   function onSubmit(submitActive: Boolean, creatingUser: Boolean): void {
     if (submitActive && !creatingUser) {
       setCreatingUser(true);
-      user.create(fullName, email, phoneNumber, password, redirect);
+      user.current.create(fullName, email, phoneNumber, password, redirect);
     }
   }
     
