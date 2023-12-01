@@ -19,15 +19,16 @@ export default function loginScreen () {
   function checkSuccesfulLogin (ack: any) {
     if (!ack.err){            
         if (user.is){
-            let newUser = gun.user(ack.pub)
-            let inGroup = true                        
+            let newUser = gun.user(ack.pub)             
             newUser.get("group").once((ack) =>{              
               if(ack == undefined){
-                console.log("Group not found")                
+                console.log("Group not found")
                 router.replace('/GroupScreen')
               } else {
+                console.log(ack)
                 console.log("Group found")
-                router.replace('../(tabs)/ShoppingList/index')                              
+                router.replace('/GroupScreen')
+                // router.replace('../shoppingList')                           
               }
             })          
         }else{
@@ -42,13 +43,13 @@ export default function loginScreen () {
       <View style={styles.container}>      
       <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>     
         <LogoAndName/>
-        <Text style={styles.descriptiveText}>Phone Number</Text>      
+        <Text style={styles.descriptiveText}>Phone Number</Text>
         <View style={styles.inputBox}>
           <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
                         value={phoneNumber}
                         onChangeText={(phoneNumber) =>{                      
                         setPhoneNumber(phoneNumber)
-                      }                  
+                      }
               }
             />
           </View>                      

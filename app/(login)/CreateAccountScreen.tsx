@@ -60,7 +60,7 @@ export default function CreateAccountScreen () {
     }
   }
 
-  function login (ack : any) {            
+  function login (ack : any) {
     if (!ack.err){    
       if (user.is){            
               console.log("Redirect to GroupScreen")

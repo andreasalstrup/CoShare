@@ -21,8 +21,9 @@ const styles = StyleSheet.create({
     },
     separator: {
       marginVertical: 30,
-      height: 1,
-      width: '80%',      
+      height: 5,
+      width: '80%',
+      color: "black", 
     },
     inputField: {
       height: 40, 
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
       color: "white",
       fontSize: 15,
       fontWeight: "bold",
-    },    
+    },
   });
 
   export default styles
