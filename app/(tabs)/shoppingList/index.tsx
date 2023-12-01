@@ -1,8 +1,8 @@
-import { Button, Pressable, StyleSheet, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
+import { Button, Pressable, StyleSheet, TextInput, useColorScheme } from 'react-native';
 import Modal from "react-native-modal";
 import { Text, View, } from '../../../components/Themed';
 import { useState } from 'react';
-import { FlatList, Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { FlatList, Gesture, GestureDetector, TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -47,7 +47,7 @@ type ListData = {
   data: {added: { user: string, date: string}, users: { name: string }[], bought?: { user: string, date: string, price: number}}
 }
 
-function leftSwipeAction() {
+const leftSwipeAction = () => {
   return (
     <View style={styles.leftSwipe}>
       <FontAwesome5
@@ -60,7 +60,7 @@ function leftSwipeAction() {
   )
 }
 
-function rightSwipeAction() {
+const rightSwipeAction = () => {
   return (
     <View style={styles.rightSwipe}>
       <FontAwesome5
@@ -77,6 +77,8 @@ export default function ToBeBoughtScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const [isModalAddOrEditItemVisible, setIsModalAddOrEditItemVisible] = useState(false);
   const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
+  const [isModalBuyItemVisible, setIsModalBuyItemVisible] = useState(false);
+
   const [products, setProducts] = useState(seedData)
 
   const [productName, setProductName] = useState('');
@@ -84,14 +86,16 @@ export default function ToBeBoughtScreen() {
   const [alreadyBought, setAlreadyBought] = useState(false);
   const [price, setPrice] = useState('0');
 
+  const [itemToBuy, setItemToBuy] = useState(0) 
   const [itemToEdit, setItemToEdit] = useState<number | undefined>() 
   const [itemToDelete, setItemToDelete] = useState(0)
 
   const swipeableRows : Swipeable[] = []  
 
-  const handleModalAddOrEditItem = () => { console.log(!isModalAddOrEditItemVisible); setIsModalAddOrEditItemVisible(() => !isModalAddOrEditItemVisible); }
-  const handleModalDelete = () => setIsModalDeleteVisible(() => !isModalDeleteVisible);
-  const handleCheckbox = () => setAlreadyBought(() => !alreadyBought);
+  const toggleModalAddOrEditItem = () => setIsModalAddOrEditItemVisible(() => !isModalAddOrEditItemVisible);
+  const toggleModalDeleteItem = () => setIsModalDeleteVisible(() => !isModalDeleteVisible);
+  const toggleModalBuyItem = () => setIsModalBuyItemVisible(() => !isModalBuyItemVisible);
+  const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
   const clearProduct = () => {
     setProductName('')
@@ -104,6 +108,25 @@ export default function ToBeBoughtScreen() {
   const editProduct = (index : number) => {
     setProductName(products[index].name)
     setSelectedUsers(products[index].data.users.map((user) => user.name))
+  }
+
+  const saveBoughtProduct = () => {
+    setProducts(products.map((product, index) => {
+      if (product === products[itemToBuy]) {
+        return { ...product,
+          data: {
+            ...product.data,
+            bought: {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)}
+          }
+        }
+      } 
+      else {
+        return product;
+      }
+    }))
+
+    toggleModalBuyItem()
+    swipeableRows[itemToBuy].reset()
   }
 
   const saveEditedProduct = () => {
@@ -123,7 +146,7 @@ export default function ToBeBoughtScreen() {
       }
     }))
 
-    handleModalAddOrEditItem()
+    toggleModalAddOrEditItem()
   }
 
   const saveAddedProduct = () => {
@@ -146,15 +169,16 @@ export default function ToBeBoughtScreen() {
     }
     setProducts(products => [...products, newProduct])
     
-    handleModalAddOrEditItem()
+    toggleModalAddOrEditItem()
   }
 
-  function swipeHandler(dir: 'left' | 'right', index: number) {
+  const swipeHandler = (dir: 'left' | 'right', index: number) =>{
     if (dir == "left") {
-        console.log(dir);
+      setItemToBuy(index)
+      toggleModalBuyItem()
     } else {
-        setItemToDelete(index)
-        handleModalDelete()
+      setItemToDelete(index)
+      toggleModalDeleteItem()
     }
   }
 
@@ -172,14 +196,14 @@ export default function ToBeBoughtScreen() {
           swipeableRows[itemToDelete].close()
         }
         setItemToDelete(0)
-        handleModalDelete()
+        toggleModalDeleteItem()
       }}>
         <Text style={styles.buttonText}>{text}</Text>
       </Pressable>   
     );
   };
 
-  function renderItem({item, index}: { item: ListData, index: number}) {  
+  const renderItem = ({item, index}: { item: ListData, index: number}) => {  
     return (
       <Swipeable
         ref={ref => ref != null ? swipeableRows[index] = ref : undefined}
@@ -188,21 +212,23 @@ export default function ToBeBoughtScreen() {
         renderLeftActions={leftSwipeAction}
         renderRightActions={rightSwipeAction}
         onSwipeableOpen={(dir) => swipeHandler(dir, index)}>
-        <TouchableOpacity
-          activeOpacity={0.5}>
-          <GestureDetector gesture={Gesture.LongPress().onStart(e => {
-            setItemToEdit(index)
-            editProduct(index)
-            handleModalAddOrEditItem()
-          })}> 
-            <View style={[styles.container, {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2}]}>
-              <View style={styles.item}>
-                <Text style={styles.itemText}>{item.name}</Text>      
+        <GestureDetector gesture={Gesture.LongPress().minDuration(300).onStart(e => {
+          setItemToEdit(index)
+          editProduct(index)
+          toggleModalAddOrEditItem()
+        })}> 
+          <View>
+            <TouchableOpacity
+              activeOpacity={0.5}>
+              <View style={[styles.container, {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2}]}>
+                <View style={styles.item}>
+                  <Text style={styles.itemText}>{item.name}</Text>      
+                </View>
+                <Text style={styles.infoText}>Added by {item.data.added.user} {item.data.added.date}</Text>
               </View>
-              <Text style={styles.infoText}>Added by {item.data.added.user} {item.data.added.date}</Text>
-            </View>
-          </GestureDetector>
-        </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
+        </GestureDetector>
       </Swipeable>
     )
   }
@@ -254,7 +280,7 @@ export default function ToBeBoughtScreen() {
               value={alreadyBought}
               onValueChange={(newValue) => setAlreadyBought(newValue)}
             />
-            <Text onPress={handleCheckbox} style={{width: '100%'}}>Already bought</Text>
+            <Text onPress={toggleCheckbox} style={{width: '100%'}}>Already bought</Text>
           </View>
           {alreadyBought ? <Text>Amount paid</Text> : null}
           {alreadyBought ? <TextInput
@@ -264,17 +290,18 @@ export default function ToBeBoughtScreen() {
             value={price.toString()}
             onChangeText={(text : string) => setPrice(text)}
             editable
+            onFocus={() => setPrice('')}
           /> : null}
           
           <Button color='#5CBCA9' title={itemToEdit ? "Edit Product" : "Add Product"} onPress={itemToEdit ? saveEditedProduct : saveAddedProduct} />
         </View>
       </Modal>
       <Modal
-        animationIn='zoomIn' 
-        animationOut='zoomOut' 
+        animationIn='zoomIn'
+        animationOut='zoomOut'
         isVisible={isModalDeleteVisible} 
         onBackdropPress={() => {
-          handleModalDelete()
+          setIsModalDeleteVisible(false)
           swipeableRows[itemToDelete].close()
         }}>
         <View style={styles.modalContainer}>
@@ -288,13 +315,40 @@ export default function ToBeBoughtScreen() {
           </View>
         </View>
       </Modal>
+      <Modal 
+        animationIn='zoomIn' 
+        animationOut='zoomOut' 
+        isVisible={isModalBuyItemVisible} 
+        onBackdropPress={() => {
+          setIsModalBuyItemVisible(false)
+          swipeableRows[itemToBuy].close()
+        }} 
+        onModalHide={clearProduct}>
+        <View style={styles.buyItemModal}>
+          <Text style={styles.modalTitleText}>{products[itemToBuy].name}</Text>
+          <Text style={styles.infoText}>Added by {products[itemToBuy].data.added.user} {products[itemToBuy].data.added.date}</Text>
+          <View style={styles.amountPaid}>
+            <Text>Amount paid</Text> 
+            <TextInput
+              style={styles.dropdown}
+              keyboardType='numeric'
+              placeholder="kr"
+              value={price.toString()}
+              onChangeText={(text : string) => setPrice(text)}
+              editable
+              onFocus={() => setPrice('')}
+            />
+          </View>
+          <Button color='#5CBCA9' title="Add Price" onPress={saveBoughtProduct} />
+        </View>
+      </Modal>
       <ActionButton
         renderIcon={() => {return <FontAwesome5
           name="plus" 
           size={50} 
           color={Colors[colorScheme].background}
           />}}  
-        onPress={handleModalAddOrEditItem}
+        onPress={toggleModalAddOrEditItem}
         buttonColor='#5CBCA9'
         position='center'
         size={70}/>
@@ -390,5 +444,13 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
+  },
+  buyItemModal: {
+    height: 250,
+    padding: 22,
+    borderRadius: 10,
+  },
+  amountPaid: {
+    marginTop: 40,
   }
 });
