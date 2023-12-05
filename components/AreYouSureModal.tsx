@@ -28,14 +28,12 @@ export default function AreYouSureModal(props: AreYouSureProps) {
         isVisible={props.isVisible} 
         onBackdropPress={props.onBackdropPress}>
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
             <Text style={styles.modalTitleText}>{props.title}</Text>
             <Text style={styles.modalContentText}>{props.text}</Text>
             <View style={styles.buttonContainer}>
               {renderButton('Yes', props.onYes)}
               {renderButton('No', props.onNo)}
             </View>
-          </View>
         </View>
       </Modal>
     </View>
@@ -48,11 +46,8 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    padding: 20,
     borderRadius: 10,
+    padding: 20,
     height: 250
   },
     modalTitleText: {
