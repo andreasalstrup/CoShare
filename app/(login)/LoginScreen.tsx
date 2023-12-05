@@ -33,7 +33,7 @@ export default function loginScreen () {
         router.replace('/GroupScreen');
       } else {
         console.log("Group found");
-        router.replace('../(tabs)/ShoppingList/index');                              
+        router.replace('/shoppingList');                              
       }
     });
 
