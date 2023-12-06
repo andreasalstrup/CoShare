@@ -1,4 +1,4 @@
-import { Button, Pressable, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { Button, StyleSheet, TextInput, useColorScheme } from 'react-native';
 import Modal from "react-native-modal";
 import { Text, View, } from '../../../components/Themed';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ import Colors from '../../../constants/Colors';
 import ActionButton from 'react-native-action-button';
 import { MultiSelect } from 'react-native-element-dropdown';
 import moment from 'moment';
+import AreYouSureModal from '../../../components/AreYouSureModal';
 
 const usersDropdown = [
   { label: 'Test bruger', value: 'Test bruger' },
@@ -103,6 +104,7 @@ export default function ToBeBoughtScreen() {
     setAlreadyBought(false)
     setPrice('0')
     setItemToEdit(undefined)
+    setItemToBuy(0)
   }
   
   const editProduct = (index : number) => {
@@ -181,27 +183,6 @@ export default function ToBeBoughtScreen() {
       toggleModalDeleteItem()
     }
   }
-
-  const renderButton = (text: 'Yes' | 'No') => {
-    return (
-      <Pressable style={[styles.button, { backgroundColor: text === 'Yes' ? '#5CBCA9' : '#E35F52' }]} onPress={() => {
-        if (text === 'Yes')
-        {
-          //Remove from GUN here
-          setProducts(prevState => prevState.filter((_,i) => i !== itemToDelete))
-          swipeableRows[itemToDelete].reset()
-        }
-        else
-        {
-          swipeableRows[itemToDelete].close()
-        }
-        setItemToDelete(0)
-        toggleModalDeleteItem()
-      }}>
-        <Text style={styles.buttonText}>{text}</Text>
-      </Pressable>   
-    );
-  };
 
   const renderItem = ({item, index}: { item: ListData, index: number}) => {  
     return (
@@ -296,25 +277,6 @@ export default function ToBeBoughtScreen() {
           <Button color='#5CBCA9' title={itemToEdit ? "Edit Product" : "Add Product"} onPress={itemToEdit ? saveEditedProduct : saveAddedProduct} />
         </View>
       </Modal>
-      <Modal
-        animationIn='zoomIn'
-        animationOut='zoomOut'
-        isVisible={isModalDeleteVisible} 
-        onBackdropPress={() => {
-          setIsModalDeleteVisible(false)
-          swipeableRows[itemToDelete].close()
-        }}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitleText}>Delete Item</Text>
-            <Text style={styles.modalContentText}>Are you sure you want to delete {products[itemToDelete].name}?</Text>
-            <View style={styles.buttonContainer}>
-              {renderButton('Yes')}
-              {renderButton('No')}
-            </View>
-          </View>
-        </View>
-      </Modal>
       <Modal 
         animationIn='zoomIn' 
         animationOut='zoomOut' 
@@ -342,6 +304,25 @@ export default function ToBeBoughtScreen() {
           <Button color='#5CBCA9' title="Add Price" onPress={saveBoughtProduct} />
         </View>
       </Modal>
+      <AreYouSureModal
+        title='Delete Item'
+        text={'Are you sure you want to delete ' + products[itemToDelete].name}
+        isVisible={isModalDeleteVisible}
+        onBackdropPress={() => {
+          setIsModalDeleteVisible(false)
+          swipeableRows[itemToDelete].close()
+        }}
+        onYes={() =>{
+          setProducts(prevState => prevState.filter((_,i) => i !== itemToDelete))
+          swipeableRows[itemToDelete].reset()
+          setItemToDelete(0)
+          toggleModalDeleteItem()
+        }}
+        onNo={() =>{
+          swipeableRows[itemToDelete].close()
+          setItemToDelete(0)
+          toggleModalDeleteItem()
+        }}/>
       <ActionButton
         renderIcon={() => {return <FontAwesome5
           name="plus" 
@@ -413,37 +394,8 @@ const styles = StyleSheet.create({
       flex: 1,
       fontSize: 16,
   },
-  modalContainer: {
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    padding: 20,
-    borderRadius: 10,
-  },
   modalTitleText: {
     fontSize: 30,
-  },
-  modalContentText: {
-    fontSize: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    padding: 10,
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 4,
-    elevation: 3,
-    width: "40%",
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
   },
   buyItemModal: {
     height: 250,
