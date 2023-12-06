@@ -1,12 +1,14 @@
 import { Redirect } from 'expo-router';
 import { ImageBackground, Pressable, View, Text, TextInput } from 'react-native';
 import styles from '../styles';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { LogoAndName } from '../../../components/LogoAndName';
-import getBluetoothComponent from './JoinGroupBluetoothComponent';
-import getIdComponent from './JoinGroupIdComponent';
-import getCreateComponent from './CreateGroupComponent';
+import getBluetoothComponent from './joinGroupBluetooth';
+import getIdComponent from './joinGroup';
+import getCreateComponent from './createGroup';
 import { router } from 'expo-router';
+import { userHandle } from '../../../handlers/user';
+
 enum State {
   buttons,
   bluetooth,
@@ -15,6 +17,7 @@ enum State {
 }
 
 export default function GroupScreen() {
+  const user = useRef(userHandle(gun));
   const [currentState, setCurrentState] = useState(State.buttons)
   const createComponent = getCreateComponent()
   const bluetoothComponent = getBluetoothComponent()
@@ -41,6 +44,7 @@ export default function GroupScreen() {
           <Pressable style={styles.button}>
             <Text style={styles.buttonText} onPress={() => {setCurrentState(State.bluetooth)}}> Join with bluetooth </Text>
           </Pressable>
+          <View style={{height:5}}/>
           <Pressable style={styles.button} onPress={() => {setCurrentState(State.id)}}>
             <Text style={styles.buttonText}> Join with group id </Text>
           </Pressable>
@@ -52,7 +56,7 @@ export default function GroupScreen() {
   function getSmallTextComponent() {
     return (
       <View style={{alignItems: "center"}}>
-        <View style={styles.separator}/>
+        {/* <View style={styles.separator}/> */}
         <Pressable onPress={() => setCurrentState(State.create)}><Text style={styles.descriptiveText}>Create new group</Text></Pressable>
         <Pressable onPress={() => logout()}><Text style={styles.descriptiveText}>Log out</Text></Pressable>
       </View>
@@ -61,15 +65,15 @@ export default function GroupScreen() {
 
   function logout() {
     console.log("tried to log out")
-    user.leave()
-    router.replace('./LoginScreen')
+    user.current.logout()
+    router.replace('../login')
   }
 
   return (
     <>
     <View style={styles.container}>
       <ImageBackground source={require('../../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
-        <LogoAndName/>
+        <LogoAndName/>        
         {getActiveComponent(currentState)}    
         {currentState != State.create && getSmallTextComponent()}
       </ImageBackground>

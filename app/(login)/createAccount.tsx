@@ -41,7 +41,7 @@ export default function CreateAccountScreen () {
 
   function redirect (ack: any): boolean {       
     if (ack.err == undefined) { 
-      router.replace('/GroupScreen')
+      router.replace('/group')
       return true;
     }
     

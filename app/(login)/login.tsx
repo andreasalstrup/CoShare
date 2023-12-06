@@ -7,10 +7,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
 import { useRef, useState } from 'react';
 import { userHandle } from '../../handlers/user';
-
+import {groupHandle } from '../../handlers/group';
 export default function loginScreen () {
   const user = useRef(userHandle(gun));
-  
+  const group = useRef(groupHandle(gun));
   const [phoneNumber, setPhoneNumber] = useState('12345678')
   const [password, setPassword] = useState('12345678')
   const [wrongCredentials, setWrongCredentials] = useState(false)
@@ -20,6 +20,7 @@ export default function loginScreen () {
   const toggleHidePassword = () => setHidePassword(!hidePassword)
 
   function succesfulLogin (ack: any, user: UserGunDB): Boolean {
+    // console.log(ack)
     if (ack.err != undefined) {
       setWrongCredentials(true);
       setAuthing(false);
@@ -27,23 +28,22 @@ export default function loginScreen () {
     }
 
     // TODO: Create useGroup
-    user.get("group").once((ack: any) => {              
-      if(ack == undefined) {
-        console.log("Group not found");          
-        router.replace('/GroupScreen');
-      } else {
-        console.log("Group found");
-        router.replace('../(tabs)/ShoppingList/index');                              
-      }
-    });
+    group.current.checkIfInGroup((ack: Boolean) => {
+      // if (ack) {
+      //   group.current.setPeers();
+      //   router.replace('../shoppingList');   
+      // }else{
+        router.replace('/group');
+      // }
+    })
 
     return false;
   }
 
   return (         
-    <View style={styles.container}>      
+    <View style={styles.container}>
       <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>     
-        <LogoAndName/>
+        <LogoAndName/>      
         <Text style={styles.descriptiveText}>Phone Number</Text>
         <View style={styles.inputBox}>
           <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
@@ -74,7 +74,7 @@ export default function loginScreen () {
           }}>
             <Text style={styles.buttonText}> Sign in</Text>
         </Pressable>                    
-        <Text style={styles.descriptiveText}><Link href={"/CreateAccountScreen"}> Create new account</Link></Text>        
+        <Text style={styles.descriptiveText}><Link href={"/createAccount"}> Create new account</Link></Text>        
       </ImageBackground>
     </View>
   );
