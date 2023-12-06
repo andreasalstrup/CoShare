@@ -19,8 +19,7 @@ export default function loginScreen () {
   
   const toggleHidePassword = () => setHidePassword(!hidePassword)
 
-  function succesfulLogin (ack: any, user: UserGunDB): Boolean {
-    // console.log(ack)
+  function succesfulLogin (ack: any, user: UserGunDB): Boolean {    
     if (ack.err != undefined) {
       setWrongCredentials(true);
       setAuthing(false);
@@ -29,12 +28,12 @@ export default function loginScreen () {
 
     // TODO: Create useGroup
     group.current.checkIfInGroup((ack: Boolean) => {
-      // if (ack) { // Just for testing
-      //   group.current.setPeers();
-      //   router.replace('../shoppingList');   
-      // }else{
+      if (ack) {
+        group.current.setPeers();
+        router.replace('../shoppingList');   
+      }else{
         router.replace('/group');
-      // }
+      }
     })
 
     return false;

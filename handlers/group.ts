@@ -37,8 +37,7 @@ class GroupHandle implements IGroup {
     }
     public checkIfInGroup(action : (ack: Boolean) => void): void {
         user = gun.user(userPub)
-        user.get("group").once((ack: any) => {
-            console.log(ack)
+        user.get("group").once((ack: any) => {            
             if (ack == undefined || ack == null) action(false)
             else action(true)
         })
