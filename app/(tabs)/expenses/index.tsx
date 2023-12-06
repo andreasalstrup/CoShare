@@ -1,5 +1,4 @@
 import { StyleSheet, Pressable, Dimensions, useColorScheme } from 'react-native';
-import Modal from "react-native-modal";
 import React, { useState, useRef } from 'react';
 import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
@@ -7,6 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { calculateExpenses } from '../../../helpers/calculateExpenses';
 import Colors from '../../../constants/Colors';
+import AreYouSureModal from '../../../components/AreYouSureModal';
 
 
 type Expense = {
@@ -79,14 +79,6 @@ export default function SettleScreen() {
     );
   };
 
-  const renderButton = (text: string, backgroundColor: string) => {
-    return (
-      <Pressable style={[styles.button, { backgroundColor }]} onPress={closeModal}>
-        <Text style={styles.buttonText}>{text}</Text>
-      </Pressable>
-    );
-  };
-
   return (
     <View>
       <FlatList
@@ -94,25 +86,19 @@ export default function SettleScreen() {
         data={calculatedExpenses}
         renderItem={renderItem}
       />
-      <Modal
-        animationIn='zoomIn'
-        animationOut='zoomOut'
+      <AreYouSureModal
+        title='Confirm Payment'
+        text={`Have you sent ${selectedItem?.amount} kr. to ${selectedItem?.to}`}
         isVisible={modalVisible}
-        onBackdropPress={closeModal}
-      >
-        <View style={styles.modalContainer}>
-          {selectedItem && (
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitleText}>Confirm Payment</Text>
-              <Text style={styles.modalContentText}>Have you sent {selectedItem.amount} kr. to {selectedItem.to}?</Text>
-              <View style={styles.buttonContainer}>
-                {renderButton('Yes', '#5CBCA9')}
-                {renderButton('No', '#E35F52')}
-              </View>
-            </View>
-          )}
-        </View>
-      </Modal>
+        onBackdropPress={() => {
+          closeModal()
+        }}
+        onYes={() =>{
+          closeModal()
+        }}
+        onNo={() =>{
+          closeModal()
+        }}/>
     </View>
   );
 }
@@ -153,37 +139,4 @@ const styles = StyleSheet.create({
   swipeIcon: {
     padding: 10,
   },
-    modalContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modalContent: {
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitleText: {
-    fontSize: 30,
-  },
-  modalContentText: {
-    fontSize: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    padding: 10,
-    marginTop: '40%',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 4,
-    elevation: 3,
-    width: "40%",
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  }
 });
