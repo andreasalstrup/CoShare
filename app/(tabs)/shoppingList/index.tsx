@@ -1,7 +1,7 @@
 import { Button, StyleSheet, TextInput, useColorScheme } from 'react-native';
 import Modal from "react-native-modal";
 import { Text, View, } from '../../../components/Themed';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FlatList, Gesture, GestureDetector, TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox';
@@ -11,42 +11,7 @@ import ActionButton from 'react-native-action-button';
 import { MultiSelect } from 'react-native-element-dropdown';
 import moment from 'moment';
 import AreYouSureModal from '../../../components/AreYouSureModal';
-
-const usersDropdown = [
-  { label: 'Test bruger', value: 'Test bruger' },
-  { label: 'Andreas', value: 'Andreas' },
-  { label: 'Mike', value: 'Mike' },
-  { label: 'Emil', value: 'Emil' },
-  { label: 'Martin', value: 'Martin' },
-];
-
-const seedData : ListData[] = [
-  {
-    name: 'Bananas',
-    data: {added: {user: "Test bruger", date: "2020.11.01"}, users: [], bought: {user: "Test bruger", date: "2020.11.01", price: 3}},
-  },
-  {
-    name: 'Chorizo',
-    data: {added: {user: "Andreas", date: "2020.11.01"}, users: [], bought: {user: "Andreas", date: "2020.11.01", price: 35}},
-  },
-  {
-    name: 'Beans',
-    data: {added: {user: "Mike", date: "2020.11.01"}, users: [], bought: {user: "Mike", date: "2020.11.01", price: 2}},
-  },
-  {
-    name: 'Apple',
-    data: {added: {user: "Emil", date: "2020.11.01"}, users: [], bought: {user: "Emil", date: "2020.11.01", price: 2.5}},
-  },
-  {
-    name: 'Chocolate',
-    data: {added: {user: "Martin", date: "2020.11.01"}, users: []},
-  },
-]
-
-type ListData = { 
-  name: string,
-  data: {added: { user: string, date: string}, users: { name: string }[], bought?: { user: string, date: string, price: number}}
-}
+import { shoppingListHandler } from '../../../handlers/list';
 
 const leftSwipeAction = () => {
   return (
@@ -75,20 +40,25 @@ const rightSwipeAction = () => {
 }
 
 export default function ToBeBoughtScreen() {
+  const shoppingListDB = useRef(shoppingListHandler(gun));
+
   const colorScheme = useColorScheme() ?? 'light';
   const [isModalAddOrEditItemVisible, setIsModalAddOrEditItemVisible] = useState(false);
   const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
   const [isModalBuyItemVisible, setIsModalBuyItemVisible] = useState(false);
 
-  const [products, setProducts] = useState(seedData)
+  const [products, setProducts] = useState<ListData[]>([])
+  const [productIds, setProductIds] = useState<string[]>([])
+  const [members, setMembers] = useState<Member[]>([])
+  const [memberIds, setMemberIds] = useState<string[]>([])
 
   const [productName, setProductName] = useState('');
-  const [selectedUsers, setSelectedUsers] = useState(usersDropdown.map((user) => user.value));
+  const [selectedUsers, setSelectedUsers] = useState<Member[]>([]);
   const [alreadyBought, setAlreadyBought] = useState(false);
   const [price, setPrice] = useState('0');
 
   const [itemToBuy, setItemToBuy] = useState(0) 
-  const [itemToEdit, setItemToEdit] = useState<number | undefined>() 
+  const [itemToEdit, setItemToEdit] = useState<number | null>() 
   const [itemToDelete, setItemToDelete] = useState(0)
 
   const swipeableRows : Swipeable[] = []  
@@ -98,78 +68,103 @@ export default function ToBeBoughtScreen() {
   const toggleModalBuyItem = () => setIsModalBuyItemVisible(() => !isModalBuyItemVisible);
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
+  useEffect(() =>{
+    shoppingListDB.current.onListUpdate(
+      (data : ListData[], ids: string[]) => {
+        setProductIds(ids)
+        setProducts(data)
+      }
+    )
+
+    shoppingListDB.current.onUsersUpdate(
+      (data : Member[], ids: string[]) => {
+        setMemberIds(ids)
+        setMembers(data)
+        if(members.length == 0)
+        {
+          setSelectedUsers(data)
+        }
+      }
+    )
+  }, [])
+
   const clearProduct = () => {
     setProductName('')
-    setSelectedUsers(usersDropdown.map((user) => user.value))
+    setSelectedUsers(members)
     setAlreadyBought(false)
     setPrice('0')
-    setItemToEdit(undefined)
+    setItemToEdit(null)
     setItemToBuy(0)
   }
   
   const editProduct = (index : number) => {
     setProductName(products[index].name)
-    setSelectedUsers(products[index].data.users.map((user) => user.name))
+    let users: Member[] = []
+    for (const key in products[index].data.users) {
+      let member = members.find(m => m.name == products[index].data.users[key].name)
+      if(member){
+        users.push(member)
+      }
+    }
+    setSelectedUsers(users)
   }
 
   const saveBoughtProduct = () => {
-    setProducts(products.map((product, index) => {
-      if (product === products[itemToBuy]) {
-        return { ...product,
-          data: {
-            ...product.data,
-            bought: {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)}
-          }
-        }
-      } 
-      else {
-        return product;
+    const editedProduct = { ...products[itemToBuy],
+      data: {
+        ...products[itemToBuy].data,
+        bought: {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)}
       }
-    }))
-
+    }
+    shoppingListDB.current.buyFromList(editedProduct, productIds.at(itemToBuy))
+    setItemToBuy(0)
     toggleModalBuyItem()
-    swipeableRows[itemToBuy].reset()
+    swipeableRows.at(itemToBuy)?.reset()
   }
 
   const saveEditedProduct = () => {
-    setProducts(products.map((product, index) => {
-      if (itemToEdit && product === products[itemToEdit]) {
-        return { ...product, 
-          name: productName,
-          data: {
-            ...product.data,
-            users: selectedUsers.map(user => ({name: user})),
-            bought: alreadyBought ? {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)} : undefined
-          }
+    if (itemToEdit != null) {
+      let users: any = {}
+      selectedUsers.forEach((value, index) => users[memberIds[members.findIndex(m => m.key == value.key && m.name == value.name)]] = {key: value.key, name: value.name})
+      console.log('pls work' +JSON.stringify(users,null,4))
+      const editedProduct: ListData = { ...products[itemToEdit], 
+        name: productName,
+        data: {
+          ...products[itemToEdit].data,
+          users: users,
+          bought: alreadyBought ? {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)} : null
         }
-      } 
-      else {
-        return product;
       }
-    }))
+
+      if(editedProduct.data.bought == null) {
+        shoppingListDB.current.updateItemInList(editedProduct, productIds.at(itemToEdit)!)
+      }
+      else {
+        shoppingListDB.current.buyFromList(editedProduct, productIds.at(itemToEdit))
+      }
+    } 
 
     toggleModalAddOrEditItem()
   }
 
   const saveAddedProduct = () => {
     const time = moment().format('YYYY.MM.DD');
-    const newProduct = {
+    let users: any = {}
+    selectedUsers.forEach(value => users[memberIds[members.findIndex(m => m.key == value.key && m.name == value.name)]] = {key: value.key, name: value.name})
+    const newProduct: ListData = {
       name: productName,
       data: {
         added: {user: "Me", date: time},
-        users: selectedUsers.map(user =>  ({name: user})),
-        bought: alreadyBought ? {user: "Me", date: time, price: Number(price)} : undefined
+        users: users,
+        bought: alreadyBought ? {user: "Me", date: time, price: Number(price)} : null
       }
     }
-    if(newProduct.data.bought === undefined) {
-      //Add to GUN here
-      console.log(newProduct.name + ' added')
+    if(newProduct.data.bought == null) {
+      shoppingListDB.current.addToList(newProduct)
     }
     else {
-      //Move to GUN bought list here
-      console.log(newProduct.name + ' bought by ' + newProduct.data.bought.user)
+      shoppingListDB.current.buyFromList(newProduct)
     }
-    setProducts(products => [...products, newProduct])
     
     toggleModalAddOrEditItem()
   }
@@ -244,13 +239,13 @@ export default function ToBeBoughtScreen() {
                 pointerEvents='none'
               />
             </View>}
-            data={usersDropdown}
+            data={members.map(m => {return {label: m.name, value: m.name}})}
             labelField="label"
             valueField="value"
             placeholder={'Selected: ' + selectedUsers.length}
-            value={selectedUsers}
+            value={selectedUsers.map(u => u.name)}
             onChange={item => {
-              setSelectedUsers(item);
+              setSelectedUsers(members.filter(m => item.includes(m.name)));
             }}
             visibleSelectedItem={false}
           />
@@ -274,7 +269,7 @@ export default function ToBeBoughtScreen() {
             onFocus={() => setPrice('')}
           /> : null}
           
-          <Button color='#5CBCA9' title={itemToEdit ? "Edit Product" : "Add Product"} onPress={itemToEdit ? saveEditedProduct : saveAddedProduct} />
+          <Button color='#5CBCA9' title={itemToEdit != null ? "Edit Product" : "Add Product"} onPress={itemToEdit != null ? saveEditedProduct : saveAddedProduct} />
         </View>
       </Modal>
       <Modal 
@@ -283,12 +278,12 @@ export default function ToBeBoughtScreen() {
         isVisible={isModalBuyItemVisible} 
         onBackdropPress={() => {
           setIsModalBuyItemVisible(false)
-          swipeableRows[itemToBuy].close()
+          swipeableRows.at(itemToBuy)?.close()
         }} 
         onModalHide={clearProduct}>
         <View style={styles.buyItemModal}>
-          <Text style={styles.modalTitleText}>{products[itemToBuy].name}</Text>
-          <Text style={styles.infoText}>Added by {products[itemToBuy].data.added.user} {products[itemToBuy].data.added.date}</Text>
+          <Text style={styles.modalTitleText}>{products.at(itemToBuy)?.name}</Text>
+          <Text style={styles.infoText}>Added by {products.at(itemToBuy)?.data.added.user} {products.at(itemToBuy)?.data.added.date}</Text>
           <View style={styles.amountPaid}>
             <Text>Amount paid</Text> 
             <TextInput
@@ -306,20 +301,22 @@ export default function ToBeBoughtScreen() {
       </Modal>
       <AreYouSureModal
         title='Delete Item'
-        text={'Are you sure you want to delete ' + products[itemToDelete].name}
+        text={`Are you sure you want to delete ${products.at(itemToDelete)?.name}?`}
         isVisible={isModalDeleteVisible}
         onBackdropPress={() => {
           setIsModalDeleteVisible(false)
-          swipeableRows[itemToDelete].close()
+          swipeableRows.at(itemToDelete)?.close()
         }}
         onYes={() =>{
-          setProducts(prevState => prevState.filter((_,i) => i !== itemToDelete))
-          swipeableRows[itemToDelete].reset()
+          if(productIds.length > 0){
+            shoppingListDB.current.deleteFromList(productIds.at(itemToDelete)!)
+          }
+          swipeableRows.at(itemToDelete)?.reset()
           setItemToDelete(0)
           toggleModalDeleteItem()
         }}
         onNo={() =>{
-          swipeableRows[itemToDelete].close()
+          swipeableRows.at(itemToDelete)?.close()
           setItemToDelete(0)
           toggleModalDeleteItem()
         }}/>
