@@ -7,6 +7,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { calculateExpenses } from '../../../helpers/calculateExpenses';
 import Colors from '../../../constants/Colors';
+import { expensesHandle } from '../../../handlers/expenses';
 
 
 type Expense = {
@@ -27,9 +28,29 @@ const DATA: Expense[] = [
   { user: 'Mike', amount: 85 },
 ];
 
-const calculatedExpenses = calculateExpenses(DATA);
+
 
 export default function SettleScreen() {
+
+  function getExpenses(groupId: string): Expense[]{
+    let expenses: Expense[] = [];
+    let currentExpense: Expense = {user: '', amount: 0};
+    gun.get('groups').get('1').get('expenses').map().on(function(expenseData){
+        currentExpense = {user: (expenseData.user).toString(), amount: parseFloat(expenseData.amount)};
+        expenses.push(currentExpense);
+    });
+    return expenses;
+}
+  /*gun.get('groups').get('1').get('expenses').set(DATA[0]);
+  gun.get('groups').get('1').get('expenses').set(DATA[1]);
+  gun.get('groups').get('1').get('expenses').set(DATA[2]);
+  gun.get('groups').get('1').get('expenses').set(DATA[3]);*/
+  const expenses = useRef(expensesHandle(gun));
+  //console.log(getExpenses('1'));
+  let expenseData = expenses.current.getExpenses('1');
+  console.log(expenseData);
+
+  const calculatedExpenses = calculateExpenses(expenseData);
   const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
