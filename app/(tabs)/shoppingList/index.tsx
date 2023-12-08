@@ -125,7 +125,7 @@ export default function ToBeBoughtScreen() {
   const saveEditedProduct = () => {
     if (itemToEdit != null) {
       let users: any = {}
-      selectedUsers.forEach((value, index) => users[memberIds[members.findIndex(m => m.key == value.key && m.name == value.name)]] = {key: value.key, name: value.name})
+      selectedUsers.forEach((value, index) => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
       console.log('pls work' +JSON.stringify(users,null,4))
       const editedProduct: ListData = { ...products[itemToEdit], 
         name: productName,
@@ -150,7 +150,7 @@ export default function ToBeBoughtScreen() {
   const saveAddedProduct = () => {
     const time = moment().format('YYYY.MM.DD');
     let users: any = {}
-    selectedUsers.forEach(value => users[memberIds[members.findIndex(m => m.key == value.key && m.name == value.name)]] = {key: value.key, name: value.name})
+    selectedUsers.forEach(value => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
     const newProduct: ListData = {
       name: productName,
       data: {
