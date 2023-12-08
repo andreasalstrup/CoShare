@@ -5,25 +5,11 @@ import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { calculateExpenses } from '../../../helpers/calculateExpenses';
+import { calculateExpenses, Expense, Transaction } from '../../../helpers/calculateExpenses';
 import Colors from '../../../constants/Colors';
 import { expensesHandle } from '../../../handlers/expenses';
 
-
-type Expense = {
-  user: string;
-  amount: number;
-};
-
-type Transaction = {
-  from: string;
-  to: string;
-  amount: number;
-};
-
 var DATA: Expense[] = [];
-
-
 
 export default function SettleScreen() {
 
@@ -38,8 +24,6 @@ export default function SettleScreen() {
   const expenses = useRef(expensesHandle(gun));
   expenses.current.getExpenses('69', getExpenses);
   
-
-  const calculatedExpenses = calculateExpenses(DATA);
   const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
