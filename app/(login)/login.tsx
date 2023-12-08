@@ -23,22 +23,21 @@ export default function loginScreen () {
     if (ack.err != undefined) {
       setWrongCredentials(true);
       setAuthing(false);
-      return true;
+      return false;
     }
 
     // TODO: Create useGroup
     group.current.checkIfInGroup((ack: Boolean) => {
-      if (false) {        
-        router.replace('/shoppingList');   
+      if (ack) {            
+        router.replace('/shoppingList');
       }else{
         router.replace('/group');
       }
     })
-
-    return false;
+    return true;
   }
 
-  return (         
+  return (
     <View style={styles.container}>
       <ImageBackground source={require('../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>     
         <LogoAndName/>      

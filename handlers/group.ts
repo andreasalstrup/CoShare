@@ -1,4 +1,5 @@
 import {randomUUID} from 'expo-crypto';
+import { IGunChain } from 'gun/types';
 interface IGroup {
     create(groupName: string, callback : () => void): void;
     join(uuid: string, callback : (ack: Boolean) => void): void;
@@ -7,38 +8,44 @@ interface IGroup {
 }
 
 class GroupHandle implements IGroup {
-
-    constructor(private gun: Gun) {        
+    readonly gun: Gun
+    constructor(private db: Gun) {
+        this.gun = db
     }
 
-    public create(groupName: string, action : () => void): void {
+    public create(groupName: string, callback : () => void): void {
         let user = gun.user(userPub)
         let groupId : string = randomUUID();        
-        let context = gun.get("groups").set({groupId: groupId})
-        context.get("members").set({members: userPub})
-        context.get("name").set({groupName: groupName})        
+        gun.get("groups").get("groupId").set({groupId: groupId})
+        let context = gun.get("groups").get("groupId").get(groupId)
+        context.get("members").set({userPub})
+        context.get("name").put(groupName)
         user.get("group").put({groupId: groupId})
-        action()
+        callback()
     }
 
-    public join(uuid: string, action : (ack: Boolean) => void): void {           
-        gun.get("groups").once(
-            function(data, key) {
-                if (data != uuid){
-                    user = gun.user(userPub)
-                    gun.get("groups").get(data).set({members: userPub})
-                    user.get("group").put({groupId: uuid})
-                    action(true)
+    public join(uuid: string, callback : (ack: Boolean) => void): void {
+        let context = gun.get("groups").get("groupId").get(uuid)
+        context.once(
+            function(d){
+                if (d == undefined){
+                    callback(false)
                 }else{
-                    action(false)
-                }
-        })
+                    console.log(userPub)                    
+                    user = gun.user(userPub)
+                    context.get("members").set({members: userPub})
+                    user.get("group").put({groupId: uuid})                    
+                    callback(true)
+                }                
+            }
+        )
     }
-    public checkIfInGroup(action : (ack: Boolean) => void): void {
+
+    public checkIfInGroup(callback : (ack: Boolean) => void): void {
         user = gun.user(userPub)
         user.get("group").once((ack: any) => {            
-            if (ack == undefined || ack == null) action(false)
-            else action(true)
+            if (ack == undefined || ack == null) callback(false)
+            else callback(true)
         })
     }
 
@@ -48,6 +55,6 @@ class GroupHandle implements IGroup {
     }
 }
 
-export function groupHandle(gun: Gun): IGroup {
-    return new GroupHandle(gun);
+export function groupHandle(db: Gun): IGroup {
+    return new GroupHandle(db);
 }

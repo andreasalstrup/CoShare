@@ -61,6 +61,7 @@ export default function GroupScreen() {
       </View>
     )
   }
+  
   function getNonMainScreenTextComponent() {
     return (
       <View style={{alignItems: "center"}}>        

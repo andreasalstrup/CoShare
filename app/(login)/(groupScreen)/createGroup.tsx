@@ -8,34 +8,32 @@ export default function getCreateComponent(){
     const group = useRef(groupHandle(gun));
     const [groupName, setGroupName] = useState("")
     const [processing, setProcessing] = useState(false)
+    const [error, setError] = useState(false)
 
-    function redirect() {
-        router.replace('/shoppingList')
-    }
     function createNewGroup(groupName : string){
         if (groupName != ""){
-            group.current.create(groupName, redirect)            
+            group.current.create(groupName, () => {router.replace('/shoppingList')})         
         }else {
+            setError(true)
             setProcessing(false)
         }
     }
-    return (
-        // <View>
+
+    return (        
         <>
-          <View style={{alignItems:"center"}}><Text style={styles.explainerText}> What is the name of your new group?</Text></View>
+          <View style={{alignItems:"center"}}><Text style={styles.explainerText}>What is the name of your new group?</Text></View>
           <Text style={styles.descriptiveText}>Group name</Text>
           <View style={styles.inputBox}>
           <TextInput style={styles.inputField} value={groupName} onChangeText={(groupName) =>{setGroupName(groupName)}}/>
           </View>
           <Pressable style={styles.button}onPress={() => {
             if (!processing){
-                createNewGroup(groupName)
                 setProcessing(true)
+                createNewGroup(groupName)
             }
-            }
+          }
         }><Text style={styles.descriptiveText}>Create new group</Text></Pressable>
-        
-        {/* </View> */}
+        {error && <Text style={styles.error}>A group must have a name</Text>}
         </>
     )
   }

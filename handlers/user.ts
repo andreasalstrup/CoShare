@@ -21,17 +21,16 @@ class UserHandle implements IAuth {
             newUser.get("fullName").put(fullName);
             newUser.get("email").put(email);
             this.login(phoneNumber,password, callback)         
-        });        
+        });   
     }
 
-    public login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {
+    public login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {        
         this.user.auth(phoneNumber, password, (ack: any) => {
             if (ack != undefined){
                 userPub = ack.soul
             }
             callback(ack, user)  
         });
-        
     }
 
     public logout() : void {

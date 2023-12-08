@@ -1,12 +1,14 @@
 import { Pressable, StyleSheet } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import AreYouSureModal from '../../components/AreYouSureModal';
+import { router } from 'expo-router';
+import { userHandle } from '../../handlers/user';
 
 export default function SettingsScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  
+  const user = useRef(userHandle(gun));
   const toggleModal = () => setIsModalVisible(() => !isModalVisible);
 
   const leaveGroup = () => {
@@ -42,6 +44,10 @@ export default function SettingsScreen() {
         onNo={() =>{
           toggleModal()
         }}/>
+        <Pressable onPress={()=>{
+          user.current.logout()
+          router.replace('/login')}
+          }><Text>Logout</Text></Pressable>
     </View>
   );
 }
