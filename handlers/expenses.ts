@@ -1,6 +1,6 @@
 import { Expense, Transaction } from "../helpers/calculateExpenses";
 interface IExpenses {
-    getExpenses(groupId: string): Expense[];
+    getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void;
     settleExpenses(groupId: string, transaction: Transaction): void;
 }
 
@@ -9,14 +9,14 @@ class ExpensesHandle implements IExpenses{
     constructor(private gun: Gun) {
     }
 
-    public getExpenses(groupId: string): Expense[]{
+    public getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void{
         let expenses: Expense[] = [];
         let currentExpense: Expense = {user: '', amount: 0};
-        gun.get('groups').get('1').get('expenses').map().on(function(expenseData){
+        gun.get('groups').get(groupId).get('expenses').map().on(function(expenseData){
             currentExpense = {user: (expenseData.user).toString(), amount: parseFloat(expenseData.amount)};
             expenses.push(currentExpense);
+            callback(expenses);
         });
-        return expenses;
     }
 
     public settleExpenses(groupId: string, transaction: Transaction): void {

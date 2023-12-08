@@ -21,36 +21,25 @@ type Transaction = {
   amount: number;
 };
 
-const DATA: Expense[] = [
-  { user: 'Martin', amount: 90 },
-  { user: 'Andreas', amount: 30 },
-  { user: 'Bisgaard', amount: 0 },
-  { user: 'Mike', amount: 85 },
-];
+var DATA: Expense[] = [];
 
 
 
 export default function SettleScreen() {
 
-  function getExpenses(groupId: string): Expense[]{
-    let expenses: Expense[] = [];
-    let currentExpense: Expense = {user: '', amount: 0};
-    gun.get('groups').get('1').get('expenses').map().on(function(expenseData){
-        currentExpense = {user: (expenseData.user).toString(), amount: parseFloat(expenseData.amount)};
-        expenses.push(currentExpense);
-    });
-    return expenses;
-}
-  /*gun.get('groups').get('1').get('expenses').set(DATA[0]);
-  gun.get('groups').get('1').get('expenses').set(DATA[1]);
-  gun.get('groups').get('1').get('expenses').set(DATA[2]);
-  gun.get('groups').get('1').get('expenses').set(DATA[3]);*/
+  function getExpenses(expenseData: Expense[]): void{
+    DATA = expenseData;
+    console.log(DATA);
+  }
+  /*gun.get('groups').get('69').get('expenses').set({user: 'Martin', amount: 90});
+  gun.get('groups').get('69').get('expenses').set({user: 'Andreas', amount: 30});
+  gun.get('groups').get('69').get('expenses').set({user: 'Bisgaard', amount: 0});
+  gun.get('groups').get('69').get('expenses').set({user: 'Mike', amount: 65});*/
   const expenses = useRef(expensesHandle(gun));
-  //console.log(getExpenses('1'));
-  let expenseData = expenses.current.getExpenses('1');
-  console.log(expenseData);
+  expenses.current.getExpenses('69', getExpenses);
+  
 
-  const calculatedExpenses = calculateExpenses(expenseData);
+  const calculatedExpenses = calculateExpenses(DATA);
   const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
@@ -112,7 +101,7 @@ export default function SettleScreen() {
     <View>
       <FlatList
         style={{marginTop: 48}}
-        data={calculatedExpenses}
+        data={calculateExpenses(DATA)}
         renderItem={renderItem}
       />
       <Modal
