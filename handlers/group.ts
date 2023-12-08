@@ -18,7 +18,7 @@ class GroupHandle implements IGroup {
         let groupId : string = randomUUID();        
         gun.get("groups").get("groupId").set({groupId: groupId})
         let context = gun.get("groups").get("groupId").get(groupId)
-        context.get("members").set({userPub})
+        context.get("members").set({members: userPub})
         context.get("name").put(groupName)
         user.get("group").put({groupId: groupId})
         callback()
