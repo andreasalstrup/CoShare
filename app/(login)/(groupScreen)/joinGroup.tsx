@@ -23,12 +23,12 @@ export default function getCreateComponent(){
     }
     return (
         <>
-          <Text style={styles.descriptiveText}> Join a group by typing its unique id </Text>
+          <View style={{alignItems:"center"}}><Text style={styles.explainerText}> Join a group by typing its unique id </Text></View>
           <Text style={styles.descriptiveText}>Group id</Text>
           <View style={styles.inputBox}>
           <TextInput style={styles.inputField} value={uuid} onChangeText={(uuid) =>{setUuid(uuid)}}/>
           </View>          
-          <Pressable onPress={() => {
+          <Pressable style={styles.button} onPress={() => {
                if (!processing){
                     joinGroup(uuid)
                     setProcessing(true)

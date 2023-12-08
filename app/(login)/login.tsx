@@ -28,9 +28,8 @@ export default function loginScreen () {
 
     // TODO: Create useGroup
     group.current.checkIfInGroup((ack: Boolean) => {
-      if (ack) {
-        group.current.setPeers();
-        router.replace('../shoppingList');   
+      if (false) {        
+        router.replace('/shoppingList');   
       }else{
         router.replace('/group');
       }

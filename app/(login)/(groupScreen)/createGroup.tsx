@@ -10,30 +10,32 @@ export default function getCreateComponent(){
     const [processing, setProcessing] = useState(false)
 
     function redirect() {
-        router.replace('../../shoppingList')
+        router.replace('/shoppingList')
     }
     function createNewGroup(groupName : string){
-        if (groupName != ""){ // Some val
+        if (groupName != ""){
             group.current.create(groupName, redirect)            
         }else {
             setProcessing(false)
         }
     }
     return (
+        // <View>
         <>
-          <Text style={styles.descriptiveText}> What is the name of your new group?</Text>
+          <View style={{alignItems:"center"}}><Text style={styles.explainerText}> What is the name of your new group?</Text></View>
           <Text style={styles.descriptiveText}>Group name</Text>
           <View style={styles.inputBox}>
           <TextInput style={styles.inputField} value={groupName} onChangeText={(groupName) =>{setGroupName(groupName)}}/>
           </View>
-          <Pressable onPress={() => {
+          <Pressable style={styles.button}onPress={() => {
             if (!processing){
                 createNewGroup(groupName)
                 setProcessing(true)
             }
             }
         }><Text style={styles.descriptiveText}>Create new group</Text></Pressable>
-          
+        
+        {/* </View> */}
         </>
     )
   }

@@ -76,6 +76,10 @@ const styles = StyleSheet.create({
       fontSize: 15,
       fontWeight: "bold",
     },
+    explainerText: {
+      fontSize: 17,    
+      color: "white",    
+    },
   });
 
   export default styles

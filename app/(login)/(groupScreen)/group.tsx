@@ -53,11 +53,18 @@ export default function GroupScreen() {
     )
   }
 
-  function getSmallTextComponent() {
+  function getMainScreenTextComponent() {
     return (
-      <View style={{alignItems: "center"}}>
-        {/* <View style={styles.separator}/> */}
+      <View style={{alignItems: "center"}}>        
         <Pressable onPress={() => setCurrentState(State.create)}><Text style={styles.descriptiveText}>Create new group</Text></Pressable>
+        <Pressable onPress={() => logout()}><Text style={styles.descriptiveText}>Log out</Text></Pressable>
+      </View>
+    )
+  }
+  function getNonMainScreenTextComponent() {
+    return (
+      <View style={{alignItems: "center"}}>        
+        <Pressable onPress={() => setCurrentState(State.buttons)}><Text style={styles.descriptiveText}>Go back</Text></Pressable>
         <Pressable onPress={() => logout()}><Text style={styles.descriptiveText}>Log out</Text></Pressable>
       </View>
     )
@@ -66,7 +73,7 @@ export default function GroupScreen() {
   function logout() {
     console.log("tried to log out")
     user.current.logout()
-    router.replace('../login')
+    router.replace('/login')
   }
 
   return (
@@ -75,7 +82,8 @@ export default function GroupScreen() {
       <ImageBackground source={require('../../../assets/images/accountScreensImage.png')} style={styles.backgroundImage}>
         <LogoAndName/>        
         {getActiveComponent(currentState)}    
-        {currentState != State.create && getSmallTextComponent()}
+        {currentState == State.buttons && getMainScreenTextComponent()}
+        {currentState != State.buttons && getNonMainScreenTextComponent()}
       </ImageBackground>
     </View>
     </>

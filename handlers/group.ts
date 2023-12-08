@@ -1,10 +1,9 @@
 import {randomUUID} from 'expo-crypto';
 interface IGroup {
-    create(groupName: string, action : () => void): void;
-    join(uuid: string, action : (ack: Boolean) => void): void;
-    checkIfInGroup(action : (ack: Boolean) => void): void ;
-    leave() : Boolean;
-    setPeers() : void;
+    create(groupName: string, callback : () => void): void;
+    join(uuid: string, callback : (ack: Boolean) => void): void;
+    checkIfInGroup(callback : (ack: Boolean) => void): void ;
+    leave() : Boolean;    
 }
 
 class GroupHandle implements IGroup {
@@ -41,14 +40,6 @@ class GroupHandle implements IGroup {
             if (ack == undefined || ack == null) action(false)
             else action(true)
         })
-    }
-
-    public setPeers() : void { // Currently does not do anything, peer discovery should be kinda manually handled by GUN itself
-        this.checkIfInGroup((ack) => {
-            if (ack){
-                let members = user.get("group").get("members")        
-            }
-        })        
     }
 
     public leave() : Boolean {
