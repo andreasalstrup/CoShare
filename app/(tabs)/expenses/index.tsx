@@ -1,6 +1,6 @@
 import { StyleSheet, Pressable, Dimensions, useColorScheme } from 'react-native';
 import Modal from "react-native-modal";
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef , useEffect} from 'react';
 import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -11,23 +11,32 @@ import { expensesHandle } from '../../../handlers/expenses';
 
 var DATA: Expense[] = [];
 
-export default function SettleScreen() {
-
-  function getExpenses(expenseData: Expense[]): void{
-    DATA = expenseData;
-    console.log(DATA);
-  }
-  /*gun.get('groups').get('69').get('expenses').set({user: 'Martin', amount: 90});
-  gun.get('groups').get('69').get('expenses').set({user: 'Andreas', amount: 30});
-  gun.get('groups').get('69').get('expenses').set({user: 'Bisgaard', amount: 0});
-  gun.get('groups').get('69').get('expenses').set({user: 'Mike', amount: 65});*/
-  const expenses = useRef(expensesHandle(gun));
-  expenses.current.getExpenses('69', getExpenses);
-  
+export default function SettleScreen() {  
   const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
+  const [data, setData] = useState<Expense[]>([]);
   const swipeableRows : Swipeable[] = [] 
+
+  /*function getExpenses(expenseData: Expense[]): void{
+    DATA = expenseData;
+    console.log(expenseData);
+  }*/
+  /*gun.get('groups').get('13').get('expenses').set({user: 'Martin', amount: 90});
+  gun.get('groups').get('13').get('expenses').set({user: 'Andreas', amount: 30});
+  gun.get('groups').get('13').get('expenses').set({user: 'Bisgaard', amount: 0});
+  gun.get('groups').get('13').get('expenses').set({user: 'Mike', amount: 65});*/
+  const expenses = useRef(expensesHandle(gun));
+  useEffect(() =>{
+    expenses.current.getExpenses
+      ('13', (expenses: Expense[]) => {
+        setData(expenses);
+      }
+    )
+
+  }, [])
+
+  console.log(data);
 
   const openModal = (item: Transaction) => {
     setSelectedItem(item);
@@ -85,7 +94,8 @@ export default function SettleScreen() {
     <View>
       <FlatList
         style={{marginTop: 48}}
-        data={calculateExpenses(DATA)}
+        data={calculateExpenses(data)}
+        extraData={data}
         renderItem={renderItem}
       />
       <Modal

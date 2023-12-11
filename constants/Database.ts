@@ -3,6 +3,7 @@ import 'react-native-webview-crypto';
 import "gun/lib/mobile";
 import Gun from 'gun/gun';
 import SEA from 'gun/sea';
+import 'gun/lib/open.js';
 import 'gun/lib/radix.js';
 import 'gun/lib/radisk.js';
 import 'gun/lib/store.js';
