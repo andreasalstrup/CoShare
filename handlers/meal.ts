@@ -1,6 +1,6 @@
 interface IMealPlan {
     getWeekMealPlan(weekKey: string): Promise<WeekTexts>;
-    setWeekMealPlan(weekKey: string, dayMeals: WeekTexts): Promise<void>;
+    setWeekMealPlan(weekKey: string, dayMeals: WeekTexts): Promise<WeekTexts>;
 }
 
 class MealPlanHandle implements IMealPlan {
@@ -14,15 +14,25 @@ class MealPlanHandle implements IMealPlan {
         let dayMeals: WeekTexts = undefined;
 
         await this.mealPlan.open((mealPlan: MealPlan) => {
+            if (mealPlan[weekKey] === undefined) {
+                this.setWeekMealPlan(weekKey, {
+                    Mon: "",
+                    Tue: "",
+                    Wed: "",
+                    Thu: "",
+                    Fri: "",
+                    Sat: "",
+                    Sun: ""
+                });
+            };
             dayMeals = mealPlan[weekKey]
         });
 
         return dayMeals;
-    
     }
 
-    public async setWeekMealPlan(weekKey: string, newDayMeals: WeekTexts): Promise<void> {
-        await this.mealPlan.get(weekKey).put(newDayMeals)
+    public async setWeekMealPlan(weekKey: string, newDayMeals: WeekTexts): Promise<WeekTexts> {
+        return await this.mealPlan.get(weekKey).put(newDayMeals);
     }
 }
 
