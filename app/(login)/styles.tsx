@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
       elevation: 3,
       width: 0.65 * Dimensions.get('window').width,      
       backgroundColor: 'grey',
+      margin: 8,
     },
     buttonText: {
       color: 'white',
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
       color: 'white',    
     },
     textboxContainer: {
-      paddingTop: 10,
+      paddingBottom: 10,
       backgroundColor: 'transparent',
     },
   });
