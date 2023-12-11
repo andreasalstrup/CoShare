@@ -1,5 +1,5 @@
 import { TopTabs } from "@bacons/expo-router-top-tabs";
-import { useColorScheme } from "react-native";
+import { View, useColorScheme } from "react-native";
 import Colors from "../../../constants/Colors";
 
 export default function ListTabLayout() {
@@ -13,6 +13,7 @@ export default function ListTabLayout() {
         tabBarIndicatorStyle: {backgroundColor: Colors[colorScheme].topNavBarIndicatorColorTurquoise},
       }}>
       <TopTabs.Header>
+        <View pointerEvents="none" style={{}}/>
       </TopTabs.Header>
       <TopTabs.Screen
         name="index"

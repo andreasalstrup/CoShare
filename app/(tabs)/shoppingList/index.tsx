@@ -69,6 +69,7 @@ export default function ToBeBoughtScreen() {
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
   useEffect(() =>{
+    console.log("effecting")
     shoppingListDB.current.onListUpdate(
       (data : ListData[], ids: string[]) => {
         setProductIds(ids)
@@ -110,6 +111,7 @@ export default function ToBeBoughtScreen() {
   }
 
   const saveBoughtProduct = () => {
+    toggleModalBuyItem()
     const editedProduct = { ...products[itemToBuy],
       data: {
         ...products[itemToBuy].data,
@@ -118,11 +120,12 @@ export default function ToBeBoughtScreen() {
     }
     shoppingListDB.current.buyFromList(editedProduct, productIds.at(itemToBuy))
     setItemToBuy(0)
-    toggleModalBuyItem()
+    
     swipeableRows.at(itemToBuy)?.reset()
   }
 
   const saveEditedProduct = () => {
+    toggleModalAddOrEditItem()
     if (itemToEdit != null) {
       let users: any = {}
       selectedUsers.forEach((value, index) => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
@@ -142,9 +145,7 @@ export default function ToBeBoughtScreen() {
       else {
         shoppingListDB.current.buyFromList(editedProduct, productIds.at(itemToEdit))
       }
-    } 
-
-    toggleModalAddOrEditItem()
+    }    
   }
 
   const saveAddedProduct = () => {
@@ -179,7 +180,7 @@ export default function ToBeBoughtScreen() {
     }
   }
 
-  const renderItem = ({item, index}: { item: ListData, index: number}) => {  
+  const renderItem = ({item, index}: { item: ListData, index: number}) => {    
     return (
       <Swipeable
         ref={ref => ref != null ? swipeableRows[index] = ref : undefined}
@@ -279,7 +280,7 @@ export default function ToBeBoughtScreen() {
         onBackdropPress={() => {
           setIsModalBuyItemVisible(false)
           swipeableRows.at(itemToBuy)?.close()
-        }} 
+        }}
         onModalHide={clearProduct}>
         <View style={styles.buyItemModal}>
           <Text style={styles.modalTitleText}>{products.at(itemToBuy)?.name}</Text>
@@ -335,71 +336,77 @@ export default function ToBeBoughtScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderBottomColor: '#000000',
-    padding: 2,
-  },
-  item: {
-    backgroundColor: 'transparent',
-    borderBottomColor: '#000000',
-    borderBottomWidth: 0,
-    padding: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  itemText: {
-    fontSize: 35,
-    flexDirection: 'row',
-  },
-  infoText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginLeft: 10,
-    marginBottom: 5,
-    marginTop: -5,
-  },
-  leftSwipe: {
-    backgroundColor: '#5CBCA9',
-    justifyContent: 'center',
-    alignItems: 'flex-end'
-  },
-  rightSwipe: {
-    backgroundColor: '#E35F52',
-    justifyContent: 'center',
-    alignItems: 'flex-end'
-  },
-  swipeIcon: {
-    padding: 20,
-  },
-  addItemModal: {
-    height: 300,
-    padding: 22,
-    justifyContent: 'center',
-    borderRadius: 4,
-  },
-  dropdown: {
-    backgroundColor: 'lightgray',
-    marginBottom: 10,
-    borderRadius: 4,
-    paddingLeft: 10
-  },
-  dropdownItem: {
-      padding: 17,
+    container: {
+      borderBottomColor: '#000000',
+      padding: 2,
+    },
+    item: {
+      backgroundColor: 'transparent',
+      borderBottomColor: '#000000',
+      borderBottomWidth: 0,
+      padding: 8,
       flexDirection: 'row',
-  },
-  dropdownTextItem: {
-      flex: 1,
-      fontSize: 16,
-  },
-  modalTitleText: {
-    fontSize: 30,
-  },
-  buyItemModal: {
-    height: 250,
-    padding: 22,
-    borderRadius: 10,
-  },
-  amountPaid: {
-    marginTop: 40,
-  }
+      justifyContent: 'space-between'
+    },
+    itemText: {
+      fontSize: 35,
+      flexDirection: 'row',
+    },
+    infoText: {
+      fontSize: 12,
+      fontWeight: 'bold',
+      marginLeft: 10,
+      marginBottom: 5,
+      marginTop: -5,
+    },
+    leftSwipe: {
+      backgroundColor: '#5CBCA9',
+      justifyContent: 'center',
+      alignItems: 'flex-end'
+    },
+    rightSwipe: {
+      backgroundColor: '#E35F52',
+      justifyContent: 'center',
+      alignItems: 'flex-end'
+    },
+    swipeIcon: {
+      padding: 20,
+    },
+    addItemModal: {
+      height: 300,
+      padding: 22,
+      justifyContent: 'center',
+      borderRadius: 4,
+    },
+    dropdown: {
+      backgroundColor: 'lightgray',
+      marginBottom: 10,
+      borderRadius: 4,
+      paddingLeft: 10
+    },
+    disabledDropdown: {
+      backgroundColor: 'gray',
+      marginBottom: 10,
+      borderRadius: 4,
+      paddingLeft: 10
+    },
+    dropdownItem: {
+        padding: 17,
+        flexDirection: 'row',
+    },
+    dropdownTextItem: {
+        flex: 1,
+        fontSize: 16,
+    },
+    modalTitleText: {
+      fontSize: 30,
+    },
+    buyItemModal: {
+      height: 250,
+      padding: 22,
+      borderRadius: 10,
+    },
+    amountPaid: {
+      marginTop: 40,
+    }
 });

@@ -67,6 +67,7 @@ export default function loginScreen () {
         <Pressable 
           style={styles.button} 
           onPress={()=>{   
+            console.log(authing)
             if (!authing){
               setAuthing(true)
               user.current.login(phoneNumber, password, succesfulLogin)                    
