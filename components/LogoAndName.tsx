@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   container: {    
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: -50,    
+    gap: -40,   
+    top: -40,
   }
 });
