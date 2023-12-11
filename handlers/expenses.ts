@@ -12,14 +12,14 @@ class ExpensesHandle implements IExpenses{
     public getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void{
         
         gun.get('groups').get(groupId).get('expenses').open((expenseData : any) =>{
-            let expenses: Expense[] = [];
+            let expensesData: Expense[] = [];
             for (const key in expenseData){                
-                if (!(expenseData[key].user == undefined || expenseData[key].amount == undefined)){
-                    let currentExpense = new Expense(expenseData[key].user, (expenseData[key].amount));            
-                    expenses.push(currentExpense);
+                if (this.isValidExpenseData(expenseData[key])){
+                    let currentExpense = new Expense(expenseData[key].user, (expenseData[key].amount), expenseData[key].timestamp, expenseData[key].id);            
+                    expensesData.push(currentExpense);
                 }   
             }      
-            callback(expenses)
+            callback(expensesData)
         })
     }
 
@@ -29,7 +29,14 @@ class ExpensesHandle implements IExpenses{
     }
 
     private settle(groupId: string, user: string, isReceiver: boolean, amount: number): void {
-        gun.get('groups').get(groupId).get('expenses').set({user: user, amount: isReceiver ? -amount : amount});
+        gun.get('groups').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount));
+    }
+
+    private isValidExpenseData(expense: Expense): boolean{
+        return expense.id != undefined &&
+        expense.timestamp != undefined &&
+        expense.user != undefined &&
+        expense.amount != undefined;
     }
 
 }

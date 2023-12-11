@@ -1,16 +1,34 @@
 export class Expense {
-    public user : string;
-    public amount : number;
+    readonly id: number;
+    readonly timestamp: number;
+    public user: string;
+    public amount: number;
   
-    public constructor(user : string, amount : number){
-      this.user = user;    
-      this.amount = amount
+    public constructor(user: string, amount: number, timestamp?: number, id?: number) {
+      this.user = user;
+      this.amount = amount;
+
+      if (timestamp != undefined) {
+        this.timestamp = timestamp;
+      } else {
+        this.timestamp = Date.now();
+      }
+
+      if (id != undefined) {
+        this.id = id;
+      } else {
+        this.id = this.generateUniqueId();
+      }
     }
   
-    public equals(cmp : Expense){
-      return (cmp.amount == this.amount && cmp.user == this.user)
+    private generateUniqueId(): number {
+      return parseInt(`${this.timestamp}${Math.floor(Math.random() * 1000)}`);
     }
-  }
+  
+    public equals(cmp: Expense): boolean {
+      return cmp.id === this.id;
+    }
+}
 
 export type Transaction = {
     from: string;

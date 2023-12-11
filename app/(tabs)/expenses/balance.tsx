@@ -3,27 +3,41 @@ import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { calculateBalance } from '../../../helpers/calculateBalance';
 import Colors from '../../../constants/Colors';
+import { Expense} from '../../../helpers/calculateExpenses';
+import { expensesHandle } from '../../../handlers/expenses';
+import { useEffect, useRef, useState } from 'react';
 
-
-type Expense = {
-  user: string;
-  amount: number;
-};
-
-const DATA: Expense[] = [
-  { user: 'Martin', amount: 90 },
-  { user: 'Andreas', amount: 30 },
-  { user: 'Bisgaard', amount: 0 },
-  { user: 'Mike', amount: 85 },
-];
-
-const calculatedBalances = calculateBalance(DATA);
+function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
+  if (cmp1.length === cmp2.length){
+    for (let i = 0; i < cmp1.length; i++){
+      if (!(cmp1[i].equals(cmp2[i]))){
+        return false
+      }
+    }
+  }else{
+    return false
+  }
+  return true
+}
 
 
 export default function BalanceScreen() {
+  const expenses = useRef(expensesHandle(gun));  
   const colorScheme = useColorScheme() ?? 'light';
+  const [data, setData] = useState<Expense[]>([]);
 
-  const renderItem = ({ item, index }: { item: Expense; index: number }) => {
+  function getExpenses(expenseData: Expense[]): void{ 
+    if (!expenseListCmp(expenseData, data)){
+      setData(expenseData);
+    }
+  }
+
+  useEffect(() => {
+    expenses.current.getExpenses('89', getExpenses);
+    console.log('hejsa')
+  }, [])
+
+  const renderItem = ({ item, index }: { item: {user: string, amount: number}; index: number }) => {
     return (
       <View style={[styles.container, { backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2 }]}>
         <View style={styles.item}>
@@ -40,7 +54,7 @@ export default function BalanceScreen() {
     <View>
       <FlatList
         style={{marginTop: 48}}
-        data={calculatedBalances}
+        data={calculateBalance(data)}
         renderItem={renderItem}
       />
     </View>
