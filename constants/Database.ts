@@ -7,6 +7,8 @@ import 'gun/lib/open.js';
 import 'gun/lib/radix.js';
 import 'gun/lib/radisk.js';
 import 'gun/lib/store.js';
+import 'gun/lib/open.js'
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IGunInstance, IGunInstanceRoot, IGunUserInstance, ISEA } from 'gun/types';
 const asyncsStore = require('gun/lib/ras.js')

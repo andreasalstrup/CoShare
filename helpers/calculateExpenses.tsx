@@ -1,7 +1,16 @@
-export type Expense = {
-    user: string;
-    amount: number;
-};
+export class Expense {
+    public user : string;
+    public amount : number;
+  
+    public constructor(user : string, amount : number){
+      this.user = user;    
+      this.amount = amount
+    }
+  
+    public equals(cmp : Expense){
+      return (cmp.amount == this.amount && cmp.user == this.user)
+    }
+  }
 
 export type Transaction = {
     from: string;
