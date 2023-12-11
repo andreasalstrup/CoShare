@@ -10,10 +10,12 @@ import { mealPlanHandle } from '../../handlers/meal';
 
 export default function MealScreen() {
   const mealPlan = mealPlanHandle(gun);
+
   const [updateCount, setUpdateCount] = useState<number>(0);
 
   const [weekTexts, setWeekTexts] = useState<WeekTexts>(undefined);
   const [editableDay, setEditableDay] = useState<Weekdays | null>(null);
+
   const [currentWeek, setCurrentWeek] = useState(moment().week());
   const [currentYear, setCurrentYear] = useState(moment().year());
   const [weekKey, setWeekKey] = useState(moment().week().toString() + moment().year().toString())
@@ -49,7 +51,6 @@ export default function MealScreen() {
 
     let newMealPlan = await mealPlan.getWeekMealPlan(weekKey);
     setWeekTexts(newMealPlan);
-    console.log("newMealPlan ", newMealPlan)
   };
 
   const showNextWeek = async () => {
@@ -62,7 +63,6 @@ export default function MealScreen() {
 
     let newMealPlan = await mealPlan.getWeekMealPlan(weekKey);
     setWeekTexts(newMealPlan);
-    console.log("newMealPlan ", newMealPlan)
   };
   
   const handleDayClick = (day: number) => {
