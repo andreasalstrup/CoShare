@@ -8,7 +8,7 @@ import 'gun/lib/radix.js';
 import 'gun/lib/radisk.js';
 import 'gun/lib/store.js';
 import 'gun/lib/open.js'
-
+import 'gun/lib/load.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IGunInstance, IGunInstanceRoot, IGunUserInstance, ISEA } from 'gun/types';
 const asyncsStore = require('gun/lib/ras.js')
@@ -29,7 +29,9 @@ declare global {
     var gun : IGunInstance<any>;
     var user :IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>;
     var SEA : ISEA;
+    var userPub : string;
 }
 global.gun = gun
 global.user = gun.user()
 global.SEA = SEA
+global.userPub = ""

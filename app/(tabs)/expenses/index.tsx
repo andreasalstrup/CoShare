@@ -7,6 +7,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { calculateExpenses, Expense, Transaction } from '../../../helpers/calculateExpenses';
 import Colors from '../../../constants/Colors';
+import AreYouSureModal from '../../../components/AreYouSureModal';
 import { expensesHandle } from '../../../handlers/expenses';
 
 function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
@@ -120,9 +121,9 @@ export default function SettleScreen() {
         data={calculateExpenses(data)}
         renderItem={renderItem}        
       />
-      <Modal
-        animationIn='zoomIn'
-        animationOut='zoomOut'
+      <AreYouSureModal
+        title='Confirm Payment'
+        text={`Have you sent ${selectedItem?.amount} kr. to ${selectedItem?.to}`}
         isVisible={modalVisible}
         onBackdropPress={closeModal}
       >
@@ -179,37 +180,4 @@ const styles = StyleSheet.create({
   swipeIcon: {
     padding: 10,
   },
-    modalContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modalContent: {
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitleText: {
-    fontSize: 30,
-  },
-  modalContentText: {
-    fontSize: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    padding: 10,
-    marginTop: '40%',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 4,
-    elevation: 3,
-    width: "40%",
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  }
 });
