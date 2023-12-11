@@ -1,5 +1,4 @@
-import { StyleSheet, Pressable, Dimensions, useColorScheme, ScrollView } from 'react-native';
-import Modal from "react-native-modal";
+import { StyleSheet, useColorScheme} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
@@ -21,12 +20,12 @@ function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
     return false
   }
   return true
-}
+};
 
-  /*gun.get('groups').get('89').get('expenses').set(new Expense('Martin', 90));
-  gun.get('groups').get('89').get('expenses').set(new Expense('Andreas', 30));
-  gun.get('groups').get('89').get('expenses').set(new Expense('Bisgaard', 0));
-  gun.get('groups').get('89').get('expenses').set(new Expense('Mike', 65));*/
+let userGroup = '';
+gun.user(userPub).get('group').get('groupId').once((id: string) => {
+  userGroup = id;
+});
 
 export default function SettleScreen() {
   const expenses = useRef(expensesHandle(gun));  
@@ -51,16 +50,9 @@ export default function SettleScreen() {
       setData(expenseData);
     }
   }
-
-  const paymentComplete: (buttonId: number, transaction: Transaction | null) => void = (buttonId: number, selectedItem: Transaction | null): void => {
-    if(buttonId == 1 && selectedItem != null){
-      expenses.current.settleExpenses('89', selectedItem);
-    }
-    closeModal();
-  };
   
   useEffect(() => {
-    expenses.current.getExpenses('89', getExpenses);
+    expenses.current.getExpenses(userGroup, getExpenses);
     console.log('hi')
   }, [])
 
@@ -97,23 +89,6 @@ export default function SettleScreen() {
     );
   };
 
-  const renderButton = (
-    text: string,
-    backgroundColor: string,
-    buttonId: number,
-    onPressHandler: (buttonId: number, transaction: Transaction | null) => void,
-    selectedItem: Transaction | null
-  ) => {
-    return (
-      <Pressable
-        style={[styles.button, { backgroundColor }]}
-        onPress={() => onPressHandler(buttonId, selectedItem)}
-      >
-        <Text style={styles.buttonText}>{text}</Text>
-      </Pressable>
-    );
-  };
-
   return (
     <View>       
       <FlatList
@@ -125,21 +100,18 @@ export default function SettleScreen() {
         title='Confirm Payment'
         text={`Have you sent ${selectedItem?.amount} kr. to ${selectedItem?.to}`}
         isVisible={modalVisible}
-        onBackdropPress={closeModal}
-      >
-        <View style={styles.modalContainer}>
-          {selectedItem && (
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitleText}>Confirm Payment</Text>
-              <Text style={styles.modalContentText}>Have you sent {selectedItem.amount} kr. to {selectedItem.to}?</Text>
-              <View style={styles.buttonContainer}>
-                {renderButton('Yes', '#5CBCA9', 1, paymentComplete, selectedItem)}
-                {renderButton('No', '#E35F52', 2, paymentComplete, selectedItem)}
-              </View>
-            </View>
-          )}
-        </View>
-      </Modal>
+        onBackdropPress={() => {
+          closeModal()
+        }}
+        onYes={() =>{
+          if(selectedItem != null){
+            expenses.current.settleExpenses(userGroup, selectedItem);
+          }
+          closeModal()
+        }}
+        onNo={() =>{
+          closeModal()
+        }}/>
     </View>
   );
 }

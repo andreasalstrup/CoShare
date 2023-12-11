@@ -1,3 +1,5 @@
+import { Expense } from "../helpers/calculateExpenses";
+
 interface IShoppingList {
     onListUpdate(callback: (data: ListData[], ids: string[]) => void): void
     onUsersUpdate(callback: (data: Member[], ids: string[]) => void): void
@@ -17,11 +19,11 @@ class ShoppingListHandler implements IShoppingList {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.user = gun.user();
-        user.get("group").on(data => {
-            this.groupId = data?.groupId.toString()
+        this.user = gun.user(userPub);
+        user.get('group').on(data => {
+            this.groupId = data?.groupId.toString();
         })
-        user.get("fullName").on((data: string) => {
+        user.get('fullName').on((data: string) => {
             this.userName = data
         })
     }
@@ -99,6 +101,8 @@ class ShoppingListHandler implements IShoppingList {
         }
 
         group.get('boughtList').set(item)
+
+        gun.get('groups').get(this.groupId).get('expenses').set(new Expense(this.userName, item.data.bought!.price));
     }
 
     private isValidListData(item: ListData): Boolean {
