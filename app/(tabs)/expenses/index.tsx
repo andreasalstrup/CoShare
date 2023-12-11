@@ -8,7 +8,6 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { calculateExpenses, Expense, Transaction } from '../../../helpers/calculateExpenses';
 import Colors from '../../../constants/Colors';
 import { expensesHandle } from '../../../handlers/expenses';
-import { Expense, Transaction } from "../../../helpers/calculateExpenses";
 
 function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
   if (cmp1.length == cmp2.length){
@@ -28,7 +27,6 @@ export default function SettleScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
-  const [data, setData] = useState<Expense[]>([]);
   const swipeableRows : Swipeable[] = [] 
   const [update, setUpdate] = useState(true)
   const [data, setData] = useState<Expense[]>([])
