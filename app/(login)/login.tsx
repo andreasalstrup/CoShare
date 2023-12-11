@@ -76,7 +76,7 @@ export default function loginScreen () {
             <Text style={styles.buttonText}> Sign in</Text>
         </Pressable>
         <Pressable 
-          style={styles.button} 
+          style={styles.buttonAlt} 
           onPress={() => router.replace('/createAccount')}>
           <Text style={styles.buttonText}>Create new account</Text>        
         </Pressable>  

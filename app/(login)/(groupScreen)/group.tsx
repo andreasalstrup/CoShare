@@ -44,11 +44,12 @@ export default function GroupScreen() {
           <Pressable style={styles.button}>
             <Text style={styles.buttonText} onPress={() => {setCurrentState(State.bluetooth)}}> Join with bluetooth </Text>
           </Pressable>
-          <View style={{height:5}}/>
           <Pressable style={styles.button} onPress={() => {setCurrentState(State.id)}}>
             <Text style={styles.buttonText}> Join with group id </Text>
           </Pressable>
-
+          <Pressable style={styles.buttonAlt} onPress={() => {setCurrentState(State.create)}}>
+            <Text style={styles.buttonText}> Create new group </Text>
+          </Pressable>
       </>
     )
   }
@@ -56,7 +57,6 @@ export default function GroupScreen() {
   function getMainScreenTextComponent() {
     return (
       <View style={{alignItems: "center"}}>        
-        <Pressable onPress={() => setCurrentState(State.create)}><Text style={styles.descriptiveText}>Create new group</Text></Pressable>
         <Pressable onPress={() => logout()}><Text style={styles.descriptiveText}>Log out</Text></Pressable>
       </View>
     )

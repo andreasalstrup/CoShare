@@ -65,6 +65,17 @@ const styles = StyleSheet.create({
       backgroundColor: '#5CBCA9',
       margin: 8,
     },
+    buttonAlt: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 32,
+      borderRadius: 4,
+      elevation: 3,
+      width: 0.65 * Dimensions.get('window').width,      
+      backgroundColor: 'gray',
+      margin: 8,
+    },
     disabledButton: {
       alignItems: 'center',
       justifyContent: 'center',
