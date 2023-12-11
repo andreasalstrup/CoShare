@@ -1,52 +1,28 @@
-import moment from 'moment';
-
-type DayMeals = {
-    Mon: string;
-    Tue: string;
-    Wed: string;
-    Thu: string;
-    Fri: string;
-    Sat: string;
-    Sun: string;
-} | undefined
-  
-type MealPlan = {
-    [key: string]: DayMeals;
-}
-
 interface IMealPlan {
-    setWeekCurrentMeals(dayMeals: DayMeals): void;
-    getWeekCurrentMeals(): Promise<DayMeals>;
+    getWeekMealPlan(weekKey: string): Promise<WeekTexts>;
+    setWeekMealPlan(weekKey: string, dayMeals: WeekTexts): Promise<void>;
 }
 
 class MealPlanHandle implements IMealPlan {
-    mealPlan: any;
-
-    readonly currnetWeek = moment().week();
-    readonly currentYear = moment().year();
-    readonly setWeekKey = this.currnetWeek.toString() + this.currentYear.toString()
+    readonly mealPlan: any;
 
     constructor(private gun: Gun) {
-        this.mealPlan = this.gun.get("groups").get("1337").get("mealplan");
-        
+        this.mealPlan = this.gun.get("groups").get("1337").get("mealplan");        
     }
 
-    public async setWeekCurrentMeals(newDayMeals: DayMeals): Promise<DayMeals> {
-        let dayMeals: DayMeals = undefined;
-        
-        dayMeals = await this.mealPlan.get(this.setWeekKey).put(newDayMeals)
-
-        return dayMeals;
-    }
-    
-    public async getWeekCurrentMeals(): Promise<DayMeals> {
-        let dayMeals: DayMeals = undefined;
+    public async getWeekMealPlan(weekKey: string): Promise<WeekTexts> {
+        let dayMeals: WeekTexts = undefined;
 
         await this.mealPlan.open((mealPlan: MealPlan) => {
-            dayMeals = mealPlan[this.setWeekKey]
+            dayMeals = mealPlan[weekKey]
         });
 
         return dayMeals;
+    
+    }
+
+    public async setWeekMealPlan(weekKey: string, newDayMeals: WeekTexts): Promise<void> {
+        await this.mealPlan.get(weekKey).put(newDayMeals)
     }
 }
 
