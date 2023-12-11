@@ -10,13 +10,18 @@ class ExpensesHandle implements IExpenses{
     }
 
     public getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void{
-        let expenses: Expense[] = [];
-        let currentExpense: Expense = {user: '', amount: 0};
-        gun.get('groups').get(groupId).get('expenses').map().on(function(expenseData){
-            currentExpense = {user: (expenseData.user).toString(), amount: parseFloat(expenseData.amount)};
-            expenses.push(currentExpense);
-            callback(expenses);
-        });
+        
+        gun.get('groups').get(groupId).get('expenses').open((expenseData : any) =>{
+            let expenses: Expense[] = [];
+            for (const key in expenseData){                
+                if (!(expenseData[key].user == undefined || expenseData[key].amount == undefined)){
+                    let currentExpense = new Expense(expenseData[key].user,parseFloat(expenseData[key].amount));            
+                    expenses.push(currentExpense);
+                }   
+            }    
+            console.log(expenses.length)    
+            callback(expenses)
+        })
     }
 
     public settleExpenses(groupId: string, transaction: Transaction): void {

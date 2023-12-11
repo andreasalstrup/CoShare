@@ -1,6 +1,6 @@
-import { StyleSheet, Pressable, Dimensions, useColorScheme } from 'react-native';
+import { StyleSheet, Pressable, Dimensions, useColorScheme, ScrollView } from 'react-native';
 import Modal from "react-native-modal";
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -8,43 +8,29 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { calculateExpenses } from '../../../helpers/calculateExpenses';
 import Colors from '../../../constants/Colors';
 import { expensesHandle } from '../../../handlers/expenses';
+import { Expense, Transaction } from "../../../helpers/calculateExpenses";
 
-
-type Expense = {
-  user: string;
-  amount: number;
-};
-
-type Transaction = {
-  from: string;
-  to: string;
-  amount: number;
-};
-
-var DATA: Expense[] = [];
-
-
+function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
+  if (cmp1.length == cmp2.length){
+    for (let i = 0; i < cmp1.length; i++){
+      if (!(cmp1[i].equals(cmp2[i]))){
+        return false
+      }
+    }
+  }else{
+    return false
+  }
+  return true
+}
 
 export default function SettleScreen() {
-
-  function getExpenses(expenseData: Expense[]): void{
-    DATA = expenseData;
-    console.log(DATA);
-  }
-  /*gun.get('groups').get('69').get('expenses').set({user: 'Martin', amount: 90});
-  gun.get('groups').get('69').get('expenses').set({user: 'Andreas', amount: 30});
-  gun.get('groups').get('69').get('expenses').set({user: 'Bisgaard', amount: 0});
-  gun.get('groups').get('69').get('expenses').set({user: 'Mike', amount: 65});*/
-  const expenses = useRef(expensesHandle(gun));
-  expenses.current.getExpenses('69', getExpenses);
-  
-
-  const calculatedExpenses = calculateExpenses(DATA);
+  const expenses = useRef(expensesHandle(gun));  
   const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
   const swipeableRows : Swipeable[] = [] 
-
+  const [update, setUpdate] = useState(true)
+  const [data, setData] = useState<Expense[]>([])
   const openModal = (item: Transaction) => {
     setSelectedItem(item);
     setModalVisible(true);
@@ -56,11 +42,30 @@ export default function SettleScreen() {
     swipeableRows.map((row) => row.close())
   };
 
-  const renderItem = ({ item, index }: { item: Transaction; index: number }) => {
+  function getExpenses(expenseData: Expense[]): void{ 
+    if (expenseListCmp(expenseData, data)){
+      console.log("Equal")
+    }else{      
+      setData(expenseData)
+      console.log("New")
+    }
+  }
+
+  /*gun.get('groups').get('69').get('expenses').set({user: 'Martin', amount: 90});
+  gun.get('groups').get('69').get('expenses').set({user: 'Andreas', amount: 30});
+  gun.get('groups').get('69').get('expenses').set({user: 'Bisgaard', amount: 0});
+  gun.get('groups').get('69').get('expenses').set({user: 'Mike', amount: 65});*/
+  
+  useEffect(() => {
+    console.log("What are we doing")
+    expenses.current.getExpenses('69', getExpenses);
+  })
+
+  function renderItem ({ item, index }: { item: Transaction; index: number }) : React.JSX.Element {
     return (
       <Swipeable
         ref={ref => ref != null ? swipeableRows[index] = ref : undefined}
-        friction={1.5}
+        friction={1.5} 
         overshootFriction={8}
         renderLeftActions={leftSwipeAction}
         onSwipeableOpen={() => openModal(item)}
@@ -96,13 +101,13 @@ export default function SettleScreen() {
       </Pressable>
     );
   };
-
+//
   return (
-    <View>
+    <View>       
       <FlatList
         style={{marginTop: 48}}
-        data={calculateExpenses(DATA)}
-        renderItem={renderItem}
+        data={calculateExpenses(data)}
+        renderItem={renderItem}        
       />
       <Modal
         animationIn='zoomIn'
