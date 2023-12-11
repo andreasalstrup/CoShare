@@ -28,7 +28,9 @@ declare global {
     var gun : IGunInstance<any>;
     var user :IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>;
     var SEA : ISEA;
+    var userPub : string;
 }
 global.gun = gun
 global.user = gun.user()
 global.SEA = SEA
+global.userPub = ""

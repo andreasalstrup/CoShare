@@ -13,35 +13,39 @@ const styles = StyleSheet.create({
     error: {
       fontSize: 14,
       fontWeight: 'bold',
-      color: "red",
+      color: 'red',
     },
     descriptiveText: {
       fontSize: 13,    
-      color: "white",
+      color: 'white',
     },
     separator: {
-      marginVertical: 30,
+      marginVertical: 20,
       height: 1,
-      width: '80%',      
+      width: '80%',
+      opacity: 0.3,
+      backgroundColor: 'white', 
     },
     inputField: {
       height: 40, 
-      width: 200, 
-      
+      width: 0.65 * Dimensions.get('window').width,      
+      padding: 4,
       justifyContent: 'center',
-      color: "white",      
+      color: 'white',      
     },
     eye: {
-      marginLeft: -24,
-      color:"#aaa",      
+      marginLeft: -28, // -(eyesize+paddingRight)
+      paddingRight: 4,
+      color:'#aaa',      
     },
     inputBox: {
       flexDirection: 'row', 
-      alignItems: 'center',    
+      alignItems: 'center',
+      justifyContent: 'space-between',    
       backgroundColor: 'black',
       opacity: 0.7,
       borderRadius: 4,
-      color: "white",      
+      color: 'white',
     },
     backgroundImage: {    
       justifyContent: 'center',
@@ -57,8 +61,20 @@ const styles = StyleSheet.create({
       paddingHorizontal: 32,
       borderRadius: 4,
       elevation: 3,
-      width: 0.6 * Dimensions.get('window').width,      
+      width: 0.65 * Dimensions.get('window').width,      
       backgroundColor: '#5CBCA9',
+      margin: 8,
+    },
+    buttonAlt: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 32,
+      borderRadius: 4,
+      elevation: 3,
+      width: 0.65 * Dimensions.get('window').width,      
+      backgroundColor: 'gray',
+      margin: 8,
     },
     disabledButton: {
       alignItems: 'center',
@@ -67,14 +83,23 @@ const styles = StyleSheet.create({
       paddingHorizontal: 32,
       borderRadius: 4,
       elevation: 3,
-      width: 0.6 * Dimensions.get('window').width,      
+      width: 0.65 * Dimensions.get('window').width,      
       backgroundColor: 'grey',
+      margin: 8,
     },
     buttonText: {
-      color: "white",
+      color: 'white',
       fontSize: 15,
-      fontWeight: "bold",
-    },    
+      fontWeight: 'bold',
+    },
+    explainerText: {
+      fontSize: 17,    
+      color: 'white',    
+    },
+    textboxContainer: {
+      paddingBottom: 10,
+      backgroundColor: 'transparent',
+    },
   });
 
   export default styles
