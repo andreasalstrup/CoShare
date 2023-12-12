@@ -11,7 +11,7 @@ class ExpensesHandle implements IExpenses{
 
     public getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void{
         
-        gun.get('groups').get(groupId).get('expenses').open((expenseData : any) =>{
+        gun.get('groups').get('groupId').get(groupId).get('expenses').open((expenseData : any) =>{
             let expensesData: Expense[] = [];
             for (const key in expenseData){                
                 if (this.isValidExpenseData(expenseData[key])){
@@ -29,7 +29,7 @@ class ExpensesHandle implements IExpenses{
     }
 
     private settle(groupId: string, user: string, isReceiver: boolean, amount: number): void {
-        gun.get('groups').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount));
+        gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount));
     }
 
     private isValidExpenseData(expense: Expense): boolean{

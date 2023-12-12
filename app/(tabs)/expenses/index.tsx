@@ -22,10 +22,7 @@ function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
   return true
 };
 
-let userGroup = '';
-gun.user(userPub).get('group').get('groupId').once((id: string) => {
-  userGroup = id;
-});
+
 
 export default function SettleScreen() {
   const expenses = useRef(expensesHandle(gun));  
@@ -50,10 +47,20 @@ export default function SettleScreen() {
       setData(expenseData);
     }
   }
+
+  let userGroup = '';
+  gun.user(userPub).get('group').get('groupId').once((id: string) => {
+    userGroup = id;
+    console.log(userGroup)
+  });
+
+  let username = '';
+  gun.user(userPub).get('fullName').open((data: any) => {
+    username = data;
+  });
   
   useEffect(() => {
     expenses.current.getExpenses(userGroup, getExpenses);
-    console.log('hi')
   }, [])
 
   function renderItem ({ item, index }: { item: Transaction; index: number }) : React.JSX.Element {

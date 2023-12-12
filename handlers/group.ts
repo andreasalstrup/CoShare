@@ -1,5 +1,6 @@
 import {randomUUID} from 'expo-crypto';
 import { IGunChain } from 'gun/types';
+import { Expense } from '../helpers/calculateExpenses';
 interface IGroup {
     create(groupName: string, callback : () => void): void;
     join(uuid: string, callback : (ack: Boolean) => void): void;
@@ -21,6 +22,9 @@ class GroupHandle implements IGroup {
         context.get("members").set({members: userPub})
         context.get("name").put(groupName)
         user.get("group").put({groupId: groupId})
+        user.get('fullName').open((data: any) => {
+            context.get('expenses').set(new Expense(data, 0)); 
+        });       
         callback()
     }
 
@@ -30,11 +34,13 @@ class GroupHandle implements IGroup {
             function(d){
                 if (d == undefined){
                     callback(false)
-                }else{
-                    console.log(userPub)                    
+                }else{                 
                     user = gun.user(userPub)
                     context.get("members").set({members: userPub})
-                    user.get("group").put({groupId: uuid})                    
+                    user.get("group").put({groupId: uuid})
+                    user.get('fullName').open((data: any) => {
+                        context.get('expenses').set(new Expense(data, 0)); 
+                    });                   
                     callback(true)
                 }                
             }

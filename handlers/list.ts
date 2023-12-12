@@ -23,9 +23,9 @@ class ShoppingListHandler implements IShoppingList {
         user.get('group').on(data => {
             this.groupId = data?.groupId.toString();
         })
-        user.get('fullName').on((data: string) => {
-            this.userName = data
-        })
+        user.get('fullName').open((data: any) => {
+              this.userName = data;
+        });
     }
 
     public onListUpdate(callback: (data: ListData[], ids: string[]) => void): void {
@@ -63,6 +63,7 @@ class ShoppingListHandler implements IShoppingList {
                     members.push(data[key])
                 }
             }
+            console.log(members)
             callback(members, ids)
         })
     }
@@ -97,7 +98,7 @@ class ShoppingListHandler implements IShoppingList {
 
         if(id)
         {
-            group.get('shoppingList').get(id).put(null)
+            this.deleteFromList(id);
         }
 
         group.get('boughtList').set(item)

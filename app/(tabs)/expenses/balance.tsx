@@ -32,9 +32,13 @@ export default function BalanceScreen() {
     }
   }
 
+  let userGroup = '';
+  gun.user(userPub).get('group').get('groupId').once((id: string) => {
+    userGroup = id;
+  });
+
   useEffect(() => {
-    expenses.current.getExpenses('89', getExpenses);
-    console.log('hejsa')
+    expenses.current.getExpenses(userGroup, getExpenses);
   }, [])
 
   const renderItem = ({ item, index }: { item: {user: string, amount: number}; index: number }) => {

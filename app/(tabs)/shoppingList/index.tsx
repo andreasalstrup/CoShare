@@ -68,6 +68,11 @@ export default function ToBeBoughtScreen() {
   const toggleModalBuyItem = () => setIsModalBuyItemVisible(() => !isModalBuyItemVisible);
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
+  let username = '';
+  gun.user(userPub).get('fullName').open((data: any) => {
+    username = data;
+  });
+
   useEffect(() =>{
     shoppingListDB.current.onListUpdate(
       (data : ListData[], ids: string[]) => {
@@ -113,7 +118,7 @@ export default function ToBeBoughtScreen() {
     const editedProduct = { ...products[itemToBuy],
       data: {
         ...products[itemToBuy].data,
-        bought: {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)}
+        bought: {user: username, date: moment().format('YYYY.MM.DD'), price: Number(price)}
       }
     }
     shoppingListDB.current.buyFromList(editedProduct, productIds.at(itemToBuy))
@@ -132,7 +137,7 @@ export default function ToBeBoughtScreen() {
         data: {
           ...products[itemToEdit].data,
           users: users,
-          bought: alreadyBought ? {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)} : null
+          bought: alreadyBought ? {user: username, date: moment().format('YYYY.MM.DD'), price: Number(price)} : null
         }
       }
 
@@ -154,9 +159,9 @@ export default function ToBeBoughtScreen() {
     const newProduct: ListData = {
       name: productName,
       data: {
-        added: {user: "Me", date: time},
+        added: {user: username, date: time},
         users: users,
-        bought: alreadyBought ? {user: "Me", date: time, price: Number(price)} : null
+        bought: alreadyBought ? {user: username, date: time, price: Number(price)} : null
       }
     }
     if(newProduct.data.bought == null) {
