@@ -4,35 +4,53 @@ interface IMealPlan {
 }
 
 class MealPlanHandle implements IMealPlan {
-    readonly mealPlan: any;
+    readonly user: UserGunDB;
+    groupId: string = "";
 
     constructor(private gun: Gun) {
-        this.mealPlan = this.gun.get("groups").get("1337").get("mealplan");        
+            this.user = gun.user();
+            this.user.get("group").on((data: any) => {
+                this.groupId = data?.groupId.toString()     
+            });
     }
 
     public async getWeekMealPlan(weekKey: string): Promise<WeekTexts> {
-        let dayMeals: WeekTexts = undefined;
+        await this.waitForId();
+        console.log("getWeekMealPlan id", this.groupId);
 
-        await this.mealPlan.open((mealPlan: MealPlan) => {
-            if (mealPlan[weekKey] === undefined) {
-                this.setWeekMealPlan(weekKey, {
-                    Mon: "",
-                    Tue: "",
-                    Wed: "",
-                    Thu: "",
-                    Fri: "",
-                    Sat: "",
-                    Sun: ""
-                });
-            };
-            dayMeals = mealPlan[weekKey]
+        let dayMeals: WeekTexts = {
+            Mon: "",
+            Tue: "",
+            Wed: "",
+            Thu: "",
+            Fri: "",
+            Sat: "",
+            Sun: ""
+        };
+
+        await this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
+            dayMeals = data
         });
-
+        
         return dayMeals;
     }
 
     public async setWeekMealPlan(weekKey: string, newDayMeals: WeekTexts): Promise<WeekTexts> {
-        return await this.mealPlan.get(weekKey).put(newDayMeals);
+        this.waitForId();
+        return await this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).put(newDayMeals);
+    }
+
+    private async waitForId(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            const checkId = () => {
+                if (this.groupId !== "") {
+                    resolve();
+                } else {
+                    setTimeout(checkId, 100);
+                }
+            };
+            checkId();
+        });
     }
 }
 
