@@ -35,7 +35,7 @@ class MealPlanHandle implements IMealPlan {
     }
 
     public async setWeekMealPlan(weekKey: string, newDayMeals: WeekTexts): Promise<WeekTexts> {
-        this.waitForId();
+        await this.waitForId();
         return await this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).put(newDayMeals);
     }
 
