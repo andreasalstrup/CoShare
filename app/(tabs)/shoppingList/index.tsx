@@ -126,7 +126,7 @@ export default function ToBeBoughtScreen() {
     if (itemToEdit != null) {
       let users: any = {}
       selectedUsers.forEach((value, index) => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
-      console.log('pls work' +JSON.stringify(users,null,4))
+      
       const editedProduct: ListData = { ...products[itemToEdit], 
         name: productName,
         data: {

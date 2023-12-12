@@ -1,5 +1,6 @@
 interface IShoppingList {
     onListUpdate(callback: (data: ListData[], ids: string[]) => void): void
+    onBoughtListUpdate(callback: (data: ListData[]) => void): void
     onUsersUpdate(callback: (data: Member[], ids: string[]) => void): void
     addToList(item: ListData): void;
     updateItemInList(item: ListData, id: string): void;
@@ -46,6 +47,27 @@ class ShoppingListHandler implements IShoppingList {
                 }
             }
             callback(list, ids)
+        })
+    }
+
+    public onBoughtListUpdate(callback: (data: ListData[]) => void): void {
+        this.gun.get('groups').get(this.groupId).get('boughtList').open((data: any) => {
+            let list: ListData[] = []
+            for (const key in data)
+            {
+                if(this.isValidBoughtListData(data[key]))
+                {
+                    for (const userKey in data[key].data.users)
+                    {
+                        if(data[key].data.users[userKey] == null){
+                            delete data[key].data.users[userKey]
+                        } 
+                    }
+                    
+                    list.push(data[key])
+                }
+            }
+            callback(list)
         })
     }
 
@@ -108,6 +130,15 @@ class ShoppingListHandler implements IShoppingList {
         item.data.added != undefined &&
         item.data.users != null &&
         item.data.bought == null;
+    }
+
+    private isValidBoughtListData(item: ListData): Boolean {
+        return item != null &&
+        item.name != undefined &&
+        item.data != undefined &&
+        item.data.added != undefined &&
+        item.data.users != null &&
+        item.data.bought != null;
     }
 
     private isValidMember(member: Member): Boolean {
