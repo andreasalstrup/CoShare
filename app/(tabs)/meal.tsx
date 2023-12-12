@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Pressable, ScrollView, useColorScheme } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -9,7 +9,7 @@ import DayRow from '../../components/DayRow';
 import { mealPlanHandle } from '../../handlers/meal';
 
 export default function MealScreen() {
-  const mealPlan = mealPlanHandle(gun);
+  const mealPlan = useRef(mealPlanHandle(gun));
 
   const [updateCount, setUpdateCount] = useState<number>(0);
 
@@ -22,11 +22,7 @@ export default function MealScreen() {
   
   useEffect(() => {
     const fetchData = async (): Promise<WeekTexts> => {
-      try {
-        return await mealPlan.getWeekMealPlan(weekKey);
-      } catch (error) {
-        console.log(error)
-      }
+        return await mealPlan.current.getWeekMealPlan(weekKey);
     };
 
     fetchData()
@@ -49,7 +45,7 @@ export default function MealScreen() {
     setCurrentYear(newYear)
     setWeekKey(weekKey)
 
-    let newMealPlan = await mealPlan.getWeekMealPlan(weekKey);
+    let newMealPlan = await mealPlan.current.getWeekMealPlan(weekKey);
     setWeekTexts(newMealPlan);
   };
 
@@ -61,7 +57,7 @@ export default function MealScreen() {
     setCurrentYear(newYear)
     setWeekKey(weekKey)
 
-    let newMealPlan = await mealPlan.getWeekMealPlan(weekKey);
+    let newMealPlan = await mealPlan.current.getWeekMealPlan(weekKey);
     setWeekTexts(newMealPlan);
   };
   
@@ -74,7 +70,7 @@ export default function MealScreen() {
       let newDayMeals: WeekTexts;
       newDayMeals = {...weekTexts!, [Weekdays[editableDay]]: text}
       setWeekTexts(newDayMeals);
-      await mealPlan.setWeekMealPlan(weekKey, newDayMeals);
+      await mealPlan.current.setWeekMealPlan(weekKey, newDayMeals);
     }
   };
 
