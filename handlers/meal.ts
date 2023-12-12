@@ -16,7 +16,6 @@ class MealPlanHandle implements IMealPlan {
 
     public async getWeekMealPlan(weekKey: string): Promise<WeekTexts> {
         await this.waitForId();
-        console.log("getWeekMealPlan id", this.groupId);
 
         let dayMeals: WeekTexts = {
             Mon: "",
