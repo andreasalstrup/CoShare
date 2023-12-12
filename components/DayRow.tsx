@@ -14,7 +14,7 @@ export default function DayRow({ WeekDay, index, text, editableDay, handleDayCli
               {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2},
             ]}
           >
-            <Text style={[styles.weekdaysText, { fontWeight: 'bold' }]}>{WeekDay}</Text>
+            <Text style={[styles.weekdaysText, { fontWeight: 'bold', color: Colors[colorScheme].text }]}>{WeekDay}</Text>
             {editableDay === index ? (
               <TextInput
                 style={[styles.weekdaysText, { fontStyle: 'italic', color: Colors[colorScheme].text }]}
@@ -24,7 +24,7 @@ export default function DayRow({ WeekDay, index, text, editableDay, handleDayCli
                 autoFocus
               />
             ) : (
-              <Text style={styles.weekdaysText}>{text}</Text>
+              <Text style={[styles.weekdaysText, {color: Colors[colorScheme].text}]}>{text}</Text>
             )}
           </TouchableOpacity>
   )
