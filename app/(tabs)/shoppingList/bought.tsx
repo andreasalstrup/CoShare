@@ -76,8 +76,8 @@ export default function BoughtScreen() {
         renderItem={renderItem}
       />
       <AreYouSureModal
-        title='Delete Item'
-        text={`Are you sure you want to delete ${products.at(itemToDelete)?.name}?`}
+        title='Move Item Back'
+        text={`Are you sure you want to move ${products.at(itemToDelete)?.name} back?`}
         isVisible={isModalDeleteVisible}
         onBackdropPress={() => {
           setIsModalDeleteVisible(false)
