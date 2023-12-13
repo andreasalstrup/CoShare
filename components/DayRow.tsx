@@ -2,7 +2,15 @@ import { Text, TouchableOpacity, StyleSheet, useColorScheme, TextInput } from 'r
 import React from 'react'
 import Colors from '../constants/Colors';
 
-export default function DayRow({ WeekDay, index, text, editableDay, handleDayClick, handleTextChange }: { WeekDay: string, index: number, text: string | undefined, editableDay: number | null, handleDayClick: (day: number) => void, handleTextChange: (text: string) => void }) {
+type DayRowProps = {
+  WeekDay: string, 
+  index: number, text: string | undefined, 
+  editableDay: number | null, 
+  handleDayClick: (day: number) => void, 
+  handleTextChange: (text: string) => void
+}
+
+export default function DayRow({ WeekDay, index, text, editableDay, handleDayClick, handleTextChange }: DayRowProps) {
 
   const colorScheme = useColorScheme() ?? 'light';  
   return (
