@@ -22,7 +22,6 @@ class MealPlanHandle implements IMealPlan {
         const waitForweekText = async (): Promise<void> => {
             return new Promise<void>((resolve) => {
                 this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
-                    console.log("data: " + JSON.stringify(data))
                     const check = () => {
                         if (data || dayMeals) {
                             dayMeals = data
