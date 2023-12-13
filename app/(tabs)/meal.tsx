@@ -1,102 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Pressable, ScrollView, useColorScheme } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Pressable, ScrollView, useColorScheme } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { FontAwesome5 } from '@expo/vector-icons';
 import moment from 'moment';
 import Colors from '../../constants/Colors';
-
-
-function getCurrentWeekDays(weekNumber: number, yearNumber: number) {
-  const startOfWeek = moment().isoWeekYear(yearNumber).isoWeek(weekNumber).startOf('isoWeek');
-  const daysFormatted = [];
-
-  for (let i = 0; i < 7; i++) {
-    const formattedDay = startOfWeek.clone().add(i, 'days').format('ddd, D MMM');
-    daysFormatted.push(formattedDay);
-  }
-  return daysFormatted;
-}
+import { Weekdays } from '../../constants/MealPlan';
+import DayRow from '../../components/DayRow';
+import { mealPlanHandle } from '../../handlers/meal';
 
 export default function MealScreen() {
-  const [editableDay, setEditableDay] = useState<number | null>(null);
-  const [weekTexts, setWeekTexts] = useState<{ [key: string]: DayInfo[] }>({});  
+  const mealPlan = useRef(mealPlanHandle(gun));
+
+  const [updateCount, setUpdateCount] = useState<number>(0);
+
+  const [weekTexts, setWeekTexts] = useState<WeekTexts>(undefined);
+  const [editableDay, setEditableDay] = useState<Weekdays | null>(null);
+
   const [currentWeek, setCurrentWeek] = useState(moment().week());
   const [currentYear, setCurrentYear] = useState(moment().year());
   const [weekKey, setWeekKey] = useState(moment().week().toString() + moment().year().toString())
+  
+  useEffect(() => {
+    const fetchData = async (): Promise<WeekTexts> => {
+        return await mealPlan.current.getWeekMealPlan(weekKey);
+    };
 
-  interface DayInfo {
-    text: string;
-  }
-
-  const initialDayInfo: DayInfo = { text: '' };
-
-  useEffect(() => { // Pending GunDB integration: This function should instead get the meal plan from GunDB
-    if (!weekTexts[weekKey]) {
-      const initialTexts = Array(7).fill(initialDayInfo);
-      setWeekTexts(prevTexts => ({ ...prevTexts, [weekKey]: initialTexts }));
-    }
-
-  }, [weekKey, weekTexts, setCurrentYear]);
-
-  const handleDayClick = (index: number) => {
-    setEditableDay(index);
-  };
-
-  const handleTextChange = (text: string) => {
-    if (editableDay !== null) {
-      let texts = weekTexts[weekKey]
-      texts[editableDay] = {text: text}      
-      setWeekTexts({[weekKey]: texts});
-      // Pending GunDB integration: After having handled the text change, it should save the meal plan to GunDB
-    }
-  };
-
-  const showPreviousWeek = () => {
-    let newWeek = (currentWeek === 1 ? 52 : currentWeek - 1)
-    let newYear = (currentWeek <= 1 ? currentYear - 1 : currentYear)
+    fetchData()
+      .then((result) => {
+        setWeekTexts(result);
+        // Rerender component with meal plan data untill it is fetched
+        if (result === undefined) {
+          setUpdateCount((prevCount) => prevCount + 1);
+        }
+    }).catch((error) => {
+      console.log(error)
+    });
+  },[updateCount])
+    
+  const showPreviousWeek = async () => {
+    let newWeek = (currentWeek === 1 ? 52 : currentWeek - 1);
+    let newYear = (currentWeek <= 1 ? currentYear - 1 : currentYear);
+    let weekKey = newWeek.toString() + newYear.toString();
     setCurrentWeek(newWeek);
     setCurrentYear(newYear)
-    setWeekKey(newWeek.toString() + newYear.toString())
+    setWeekKey(weekKey)
+
+    let newMealPlan = await mealPlan.current.getWeekMealPlan(weekKey);
+    setWeekTexts(newMealPlan);
   };
 
-  const showNextWeek = () => {
-    let newWeek = currentWeek === 52 ? 1 : currentWeek + 1
-    let newYear = currentWeek >= 52 ? currentYear + 1 : currentYear
+  const showNextWeek = async () => {
+    let newWeek = (currentWeek === 52 ? 1 : currentWeek + 1);
+    let newYear = (currentWeek >= 52 ? currentYear + 1 : currentYear);
+    let weekKey = newWeek.toString() + newYear.toString();
     setCurrentWeek(newWeek);
     setCurrentYear(newYear)
-    setWeekKey(newWeek.toString() + newYear.toString())
-  };
+    setWeekKey(weekKey)
 
-  const renderDays = () => {
-    const weekDays = getCurrentWeekDays(currentWeek, currentYear);
-    const textsForCurrentWeek = weekTexts[weekKey] || Array(7).fill(initialDayInfo);
-    const colorScheme = useColorScheme() ?? 'light';
-
-    return weekDays.map((day, index) => (
-      <TouchableOpacity
-        key={index}
-        onPress={() => handleDayClick(index)}
-        style={[
-          styles.dayContainer, 
-          {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2},
-        ]}
-      >
-        <Text style={[styles.weekdaysText, { fontWeight: 'bold' }]}>{day}</Text>
-        {editableDay === index ? (
-          <TextInput
-            style={[styles.weekdaysText, { fontStyle: 'italic', color: Colors[colorScheme].text }]}
-            value={textsForCurrentWeek[index].text}
-            onChangeText={handleTextChange}
-            onBlur={() => setEditableDay(null)}
-            autoFocus
-          />
-        ) : (
-          <Text style={styles.weekdaysText}>{textsForCurrentWeek[index].text}</Text>
-        )}
-      </TouchableOpacity>
-    ));
+    let newMealPlan = await mealPlan.current.getWeekMealPlan(weekKey);
+    setWeekTexts(newMealPlan);
   };
   
+  const handleDayClick = (day: number) => {
+    setEditableDay(day);
+  };
+
+  const handleTextChange = async (text: string) => {
+    if (editableDay !== null) {
+      let newDayMeals: WeekTexts;
+      newDayMeals = {...weekTexts!, [Weekdays[editableDay]]: text}
+      setWeekTexts(newDayMeals);
+      await mealPlan.current.setWeekMealPlan(weekKey, newDayMeals);
+    }
+  };
+
   const colorScheme = useColorScheme() ?? 'light';
   return (
     <View style={styles.container}>
@@ -120,7 +97,15 @@ export default function MealScreen() {
         </Pressable>
       </View>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.weekdaysContainer}>{renderDays()}</View>
+        <View style={styles.weekdaysContainer}>
+          <DayRow WeekDay='Mon' index={Weekdays.Mon} text={weekTexts?.Mon} editableDay={editableDay} handleDayClick={handleDayClick} handleTextChange={handleTextChange}></DayRow>
+          <DayRow WeekDay='Tue' index={Weekdays.Tue} text={weekTexts?.Tue} editableDay={editableDay} handleDayClick={handleDayClick} handleTextChange={handleTextChange}></DayRow>
+          <DayRow WeekDay='Wed' index={Weekdays.Wed} text={weekTexts?.Wed} editableDay={editableDay} handleDayClick={handleDayClick} handleTextChange={handleTextChange}></DayRow>
+          <DayRow WeekDay='Thu' index={Weekdays.Thu} text={weekTexts?.Thu} editableDay={editableDay} handleDayClick={handleDayClick} handleTextChange={handleTextChange}></DayRow>
+          <DayRow WeekDay='Fri' index={Weekdays.Fri} text={weekTexts?.Fri} editableDay={editableDay} handleDayClick={handleDayClick} handleTextChange={handleTextChange}></DayRow>
+          <DayRow WeekDay='Sat' index={Weekdays.Sat} text={weekTexts?.Sat} editableDay={editableDay} handleDayClick={handleDayClick} handleTextChange={handleTextChange}></DayRow>
+          <DayRow WeekDay='Sun' index={Weekdays.Sun} text={weekTexts?.Sun} editableDay={editableDay} handleDayClick={handleDayClick} handleTextChange={handleTextChange}></DayRow>
+        </View>
       </ScrollView>
     </View>
   );
