@@ -18,7 +18,7 @@ export default function loginScreen () {
   const [authing, setAuthing] = useState(false)
   
   const toggleHidePassword = () => setHidePassword(!hidePassword)
-
+  
   function succesfulLogin (ack: any, user: UserGunDB): Boolean {    
     if (ack.err != undefined) {
       setWrongCredentials(true);
