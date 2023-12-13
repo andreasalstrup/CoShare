@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, StyleSheet, useColorScheme, TextInput } from 'react-native'
-import React from 'react'
+import { useRef } from 'react'
 import Colors from '../constants/Colors';
 
 type DayRowProps = {
@@ -11,12 +11,16 @@ type DayRowProps = {
 }
 
 export default function DayRow({ WeekDay, index, text, editableDay, handleDayClick, handleTextChange }: DayRowProps) {
-
   const colorScheme = useColorScheme() ?? 'light';  
+  const textInputRef = useRef<TextInput>(null);
+
   return (
     <TouchableOpacity
             key={index}
-            onPress={() => handleDayClick(index)}
+            onPress={() => {
+              handleDayClick(index) 
+              textInputRef.current?.focus()
+            }}
             style={[
               styles.dayContainer, 
               {backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2},
@@ -25,6 +29,7 @@ export default function DayRow({ WeekDay, index, text, editableDay, handleDayCli
             <Text style={[styles.weekdaysText, { fontWeight: 'bold', color: Colors[colorScheme].text }]}>{WeekDay}</Text>
             {editableDay === index ? (
               <TextInput
+                ref={textInputRef}
                 style={[styles.weekdaysText, { fontStyle: 'italic', color: Colors[colorScheme].text }]}
                 value={text}
                 onChangeText={handleTextChange}
