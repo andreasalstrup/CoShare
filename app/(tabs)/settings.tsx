@@ -8,7 +8,7 @@ import { userHandle } from '../../handlers/user';
 
 export default function SettingsScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const user = useRef(userHandle(gun));  
+  const user = useRef(userHandle(gun));
   const toggleModal = () => setIsModalVisible(() => !isModalVisible);
 
   function leaveGroup () : void {

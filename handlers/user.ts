@@ -1,4 +1,4 @@
-export interface IAuth {
+interface IAuth {
     create(fullName: string, email: string, phoneNumber: string, password: string, callback: (ack: any) => Boolean): void;
     login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void;
     logout() : void;

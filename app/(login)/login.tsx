@@ -5,12 +5,12 @@ import { ImageBackground, Pressable } from 'react-native';
 import { Link, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LogoAndName } from '../../components/LogoAndName';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { userHandle } from '../../handlers/user';
 import {groupHandle } from '../../handlers/group';
 export default function loginScreen () {
   const user = useRef(userHandle(gun));
-  const group = useRef(groupHandle(gun));  
+  const group = useRef(groupHandle(gun));
   const [phoneNumber, setPhoneNumber] = useState('12345678')
   const [password, setPassword] = useState('12345678')
   const [wrongCredentials, setWrongCredentials] = useState(false)
@@ -18,7 +18,7 @@ export default function loginScreen () {
   const [authing, setAuthing] = useState(false)
   
   const toggleHidePassword = () => setHidePassword(!hidePassword)
-  
+
   function succesfulLogin (ack: any, user: UserGunDB): Boolean {    
     if (ack.err != undefined) {
       setWrongCredentials(true);
