@@ -8,13 +8,20 @@ import { userHandle } from '../../handlers/user';
 
 export default function SettingsScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const user = useRef(userHandle(gun));
+  const user = useRef(userHandle(gun));  
   const toggleModal = () => setIsModalVisible(() => !isModalVisible);
 
-  const leaveGroup = () => {
-    //Remove from GUN group here
+  function leaveGroup () : void {
+    //Not implemented
+    console.log("Not implemented")
+    logout()
   }
 
+  function logout () : void {
+    user.current.logout()
+    router.replace('/login')
+  }
+  
   return (
     <View>
       <View>
@@ -44,10 +51,9 @@ export default function SettingsScreen() {
         onNo={() =>{
           toggleModal()
         }}/>
-        <Pressable onPress={()=>{
-          user.current.logout()
-          router.replace('/login')}
-          }><Text>Logout</Text></Pressable>
+        <Pressable style={styles.listButton} onPress={logout}>
+          <Text style={styles.leaveGroupText}>Logout</Text>          
+        </Pressable>        
     </View>
   );
 }

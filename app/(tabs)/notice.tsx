@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TextInput, useColorScheme, SafeAreaView, ScrollView } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import Colors from '../../constants/Colors';
+import { groupHandle } from '../../handlers/group';
 
 export default function NoticeScreen() {
   const colorScheme = useColorScheme() ?? 'light';
+  const group = useRef(groupHandle(gun)).current;
   const [houseRules, setHouseRules] = useState('');
+  const [groupId, setGroupId] = useState('')
+  const [groupName, setGroupName] = useState('')
   const users = [
     { name: 'Test Bruger', phone: '12 34 56 78', email: 'testbruger42@gmail.com' },
     { name: 'Andreas Alstrup', phone: '87 65 43 21', email: 'andreas.alstrup@gmail.com' },
   ];
+  useEffect(() => {
+    group.getUUID(setGroupId)
+    group.getGName(setGroupName)
+  }, [])
+  
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: Colors[colorScheme].background}]}>
       <ScrollView>
@@ -32,6 +41,11 @@ export default function NoticeScreen() {
               <Text>Email: {user.email}</Text>
             </View>
           ))}
+        </View>
+        <View style={styles.userCard}> 
+          <Text style={styles.title}>Group information</Text>
+          {groupId != '' && <Text selectable={true}>Group id: {groupId}</Text>}
+          {groupName != '' && <Text>Group name: {groupName}</Text>}
         </View>
       </ScrollView>
     </SafeAreaView>
