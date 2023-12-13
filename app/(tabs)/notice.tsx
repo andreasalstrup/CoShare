@@ -24,6 +24,8 @@ export default function NoticeScreen() {
       <ScrollView>
         <View>
           <Text style={styles.title}>Household Rules</Text>
+          {groupName != '' && <Text>Group name: {groupName}</Text>}
+          {groupId != '' && <Text selectable={true}>Group ID: {groupId}</Text>}
           <TextInput
             style={[styles.input, {color: Colors[colorScheme].text}]}
             placeholder="Click to make rules"
@@ -41,11 +43,6 @@ export default function NoticeScreen() {
               <Text>Email: {user.email}</Text>
             </View>
           ))}
-        </View>
-        <View style={styles.userCard}> 
-          <Text style={styles.title}>Group information</Text>
-          {groupId != '' && <Text selectable={true}>Group id: {groupId}</Text>}
-          {groupName != '' && <Text>Group name: {groupName}</Text>}
         </View>
       </ScrollView>
     </SafeAreaView>
