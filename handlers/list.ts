@@ -18,10 +18,10 @@ class ShoppingListHandler implements IShoppingList {
     constructor(gun: Gun) {
         this.gun = gun;
         this.user = gun.user();
-        user.get("group").on(data => {
+        this.user.get("group").on((data: { groupId: string }) => {
             this.groupId = data?.groupId.toString()
         })
-        user.get("fullName").on((data: string) => {
+        this.user.get("fullName").on((data: string) => {
             this.userName = data
         })
     }

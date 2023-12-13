@@ -1,5 +1,5 @@
 import {randomUUID} from 'expo-crypto';
-interface IGroup {
+export interface IGroup {
     create(groupName: string, callback : () => void): void;
     join(uuid: string, callback : (ack: Boolean) => void): void;
     checkIfInGroup(callback : (ack: Boolean) => void): void ;
