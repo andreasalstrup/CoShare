@@ -1,65 +1,45 @@
 import { Expense } from "./calculateExpenses";
 
-/*export const calculateBalance = (expenses: Expense[]) => {
-    
-    const totalSpent: { [name: string]: number } = {};
-    const userCount: { [name: string]: number } = {};
+export const calculateBalance = (expenses: Expense[], members: string[]) => {
+    const balanceMap: Record<string, number[]> = {};
+    const balance: { user: string, amount: number }[] = [];
 
-    expenses.forEach(({ user, amount }) => {
-        totalSpent[user] = (totalSpent[user] || 0) + amount;
-        userCount[user] = (userCount[user] || 0) + 1;
-    });
-
-    const users = Object.keys(totalSpent);
-    const totalUsers = users.length;
-    const averageAmount = users.reduce((acc, user) => acc + (totalSpent[user] / userCount[user]), 0) / totalUsers;
-
-    const calculatedBalances: { [name: string]: number } = {};
-    users.forEach((user) => {
-        calculatedBalances[user] = parseFloat(((totalSpent[user] / userCount[user]) - averageAmount).toFixed(2));
-    });
-
-    const calculatedBalances: { [name: string]: number } = {};
-    
-
-    const calculatedBalancesArray: {user: string, amount: number}[] = Object.entries(calculatedBalances).map(([user, amount]) => ({
-        user,
-        amount,
-    }));
-    
-    return calculatedBalancesArray;
-};*/
-
-export const calculateBalance = (expenses: Expense[]) => {
-    const balanceMap: Record<string, number> = {};
-    let averageAmount = 0;
-    let total = 0;
-    let uniqueUsers = new Set<string>();
-
-
-    // Calculate the total expenses and add users to set
-    expenses.forEach((expense) => {
-        uniqueUsers.add(expense.user)
-        total += expense.amount;
-    });
-
-    averageAmount = total/uniqueUsers.size;
-
-
-    //Calculate the balance for each user
-    expenses.forEach((expense) => {
-        const { user, amount } = expense;
-        if (!balanceMap[user]) {
-          balanceMap[user] = 0;
+    members.forEach((name) => {
+        if (!balanceMap[name]) {
+            balanceMap[name] = [];
         }
-        balanceMap[user] += amount;
+
+        balanceMap[name][0] = 0;
+        balanceMap[name][1] = 0;
+    })
+
+    //Calculate the amount paid for each user and initialse balanceMap
+    expenses.forEach((expense) => {
+        const { user, amount} = expense;
+
+        balanceMap[user][0] += amount;
     });
+
+    // Calculate the total expenses each user has been a part of
+    expenses.forEach((expense) => {
+        const { user, amount} = expense;
+        const users: string[] = JSON.parse(expense.users);
+
+        if(users.includes(user)){
+            balanceMap[user][1] += amount / users.length;
+        }
+    });
+
     for(var user in balanceMap){
-        balanceMap[user] -= averageAmount;
+        balanceMap[user][0] -= balanceMap[user][1];
     }
 
-    // Convert the balanceMap to an array of { user, amount }
-    const balance: {user: string, amount: number}[] = Object.entries(balanceMap).map(([user, amount]) => ({ user, amount }));
-  
+    for (const user in balanceMap) {
+        if (balanceMap[user][0] != undefined) {
+            balance.push({ user, amount: balanceMap[user][0] });
+        }
+    }
+
+
     return balance;
   }

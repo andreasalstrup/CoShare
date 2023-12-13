@@ -49,11 +49,10 @@ export default function ToBeBoughtScreen() {
 
   const [products, setProducts] = useState<ListData[]>([])
   const [productIds, setProductIds] = useState<string[]>([])
-  const [members, setMembers] = useState<Member[]>([])
-  const [memberIds, setMemberIds] = useState<string[]>([])
+  const [members, setMembers] = useState<string[]>([])
 
   const [productName, setProductName] = useState('');
-  const [selectedUsers, setSelectedUsers] = useState<Member[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [alreadyBought, setAlreadyBought] = useState(false);
   const [price, setPrice] = useState('0');
 
@@ -82,9 +81,9 @@ export default function ToBeBoughtScreen() {
     )
 
     shoppingListDB.current.onUsersUpdate(
-      (data : Member[], ids: string[]) => {
-        setMemberIds(ids)
+      (data : string[]) => {
         setMembers(data)
+        console.log(data)
         if(members.length == 0)
         {
           setSelectedUsers(data)
@@ -104,9 +103,10 @@ export default function ToBeBoughtScreen() {
   
   const editProduct = (index : number) => {
     setProductName(products[index].name)
-    let users: Member[] = []
-    for (const key in products[index].data.users) {
-      let member = members.find(m => m.name == products[index].data.users[key].name)
+    let users: string[] = []
+    for (const name in products[index].data.users) {
+      console.log(name)
+      let member = members.find(m => m == name)
       if(member){
         users.push(member)
       }
@@ -130,7 +130,7 @@ export default function ToBeBoughtScreen() {
   const saveEditedProduct = () => {
     if (itemToEdit != null) {
       let users: any = {}
-      selectedUsers.forEach((value, index) => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
+      selectedUsers.forEach((value, index) => users[members.findIndex(m => m == value)] = {key: value, name: value})
       console.log('pls work' +JSON.stringify(users,null,4))
       const editedProduct: ListData = { ...products[itemToEdit], 
         name: productName,
@@ -155,7 +155,7 @@ export default function ToBeBoughtScreen() {
   const saveAddedProduct = () => {
     const time = moment().format('YYYY.MM.DD');
     let users: any = {}
-    selectedUsers.forEach(value => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
+    selectedUsers.forEach(value => users[members.findIndex(m => m == value)] = {key: value, name: value})
     const newProduct: ListData = {
       name: productName,
       data: {
@@ -244,13 +244,13 @@ export default function ToBeBoughtScreen() {
                 pointerEvents='none'
               />
             </View>}
-            data={members.map(m => {return {label: m.name, value: m.name}})}
+            data={members.map(m => {return {label: m, value: m}})}
             labelField="label"
             valueField="value"
             placeholder={'Selected: ' + selectedUsers.length}
-            value={selectedUsers.map(u => u.name)}
+            value={selectedUsers.map(u => u)}
             onChange={item => {
-              setSelectedUsers(members.filter(m => item.includes(m.name)));
+              setSelectedUsers(members.filter(m => item.includes(m)));
             }}
             visibleSelectedItem={false}
           />

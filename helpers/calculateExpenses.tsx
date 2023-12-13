@@ -3,10 +3,12 @@ export class Expense {
     readonly timestamp: number;
     public user: string;
     public amount: number;
+    public users: string;
   
-    public constructor(user: string, amount: number, timestamp?: number, id?: number) {
+    public constructor(user: string, amount: number, users: string, timestamp?: number, id?: number) {
       this.user = user;
       this.amount = amount;
+      this.users = users;
 
       if (timestamp != undefined) {
         this.timestamp = timestamp;

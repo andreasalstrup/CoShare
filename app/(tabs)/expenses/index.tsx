@@ -49,14 +49,14 @@ export default function SettleScreen() {
   }
 
   let userGroup = '';
-  gun.user(userPub).get('group').get('groupId').once((id: string) => {
+  gun.user(userPub).get('group').get('groupId').open((id: string) => {
     userGroup = id;
     console.log(userGroup)
   });
 
   let username = '';
-  gun.user(userPub).get('fullName').open((data: any) => {
-    username = data;
+  gun.user(userPub).get('fullName').open((name: string) => {
+    username = name;
   });
   
   useEffect(() => {

@@ -8,12 +8,7 @@ type ListData = {
             user: string, 
             date: string
         }, 
-        users: { 
-            [key: string]: {
-                key: string,
-                name: string
-            } 
-        },
+        users: string[],
         bought: { 
             user: string, 
             date: string, 
@@ -22,10 +17,4 @@ type ListData = {
     }
 }
 
-//Temp model until I know how to get all users properly
-type Member = {
-    id: string,
-    key: string,
-    name: string
-}
 // type Ack = { ok: 0; pub: string; } | { err: string; }

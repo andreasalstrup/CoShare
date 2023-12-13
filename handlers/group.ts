@@ -21,10 +21,7 @@ class GroupHandle implements IGroup {
         let context = gun.get("groups").get("groupId").get(groupId)
         context.get("members").set({members: userPub})
         context.get("name").put(groupName)
-        user.get("group").put({groupId: groupId})
-        user.get('fullName').open((data: any) => {
-            context.get('expenses').set(new Expense(data, 0)); 
-        });       
+        user.get("group").put({groupId: groupId})     
         callback()
     }
 
@@ -37,10 +34,7 @@ class GroupHandle implements IGroup {
                 }else{                 
                     user = gun.user(userPub)
                     context.get("members").set({members: userPub})
-                    user.get("group").put({groupId: uuid})
-                    user.get('fullName').open((data: any) => {
-                        context.get('expenses').set(new Expense(data, 0)); 
-                    });                   
+                    user.get("group").put({groupId: uuid})                
                     callback(true)
                 }                
             }

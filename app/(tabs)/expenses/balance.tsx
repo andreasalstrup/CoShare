@@ -25,10 +25,17 @@ export default function BalanceScreen() {
   const expenses = useRef(expensesHandle(gun));  
   const colorScheme = useColorScheme() ?? 'light';
   const [data, setData] = useState<Expense[]>([]);
+  const [members, setMembers] = useState<string[]>([]);
 
   function getExpenses(expenseData: Expense[]): void{ 
     if (!expenseListCmp(expenseData, data)){
       setData(expenseData);
+    }
+  }
+
+  function getGroupMembers(_members: string[]): void{
+    if (_members != members){
+      setMembers(_members);
     }
   }
 
@@ -39,6 +46,8 @@ export default function BalanceScreen() {
 
   useEffect(() => {
     expenses.current.getExpenses(userGroup, getExpenses);
+    expenses.current.getGroupMembers(userGroup, getGroupMembers);
+    console.log(calculateBalance(data, members))
   }, [])
 
   const renderItem = ({ item, index }: { item: {user: string, amount: number}; index: number }) => {
@@ -58,7 +67,7 @@ export default function BalanceScreen() {
     <View>
       <FlatList
         style={{marginTop: 48}}
-        data={calculateBalance(data)}
+        data={calculateBalance(data, members)}
         renderItem={renderItem}
       />
     </View>

@@ -2,6 +2,7 @@ import { Expense, Transaction } from "../helpers/calculateExpenses";
 interface IExpenses {
     getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void;
     settleExpenses(groupId: string, transaction: Transaction): void;
+    getGroupMembers(groupId: string, callback: (users: string[]) => void): void
 }
 
 class ExpensesHandle implements IExpenses{
@@ -24,12 +25,28 @@ class ExpensesHandle implements IExpenses{
     }
 
     public settleExpenses(groupId: string, transaction: Transaction): void {
-        this.settle(groupId, transaction.from, false, transaction.amount);
-        this.settle(groupId, transaction.to, true, transaction.amount);
+        this.settle(groupId, transaction.from, [transaction.from, transaction.to], false, transaction.amount);
+        this.settle(groupId, transaction.to, [transaction.from, transaction.to], true, transaction.amount);
     }
 
-    private settle(groupId: string, user: string, isReceiver: boolean, amount: number): void {
-        gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount));
+    public getGroupMembers(groupId: string, callback: (users: string[]) => void): void{
+        let users: string[] = [];
+        gun.get('groups').get('groupId').get(groupId).get('members').open((data: any) => {
+            for (const key in data)
+            {
+                if(data[key].members != undefined)
+                {
+                    gun.user(data[key].members).get('fullName').open((name: string) => {
+                        users.push(name);
+                    })
+                }
+            }
+            callback(users)
+        });
+    }
+
+    private settle(groupId: string, user: string, users: string[], isReceiver: boolean, amount: number): void {
+        gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount, JSON.stringify(users)));
     }
 
     private isValidExpenseData(expense: Expense): boolean{
