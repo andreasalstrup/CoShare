@@ -13,20 +13,29 @@ export const calculateBalance = (expenses: Expense[], members: string[]) => {
         balanceMap[name][1] = 0;
     })
 
-    //Calculate the amount paid for each user and initialse balanceMap
+    //Calculate the amount paid for each user
     expenses.forEach((expense) => {
         const { user, amount} = expense;
-
+        console.log(expense)
         balanceMap[user][0] += amount;
     });
 
     // Calculate the total expenses each user has been a part of
     expenses.forEach((expense) => {
-        const { user, amount} = expense;
-        const users: string[] = JSON.parse(expense.users);
-
-        if(users.includes(user)){
-            balanceMap[user][1] += amount / users.length;
+        if(expense != undefined){
+            const { amount } = expense;
+        
+            const parsedObject: Record<string, { key: string; name: string }> = JSON.parse(expense.users);
+            console.log(amount +' '+parsedObject)
+            const users: string[] = Object.values(parsedObject).map(obj => obj.name);
+            console.log(users)
+            const parsedUsers = Array.isArray(users) ? users : [users];
+    
+            parsedUsers.forEach((user) => {
+                if(balanceMap[user][1] != undefined && user != undefined){
+                    balanceMap[user][1] += amount / parsedUsers.length;
+                }
+            })
         }
     });
 
@@ -39,7 +48,6 @@ export const calculateBalance = (expenses: Expense[], members: string[]) => {
             balance.push({ user, amount: balanceMap[user][0] });
         }
     }
-
 
     return balance;
   }

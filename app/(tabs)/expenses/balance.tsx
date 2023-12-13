@@ -34,7 +34,8 @@ export default function BalanceScreen() {
   }
 
   function getGroupMembers(_members: string[]): void{
-    if (_members != members){
+    console.log(members.length)
+    if (_members != members && (_members.length > 0 || members.length == 0)){
       setMembers(_members);
     }
   }
@@ -47,7 +48,6 @@ export default function BalanceScreen() {
   useEffect(() => {
     expenses.current.getExpenses(userGroup, getExpenses);
     expenses.current.getGroupMembers(userGroup, getGroupMembers);
-    console.log(calculateBalance(data, members))
   }, [])
 
   const renderItem = ({ item, index }: { item: {user: string, amount: number}; index: number }) => {

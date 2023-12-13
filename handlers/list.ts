@@ -36,12 +36,6 @@ class ShoppingListHandler implements IShoppingList {
             {
                 if(this.isValidListData(data[key]))
                 {
-                    for (const userKey in data[key].data.users)
-                    {
-                        if(data[key].data.users[userKey] == null){
-                            delete data[key].data.users[userKey]
-                        } 
-                    }
                     ids.push(key)
                     list.push(data[key])
                 }
@@ -73,7 +67,7 @@ class ShoppingListHandler implements IShoppingList {
     public updateItemInList(item: ListData, id: string): void {
         let group = this.gun.get('groups').get('groupId').get(this.groupId)
 
-        group.get('members').load((data: any) => {
+        /*group.get('members').load((data: any) => {
             console.log(data)
             for (const key in data)
             {
@@ -82,17 +76,17 @@ class ShoppingListHandler implements IShoppingList {
                     group.get('shoppingList').get(id).get('data').get('users').get(key).put(null)
                 }
             }
-        })
+        })*/
         
         group.get('shoppingList').get(id).put(item)
     }
 
     public deleteFromList(id: string): void {  
-        this.gun.get('groups').get(this.groupId).get('shoppingList').get(id).put(null)
+        this.gun.get('groups').get('groupId').get(this.groupId).get('shoppingList').get(id).put(null)
     }
 
     public buyFromList(item: ListData, id?: string): void {
-        item.data.bought!.user =  this.userName
+        item.data.bought!.user = this.userName
         let group = this.gun.get('groups').get('groupId').get(this.groupId)
 
         if(id)

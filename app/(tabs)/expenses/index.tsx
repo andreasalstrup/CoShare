@@ -8,6 +8,7 @@ import { calculateExpenses, Expense, Transaction } from '../../../helpers/calcul
 import Colors from '../../../constants/Colors';
 import AreYouSureModal from '../../../components/AreYouSureModal';
 import { expensesHandle } from '../../../handlers/expenses';
+import { calculateBalance } from '../../../helpers/calculateBalance';
 
 function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
   if (cmp1.length === cmp2.length){
@@ -31,6 +32,8 @@ export default function SettleScreen() {
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
   const swipeableRows : Swipeable[] = [];
   const [data, setData] = useState<Expense[]>([]);
+  const [members, setMembers] = useState<string[]>([]);
+
   const openModal = (item: Transaction) => {
     setSelectedItem(item);
     setModalVisible(true);
@@ -48,8 +51,14 @@ export default function SettleScreen() {
     }
   }
 
+  function getGroupMembers(_members: string[]): void{
+    if (_members != members && (_members.length > 0 || members.length == 0)){
+      setMembers(_members);
+    }
+  }
+
   let userGroup = '';
-  gun.user(userPub).get('group').get('groupId').open((id: string) => {
+  gun.user(userPub).get('group').get('groupId').once((id: string) => {
     userGroup = id;
     console.log(userGroup)
   });
@@ -61,6 +70,7 @@ export default function SettleScreen() {
   
   useEffect(() => {
     expenses.current.getExpenses(userGroup, getExpenses);
+    expenses.current.getGroupMembers(userGroup, getGroupMembers);
   }, [])
 
   function renderItem ({ item, index }: { item: Transaction; index: number }) : React.JSX.Element {
@@ -100,7 +110,7 @@ export default function SettleScreen() {
     <View>       
       <FlatList
         style={{marginTop: 48}}
-        data={calculateExpenses(data)}
+        data={calculateExpenses(calculateBalance(data, members))}
         renderItem={renderItem}        
       />
       <AreYouSureModal
