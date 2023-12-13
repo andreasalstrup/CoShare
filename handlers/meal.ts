@@ -17,20 +17,35 @@ class MealPlanHandle implements IMealPlan {
     public async getWeekMealPlan(weekKey: string): Promise<WeekTexts> {
         await this.waitForId();
 
-        let dayMeals: WeekTexts = {
-            Mon: "",
-            Tue: "",
-            Wed: "",
-            Thu: "",
-            Fri: "",
-            Sat: "",
-            Sun: ""
-        };
+        let dayMeals: WeekTexts = undefined;
 
-        await this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
-            dayMeals = data
-        });
-        
+        const waitForweekText = async (): Promise<void> => {
+            return new Promise<void>((resolve) => {
+                this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
+                    console.log("data: " + JSON.stringify(data))
+                    const check = () => {
+                        if (data || dayMeals) {
+                            dayMeals = data
+                            resolve();
+                        } else {
+                            dayMeals = {
+                                Mon: "",
+                                Tue: "",
+                                Wed: "",
+                                Thu: "",
+                                Fri: "",
+                                Sat: "",
+                                Sun: ""
+                            };
+                            setTimeout(check, 100);
+                        };
+                    };
+                    check();
+                });
+            });
+        };
+    
+        await waitForweekText();
         return dayMeals;
     }
 
