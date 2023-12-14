@@ -66,17 +66,6 @@ class ShoppingListHandler implements IShoppingList {
 
     public updateItemInList(item: ListData, id: string): void {
         let group = this.gun.get('groups').get('groupId').get(this.groupId)
-
-        /*group.get('members').load((data: any) => {
-            console.log(data)
-            for (const key in data)
-            {
-                if(item.data.users == null)
-                {
-                    group.get('shoppingList').get(id).get('data').get('users').get(key).put(null)
-                }
-            }
-        })*/
         
         group.get('shoppingList').get(id).put(item)
     }
@@ -96,7 +85,7 @@ class ShoppingListHandler implements IShoppingList {
 
         group.get('boughtList').set(item)
 
-        gun.get('groups').get('groupId').get(this.groupId).get('expenses').set(new Expense(this.userName, item.data.bought!.price, JSON.stringify(item.data.users)));
+        gun.get('groups').get('groupId').get(this.groupId).get('expenses').set(new Expense(this.userName, item.data.bought!.price, item.data.users));
     }
 
     private isValidListData(item: ListData): Boolean {

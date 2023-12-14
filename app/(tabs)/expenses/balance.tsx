@@ -34,8 +34,7 @@ export default function BalanceScreen() {
   }
 
   function getGroupMembers(_members: string[]): void{
-    console.log(members.length)
-    if (_members != members && (_members.length > 0 || members.length == 0)){
+    if (_members != members){
       setMembers(_members);
     }
   }
@@ -50,13 +49,15 @@ export default function BalanceScreen() {
     expenses.current.getGroupMembers(userGroup, getGroupMembers);
   }, [])
 
+  let previousBalance: { user: string, amount: number }[] = [];
+
   const renderItem = ({ item, index }: { item: {user: string, amount: number}; index: number }) => {
     return (
       <View style={[styles.container, { backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2 }]}>
         <View style={styles.item}>
           <Text style={styles.itemText}>{item.user}</Text>
           <Text style={[styles.itemAmount, { color: item.amount >= 0 ? (item.amount == 0 ? 'black' : '#5CBCA9') : '#E35F52' }]}>
-            {item.amount > 0 ? "+" + item.amount.toFixed(2) : item.amount.toFixed(2)} kr.
+            {item.amount > 0 ? "+" + item.amount : item.amount} kr.
           </Text>
         </View>
       </View>
@@ -67,7 +68,7 @@ export default function BalanceScreen() {
     <View>
       <FlatList
         style={{marginTop: 48}}
-        data={calculateBalance(data, members)}
+        data={previousBalance = calculateBalance(data, members, previousBalance)}
         renderItem={renderItem}
       />
     </View>

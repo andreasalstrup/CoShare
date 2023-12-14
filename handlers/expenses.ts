@@ -25,11 +25,8 @@ class ExpensesHandle implements IExpenses{
     }
 
     public settleExpenses(groupId: string, transaction: Transaction): void {
-        let data: {users: string[]} = {users: []};
-        data.users.push(transaction.from);
-        data.users.push(transaction.to);
-        this.settle(groupId, transaction.from, data.users, false, transaction.amount);
-        this.settle(groupId, transaction.to, data.users, true, transaction.amount);
+        this.settle(groupId, transaction.from, [transaction.from, transaction.to], false, transaction.amount);
+        this.settle(groupId, transaction.to, [transaction.from, transaction.to], true, transaction.amount);
     }
 
     public getGroupMembers(groupId: string, callback: (users: string[]) => void): void{
@@ -49,7 +46,6 @@ class ExpensesHandle implements IExpenses{
     }
 
     private settle(groupId: string, user: string, users: string[], isReceiver: boolean, amount: number): void {
-        console.log(user+' '+amount+' '+JSON.stringify(users))
         gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount, JSON.stringify(users)));
     }
 

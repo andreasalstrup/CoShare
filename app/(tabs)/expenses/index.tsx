@@ -52,7 +52,7 @@ export default function SettleScreen() {
   }
 
   function getGroupMembers(_members: string[]): void{
-    if (_members != members && (_members.length > 0 || members.length == 0)){
+    if (_members != members){
       setMembers(_members);
     }
   }
@@ -72,6 +72,8 @@ export default function SettleScreen() {
     expenses.current.getExpenses(userGroup, getExpenses);
     expenses.current.getGroupMembers(userGroup, getGroupMembers);
   }, [])
+
+  let previousBalance: { user: string, amount: number }[] = [];
 
   function renderItem ({ item, index }: { item: Transaction; index: number }) : React.JSX.Element {
     return (
@@ -110,7 +112,7 @@ export default function SettleScreen() {
     <View>       
       <FlatList
         style={{marginTop: 48}}
-        data={calculateExpenses(calculateBalance(data, members))}
+        data={calculateExpenses(previousBalance = calculateBalance(data, members, previousBalance))}
         renderItem={renderItem}        
       />
       <AreYouSureModal

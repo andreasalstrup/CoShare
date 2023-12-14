@@ -8,7 +8,7 @@ type ListData = {
             user: string, 
             date: string
         }, 
-        users: string[],
+        users: string,
         bought: { 
             user: string, 
             date: string, 

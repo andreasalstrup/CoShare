@@ -103,8 +103,10 @@ export default function ToBeBoughtScreen() {
   
   const editProduct = (index : number) => {
     setProductName(products[index].name)
-    let users: string[] = []
-    for (const name in products[index].data.users) {
+    const parsedUsers = JSON.parse(products[index].data.users); 
+    console.log(products[index].data.users+'hej')
+    let users: string[] = Array.isArray(parsedUsers) ? parsedUsers : [parsedUsers]
+    for (const name in users) {
       console.log(name)
       let member = members.find(m => m == name)
       if(member){
@@ -129,14 +131,14 @@ export default function ToBeBoughtScreen() {
 
   const saveEditedProduct = () => {
     if (itemToEdit != null) {
-      let users: any = {}
-      selectedUsers.forEach((value, index) => users[members.findIndex(m => m == value)] = {key: value, name: value})
-      console.log('pls work' +JSON.stringify(users,null,4))
+      let users: string[] = []
+      selectedUsers.forEach(value => users.push(value))
+      users = users.filter(user => user !== null)
       const editedProduct: ListData = { ...products[itemToEdit], 
         name: productName,
         data: {
           ...products[itemToEdit].data,
-          users: users,
+          users: JSON.stringify(users),
           bought: alreadyBought ? {user: username, date: moment().format('YYYY.MM.DD'), price: Number(price)} : null
         }
       }
@@ -154,13 +156,14 @@ export default function ToBeBoughtScreen() {
 
   const saveAddedProduct = () => {
     const time = moment().format('YYYY.MM.DD');
-    let users: any = {}
-    selectedUsers.forEach(value => users[members.findIndex(m => m == value)] = {key: value, name: value})
+    let users: string[] = []
+    selectedUsers.forEach(value => users[members.findIndex(m => m == value)] = value)
+    users = users.filter(user => user !== null)
     const newProduct: ListData = {
       name: productName,
       data: {
         added: {user: username, date: time},
-        users: users,
+        users: JSON.stringify(users),
         bought: alreadyBought ? {user: username, date: time, price: Number(price)} : null
       }
     }
