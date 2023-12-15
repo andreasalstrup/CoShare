@@ -40,7 +40,6 @@ class GroupHandle implements IGroup {
                     context.get("members").set({members: userPub})
                     user.get("group").put({groupId: uuid})  
                     gun.user(userPub).get('fullName').open((data: any) => {
-                        console.log(new Expense(data, 0, JSON.stringify([data])))
                         gun.get('groups').get('groupId').get(uuid).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
                     });              
                     callback(true)

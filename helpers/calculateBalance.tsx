@@ -40,7 +40,7 @@ export const calculateBalance = (expenses: Expense[], members: string[], previou
 
                 const parsedUsers = JSON.parse(usersString);
                 const users = Array.isArray(parsedUsers) ? parsedUsers : [parsedUsers];
-                console.log(users)
+
                 users.forEach((user) => {
                     if(user !== undefined && balanceMap[user] !== undefined && balanceMap[user][1] !== undefined){
                         balanceMap[user][1] += amount / parsedUsers.length;

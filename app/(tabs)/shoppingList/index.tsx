@@ -83,7 +83,6 @@ export default function ToBeBoughtScreen() {
     shoppingListDB.current.onUsersUpdate(
       (data : string[]) => {
         setMembers(data)
-        console.log(data)
         if(members.length == 0)
         {
           setSelectedUsers(data)
@@ -104,10 +103,8 @@ export default function ToBeBoughtScreen() {
   const editProduct = (index : number) => {
     setProductName(products[index].name)
     const parsedUsers = JSON.parse(products[index].data.users); 
-    console.log(products[index].data.users+'hej')
     let users: string[] = Array.isArray(parsedUsers) ? parsedUsers : [parsedUsers]
     for (const name in users) {
-      console.log(name)
       let member = members.find(m => m == name)
       if(member){
         users.push(member)

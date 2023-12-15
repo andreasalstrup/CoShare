@@ -21,16 +21,13 @@ class ShoppingListHandler implements IShoppingList {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.user = gun.user();
+        this.user = gun.user(userPub);
         this.user.get("group").on((data: { groupId: string }) => {
             this.groupId = data?.groupId.toString()
         })
         this.user.get("fullName").on((data: string) => {
             this.userName = data
         })
-        user.get('fullName').open((data: any) => {
-              this.userName = data;
-        });
     }
 
     public onListUpdate(callback: (data: ListData[], ids: string[]) => void): void {
@@ -50,7 +47,7 @@ class ShoppingListHandler implements IShoppingList {
     }
 
     public onBoughtListUpdate(callback: (data: ListData[], ids: string[]) => void): void {
-        this.gun.get('groups').get(this.groupId).get('boughtList').open((data: any) => {
+        this.gun.get('groups').get('groupId').get(this.groupId).get('boughtList').open((data: any) => {
             let list: ListData[] = []
             let ids: string[] = []
             for (const key in data)
