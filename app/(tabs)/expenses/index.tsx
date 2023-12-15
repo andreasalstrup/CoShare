@@ -1,39 +1,38 @@
-import { StyleSheet, Pressable, Dimensions, useColorScheme } from 'react-native';
-import React, { useState, useRef } from 'react';
+import { StyleSheet, useColorScheme} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
 import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { calculateExpenses } from '../../../helpers/calculateExpenses';
+import { calculateExpenses, Expense, Transaction } from '../../../helpers/calculateExpenses';
 import Colors from '../../../constants/Colors';
 import AreYouSureModal from '../../../components/AreYouSureModal';
+import { expensesHandle } from '../../../handlers/expenses';
+import { calculateBalance } from '../../../helpers/calculateBalance';
 
-
-type Expense = {
-  user: string;
-  amount: number;
+function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
+  if (cmp1.length === cmp2.length){
+    for (let i = 0; i < cmp1.length; i++){
+      if (!(cmp1[i].equals(cmp2[i]))){
+        return false
+      }
+    }
+  }else{
+    return false
+  }
+  return true
 };
 
-type Transaction = {
-  from: string;
-  to: string;
-  amount: number;
-};
 
-const DATA: Expense[] = [
-  { user: 'Martin', amount: 90 },
-  { user: 'Andreas', amount: 30 },
-  { user: 'Bisgaard', amount: 0 },
-  { user: 'Mike', amount: 85 },
-];
-
-const calculatedExpenses = calculateExpenses(DATA);
 
 export default function SettleScreen() {
+  const expenses = useRef(expensesHandle(gun));  
   const colorScheme = useColorScheme() ?? 'light';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null);
-  const swipeableRows : Swipeable[] = [] 
+  const swipeableRows : Swipeable[] = [];
+  const [data, setData] = useState<Expense[]>([]);
+  const [members, setMembers] = useState<string[]>([]);
 
   const openModal = (item: Transaction) => {
     setSelectedItem(item);
@@ -46,11 +45,40 @@ export default function SettleScreen() {
     swipeableRows.map((row) => row.close())
   };
 
-  const renderItem = ({ item, index }: { item: Transaction; index: number }) => {
+  function getExpenses(expenseData: Expense[]): void{ 
+    if (!expenseListCmp(expenseData, data)){
+      setData(expenseData);
+    }
+  }
+
+  function getGroupMembers(_members: string[]): void{
+    if (_members != members){
+      setMembers(_members);
+    }
+  }
+
+  let userGroup = '';
+  gun.user(userPub).get('group').get('groupId').once((id: string) => {
+    userGroup = id;
+  });
+
+  let username = '';
+  gun.user(userPub).get('fullName').once((name: string) => {
+    username = name;
+  });
+  
+  useEffect(() => {
+    expenses.current.getExpenses(userGroup, getExpenses);
+    expenses.current.getGroupMembers(userGroup, getGroupMembers);
+  }, [])
+
+  let previousBalance: { user: string, amount: number }[] = [];
+
+  function renderItem ({ item, index }: { item: Transaction; index: number }) : React.JSX.Element {
     return (
       <Swipeable
         ref={ref => ref != null ? swipeableRows[index] = ref : undefined}
-        friction={1.5}
+        friction={1.5} 
         overshootFriction={8}
         renderLeftActions={leftSwipeAction}
         onSwipeableOpen={() => openModal(item)}
@@ -80,11 +108,11 @@ export default function SettleScreen() {
   };
 
   return (
-    <View>
+    <View>       
       <FlatList
         style={{marginTop: 48}}
-        data={calculatedExpenses}
-        renderItem={renderItem}
+        data={calculateExpenses(previousBalance = calculateBalance(data, members, previousBalance))}
+        renderItem={renderItem}        
       />
       <AreYouSureModal
         title='Confirm Payment'
@@ -94,6 +122,9 @@ export default function SettleScreen() {
           closeModal()
         }}
         onYes={() =>{
+          if(selectedItem != null){
+            expenses.current.settleExpenses(userGroup, selectedItem);
+          }
           closeModal()
         }}
         onNo={() =>{

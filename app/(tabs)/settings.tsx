@@ -5,16 +5,17 @@ import { useRef, useState } from 'react';
 import AreYouSureModal from '../../components/AreYouSureModal';
 import { router } from 'expo-router';
 import { userHandle } from '../../handlers/user';
+import { groupHandle } from '../../handlers/group';
 
 export default function SettingsScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const user = useRef(userHandle(gun));
+  const group = useRef(groupHandle(gun));
   const toggleModal = () => setIsModalVisible(() => !isModalVisible);
 
   function leaveGroup () : void {
-    //Not implemented
-    console.log("Not implemented")
-    logout()
+    group.current.leave()
+    router.replace('/group')
   }
 
   function logout () : void {

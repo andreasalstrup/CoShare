@@ -3,33 +3,61 @@ import { Text, View, } from '../../../components/Themed';
 import { FlatList } from 'react-native-gesture-handler';
 import { calculateBalance } from '../../../helpers/calculateBalance';
 import Colors from '../../../constants/Colors';
+import { Expense} from '../../../helpers/calculateExpenses';
+import { expensesHandle } from '../../../handlers/expenses';
+import { useEffect, useRef, useState } from 'react';
 
-
-type Expense = {
-  user: string;
-  amount: number;
-};
-
-const DATA: Expense[] = [
-  { user: 'Martin', amount: 90 },
-  { user: 'Andreas', amount: 30 },
-  { user: 'Bisgaard', amount: 0 },
-  { user: 'Mike', amount: 85 },
-];
-
-const calculatedBalances = calculateBalance(DATA);
+function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
+  if (cmp1.length === cmp2.length){
+    for (let i = 0; i < cmp1.length; i++){
+      if (!(cmp1[i].equals(cmp2[i]))){
+        return false
+      }
+    }
+  }else{
+    return false
+  }
+  return true
+}
 
 
 export default function BalanceScreen() {
+  const expenses = useRef(expensesHandle(gun));  
   const colorScheme = useColorScheme() ?? 'light';
+  const [data, setData] = useState<Expense[]>([]);
+  const [members, setMembers] = useState<string[]>([]);
 
-  const renderItem = ({ item, index }: { item: Expense; index: number }) => {
+  function getExpenses(expenseData: Expense[]): void{ 
+    if (!expenseListCmp(expenseData, data)){
+      setData(expenseData);
+    }
+  }
+
+  function getGroupMembers(_members: string[]): void{
+    if (_members != members){
+      setMembers(_members);
+    }
+  }
+
+  let userGroup = '';
+  gun.user(userPub).get('group').get('groupId').once((id: string) => {
+    userGroup = id;
+  });
+
+  useEffect(() => {
+    expenses.current.getExpenses(userGroup, getExpenses);
+    expenses.current.getGroupMembers(userGroup, getGroupMembers);
+  }, [])
+
+  let previousBalance: { user: string, amount: number }[] = [];
+
+  const renderItem = ({ item, index }: { item: {user: string, amount: number}; index: number }) => {
     return (
       <View style={[styles.container, { backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2 }]}>
         <View style={styles.item}>
           <Text style={styles.itemText}>{item.user}</Text>
           <Text style={[styles.itemAmount, { color: item.amount >= 0 ? (item.amount == 0 ? 'black' : '#5CBCA9') : '#E35F52' }]}>
-            {item.amount > 0 ? "+" + item.amount.toFixed(2) : item.amount.toFixed(2)} kr.
+            {item.amount > 0 ? "+" + item.amount : item.amount} kr.
           </Text>
         </View>
       </View>
@@ -40,7 +68,7 @@ export default function BalanceScreen() {
     <View>
       <FlatList
         style={{marginTop: 48}}
-        data={calculatedBalances}
+        data={previousBalance = calculateBalance(data, members, previousBalance)}
         renderItem={renderItem}
       />
     </View>

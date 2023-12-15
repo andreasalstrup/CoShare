@@ -49,11 +49,10 @@ export default function ToBeBoughtScreen() {
 
   const [products, setProducts] = useState<ListData[]>([])
   const [productIds, setProductIds] = useState<string[]>([])
-  const [members, setMembers] = useState<Member[]>([])
-  const [memberIds, setMemberIds] = useState<string[]>([])
+  const [members, setMembers] = useState<string[]>([])
 
   const [productName, setProductName] = useState('');
-  const [selectedUsers, setSelectedUsers] = useState<Member[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [alreadyBought, setAlreadyBought] = useState(false);
   const [price, setPrice] = useState('0');
 
@@ -68,6 +67,11 @@ export default function ToBeBoughtScreen() {
   const toggleModalBuyItem = () => setIsModalBuyItemVisible(() => !isModalBuyItemVisible);
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
+  let username = '';
+  gun.user(userPub).get('fullName').open((data: any) => {
+    username = data;
+  });
+
   useEffect(() =>{
     shoppingListDB.current.onListUpdate(
       (data : ListData[], ids: string[]) => {
@@ -77,8 +81,7 @@ export default function ToBeBoughtScreen() {
     )
 
     shoppingListDB.current.onUsersUpdate(
-      (data : Member[], ids: string[]) => {
-        setMemberIds(ids)
+      (data : string[]) => {
         setMembers(data)
         if(members.length == 0)
         {
@@ -99,9 +102,10 @@ export default function ToBeBoughtScreen() {
   
   const editProduct = (index : number) => {
     setProductName(products[index].name)
-    let users: Member[] = []
-    for (const key in products[index].data.users) {
-      let member = members.find(m => m.name == products[index].data.users[key].name)
+    const parsedUsers = JSON.parse(products[index].data.users); 
+    let users: string[] = Array.isArray(parsedUsers) ? parsedUsers : [parsedUsers]
+    for (const name in users) {
+      let member = members.find(m => m == name)
       if(member){
         users.push(member)
       }
@@ -113,7 +117,7 @@ export default function ToBeBoughtScreen() {
     const editedProduct = { ...products[itemToBuy],
       data: {
         ...products[itemToBuy].data,
-        bought: {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)}
+        bought: {user: username, date: moment().format('YYYY.MM.DD'), price: Number(price)}
       }
     }
     shoppingListDB.current.buyFromList(editedProduct, productIds.at(itemToBuy))
@@ -124,15 +128,14 @@ export default function ToBeBoughtScreen() {
 
   const saveEditedProduct = () => {
     if (itemToEdit != null) {
-      let users: any = {}
-      selectedUsers.forEach((value, index) => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
-      
+      let users: string[] = selectedUsers;
+      users = users.filter(user => user !== null)
       const editedProduct: ListData = { ...products[itemToEdit], 
         name: productName,
         data: {
           ...products[itemToEdit].data,
-          users: users,
-          bought: alreadyBought ? {user: "Me", date: moment().format('YYYY.MM.DD'), price: Number(price)} : null
+          users: JSON.stringify(users),
+          bought: alreadyBought ? {user: username, date: moment().format('YYYY.MM.DD'), price: Number(price)} : null
         }
       }
 
@@ -149,14 +152,14 @@ export default function ToBeBoughtScreen() {
 
   const saveAddedProduct = () => {
     const time = moment().format('YYYY.MM.DD');
-    let users: any = {}
-    selectedUsers.forEach(value => users[memberIds[members.findIndex(m => m.key == value.key)]] = {key: value.key, name: value.name})
+    let users: string[] = selectedUsers;
+    users = users.filter(user => user !== null)
     const newProduct: ListData = {
       name: productName,
       data: {
-        added: {user: "Me", date: time},
-        users: users,
-        bought: alreadyBought ? {user: "Me", date: time, price: Number(price)} : null
+        added: {user: username, date: time},
+        users: JSON.stringify(users),
+        bought: alreadyBought ? {user: username, date: time, price: Number(price)} : null
       }
     }
     if(newProduct.data.bought == null) {
@@ -239,13 +242,13 @@ export default function ToBeBoughtScreen() {
                 pointerEvents='none'
               />
             </View>}
-            data={members.map(m => {return {label: m.name, value: m.name}})}
+            data={members.map(m => {return {label: m, value: m}})}
             labelField="label"
             valueField="value"
             placeholder={'Selected: ' + selectedUsers.length}
-            value={selectedUsers.map(u => u.name)}
+            value={selectedUsers}
             onChange={item => {
-              setSelectedUsers(members.filter(m => item.includes(m.name)));
+              setSelectedUsers(members.filter(m => item.includes(m)));
             }}
             visibleSelectedItem={false}
           />

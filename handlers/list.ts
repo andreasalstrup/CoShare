@@ -1,7 +1,9 @@
+import { Expense } from "../helpers/calculateExpenses";
+
 interface IShoppingList {
     onListUpdate(callback: (data: ListData[], ids: string[]) => void): void
     onBoughtListUpdate(callback: (data: ListData[], ids: string[]) => void): void
-    onUsersUpdate(callback: (data: Member[], ids: string[]) => void): void
+    onUsersUpdate(callback: (data: string[]) => void): void
     addToList(item: ListData): void;
     updateItemInList(item: ListData, id: string): void;
     deleteFromList(id: string): void;
@@ -19,7 +21,7 @@ class ShoppingListHandler implements IShoppingList {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.user = gun.user();
+        this.user = gun.user(userPub);
         this.user.get("group").on((data: { groupId: string }) => {
             this.groupId = data?.groupId.toString()
         })
@@ -29,20 +31,13 @@ class ShoppingListHandler implements IShoppingList {
     }
 
     public onListUpdate(callback: (data: ListData[], ids: string[]) => void): void {
-        this.gun.get('groups').get(this.groupId).get('shoppingList').open((data: any) => {
+        this.gun.get('groups').get('groupId').get(this.groupId).get('shoppingList').open((data: any) => {
             let list: ListData[] = []
             let ids: string[] = []
             for (const key in data)
             {
                 if(this.isValidListData(data[key]))
                 {
-                    for (const userKey in data[key].data.users)
-                    {
-                        if(data[key].data.users[userKey] == null){
-                            delete data[key].data.users[userKey]
-                        } 
-                    }
-                    
                     ids.push(key)
                     list.push(data[key])
                 }
@@ -52,7 +47,7 @@ class ShoppingListHandler implements IShoppingList {
     }
 
     public onBoughtListUpdate(callback: (data: ListData[], ids: string[]) => void): void {
-        this.gun.get('groups').get(this.groupId).get('boughtList').open((data: any) => {
+        this.gun.get('groups').get('groupId').get(this.groupId).get('boughtList').open((data: any) => {
             let list: ListData[] = []
             let ids: string[] = []
             for (const key in data)
@@ -73,49 +68,39 @@ class ShoppingListHandler implements IShoppingList {
         })
     }
 
-    public onUsersUpdate(callback: (data: Member[], ids: string[]) => void): void {
-        this.gun.get('groups').get(this.groupId).get('members').open((data: any) => {
-            let ids: string[] = []
-            let members: Member[] = []
+    public onUsersUpdate(callback: (data: string[]) => void): void {
+        this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
+            let members: string[] = []
             for (const key in data)
             {
-                if(this.isValidMember(data[key]))
+                if(data[key].members != undefined)
                 {
-                    ids.push(key)
-                    members.push(data[key])
+                    gun.user(data[key].members).get('fullName').open((name: string) => {
+                        members.push(name)
+                    })
                 }
             }
-            callback(members, ids)
+            callback(members)
         })
     }
 
     public addToList(item: ListData): void {
-        this.gun.get('groups').get(this.groupId).get('shoppingList').set(item)
+        this.gun.get('groups').get('groupId').get(this.groupId).get('shoppingList').set(item)
     }
 
     public updateItemInList(item: ListData, id: string): void {
-        let group = this.gun.get('groups').get(this.groupId)
-
-        group.get('members').load((data: any) => {
-            for (const key in data)
-            {
-                if(item.data.users[key] == null)
-                {
-                    group.get('shoppingList').get(id).get('data').get('users').get(key).put(null)
-                }
-            }
-        })
+        let group = this.gun.get('groups').get('groupId').get(this.groupId)
         
         group.get('shoppingList').get(id).put(item)
     }
 
     public deleteFromList(id: string): void {  
-        this.gun.get('groups').get(this.groupId).get('shoppingList').get(id).put(null)
+        this.gun.get('groups').get('groupId').get(this.groupId).get('shoppingList').get(id).put(null)
     }
 
     public deleteFromBoughtList(item: ListData, id: string): void {  
         item.data.bought = null
-        let group = this.gun.get('groups').get(this.groupId)
+        let group = this.gun.get('groups').get('groupId').get(this.groupId)
 
         if(id)
         {
@@ -126,15 +111,17 @@ class ShoppingListHandler implements IShoppingList {
     }
 
     public buyFromList(item: ListData, id?: string): void {
-        item.data.bought!.user =  this.userName
-        let group = this.gun.get('groups').get(this.groupId)
+        item.data.bought!.user = this.userName
+        let group = this.gun.get('groups').get('groupId').get(this.groupId)
 
         if(id)
         {
-            group.get('shoppingList').get(id).put(null)
+            this.deleteFromList(id);
         }
 
         group.get('boughtList').set(item)
+
+        this.gun.get('groups').get('groupId').get(this.groupId).get('expenses').set(new Expense(this.userName, item.data.bought!.price, item.data.users));
     }
 
     private isValidListData(item: ListData): Boolean {
@@ -155,11 +142,6 @@ class ShoppingListHandler implements IShoppingList {
         item.data.bought != null;
     }
 
-    private isValidMember(member: Member): Boolean {
-        return member != null &&
-        member.key != null &&
-        member.name != null;
-    }
 }
 
 export function shoppingListHandler(gun: Gun): IShoppingList {
