@@ -34,10 +34,12 @@ export const calculateBalance = (expenses: Expense[], members: string[], previou
             const { amount } = expense;
             
             try {
+                //Fixes the usersString after gunDB has added extra symbols
                 let usersString = expense.users.replace(/^"/, '')
-                                           .replace(/"$/, '')
-                                           .replace(/\\"/g, '"');
+                                               .replace(/"$/, '')
+                                               .replace(/\\"/g, '"');
 
+                //Parses the usersString to an array and ensures it is an array
                 const parsedUsers = JSON.parse(usersString);
                 const users = Array.isArray(parsedUsers) ? parsedUsers : [parsedUsers];
 
