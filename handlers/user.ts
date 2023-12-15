@@ -9,14 +9,12 @@ class UserHandle implements IAuth {
     readonly gun: Gun;
 
     constructor(db: Gun) {
-        this.user = db.user();
         this.gun = db
+        this.user = db.user();
     }
 
     public create(fullName: string, email: string, phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {
-        console.log(this.gun)
         this.user.create(phoneNumber, password, (ack: any) => {
-            console.log("User created callback")
             if (ack.err != undefined) {
                 callback(ack,undefined)
                 return false;
@@ -25,7 +23,7 @@ class UserHandle implements IAuth {
             newUser.get("fullName").put(fullName);
             newUser.get("email").put(email);
             this.login(phoneNumber,password, callback)         
-        });   
+        });
     }
 
     public login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {        
@@ -42,6 +40,6 @@ class UserHandle implements IAuth {
     }
 }
 
-export function userHandle(gun: Gun): IAuth {
-    return new UserHandle(gun);
+export function userHandle(db: Gun): IAuth {
+    return new UserHandle(db);
 }

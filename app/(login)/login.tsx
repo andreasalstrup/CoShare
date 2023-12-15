@@ -18,15 +18,14 @@ export default function loginScreen () {
   const [authing, setAuthing] = useState(false)
   
   const toggleHidePassword = () => setHidePassword(!hidePassword)
-
+  
   function succesfulLogin (ack: any, user: UserGunDB): Boolean {    
     if (ack.err != undefined) {
       setWrongCredentials(true);
       setAuthing(false);
       return false;
     }
-
-    // TODO: Create useGroup
+    
     group.current.checkIfInGroup((ack: Boolean) => {
       if (ack) {            
         router.replace('/shoppingList');
@@ -46,7 +45,7 @@ export default function loginScreen () {
           <View style={styles.inputBox}>
             <TextInput maxLength={8} inputMode='tel' autoComplete={'tel'} style={styles.inputField}
                           value={phoneNumber}
-                          onChangeText={(phoneNumber) =>setPhoneNumber(phoneNumber)}/>
+                          onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}/>
           </View>                      
         </View> 
         <View style={styles.textboxContainer}>
