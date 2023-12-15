@@ -19,8 +19,8 @@ export default function MealScreen() {
   const [weekKey, setWeekKey] = useState(moment().week().toString() + moment().year().toString())
   
   useEffect(() => {
-    mealPlan.current.getWeekMealPlan(weekKey, (currnetMealPlan) => {
-      setWeekTexts(currnetMealPlan);
+    mealPlan.current.getWeekMealPlan(weekKey, (weekTexts) => {
+      setWeekTexts(weekTexts);
     });
   },[weekKey])
     
@@ -48,10 +48,9 @@ export default function MealScreen() {
 
   const handleTextChange = (text: string) => {
     if (editableDay !== null) {
-      let newDayMeals: WeekTexts;
-      newDayMeals = {...weekTexts!, [Weekdays[editableDay]]: text}
-      mealPlan.current.setWeekMealPlan(weekKey, newDayMeals);
-      setWeekTexts(newDayMeals);
+      let newWeekTexts: WeekTexts = {...weekTexts!, [Weekdays[editableDay]]: text}
+      mealPlan.current.setWeekMealPlan(weekKey, newWeekTexts);
+      setWeekTexts(newWeekTexts);
     }
   };
 
