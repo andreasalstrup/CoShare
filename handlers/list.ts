@@ -100,7 +100,7 @@ class ShoppingListHandler implements IShoppingList {
 
     public deleteFromBoughtList(item: ListData, id: string): void {  
         item.data.bought = null
-        let group = this.gun.get('groups').get(this.groupId)
+        let group = this.gun.get('groups').get('groupId').get(this.groupId)
 
         if(id)
         {
@@ -121,7 +121,7 @@ class ShoppingListHandler implements IShoppingList {
 
         group.get('boughtList').set(item)
 
-        gun.get('groups').get('groupId').get(this.groupId).get('expenses').set(new Expense(this.userName, item.data.bought!.price, item.data.users));
+        this.gun.get('groups').get('groupId').get(this.groupId).get('expenses').set(new Expense(this.userName, item.data.bought!.price, item.data.users));
     }
 
     private isValidListData(item: ListData): Boolean {

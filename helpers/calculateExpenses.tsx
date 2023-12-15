@@ -1,3 +1,5 @@
+import {randomUUID} from 'expo-crypto';
+
 export class Expense {
     readonly id: number;
     readonly timestamp: number;
@@ -19,12 +21,8 @@ export class Expense {
       if (id != undefined) {
         this.id = id;
       } else {
-        this.id = this.generateUniqueId();
+        this.id = parseInt(randomUUID());
       }
-    }
-  
-    private generateUniqueId(): number {
-      return parseInt(`${this.timestamp}${Math.floor(Math.random() * 1000)}`);
     }
   
     public equals(cmp: Expense): boolean {

@@ -128,8 +128,7 @@ export default function ToBeBoughtScreen() {
 
   const saveEditedProduct = () => {
     if (itemToEdit != null) {
-      let users: string[] = []
-      selectedUsers.forEach(value => users.push(value))
+      let users: string[] = selectedUsers;
       users = users.filter(user => user !== null)
       const editedProduct: ListData = { ...products[itemToEdit], 
         name: productName,
@@ -153,8 +152,7 @@ export default function ToBeBoughtScreen() {
 
   const saveAddedProduct = () => {
     const time = moment().format('YYYY.MM.DD');
-    let users: string[] = []
-    selectedUsers.forEach(value => users[members.findIndex(m => m == value)] = value)
+    let users: string[] = selectedUsers;
     users = users.filter(user => user !== null)
     const newProduct: ListData = {
       name: productName,
@@ -248,7 +246,7 @@ export default function ToBeBoughtScreen() {
             labelField="label"
             valueField="value"
             placeholder={'Selected: ' + selectedUsers.length}
-            value={selectedUsers.map(u => u)}
+            value={selectedUsers}
             onChange={item => {
               setSelectedUsers(members.filter(m => item.includes(m)));
             }}

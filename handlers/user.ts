@@ -19,25 +19,20 @@ class UserHandle implements IAuth {
                 callback(ack,undefined)
                 return false;
             }
-            this.login(phoneNumber,password, callback, fullName, email);         
+            const newUser = this.gun.user('~'+ack.pub)
+            newUser.get("fullName").put(fullName);
+            newUser.get("email").put(email);
+            this.login(phoneNumber,password, callback);         
         });   
     }
 
-    public login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean, fullName?: string, email?: string): void {        
+    public login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {        
         this.user.auth(phoneNumber, password, (ack: any) => {
             if (ack != undefined){
                 userPub = ack.soul
-                if(fullName != undefined && email != undefined) {
-                  this.addCredentials(fullName, email);
-                }
             }
             callback(ack, this.user)  
         });
-    }
-
-    private addCredentials(fullName: string, email: string) : void {
-        gun.user(userPub).get('fullName').put(fullName);
-        gun.user(userPub).get('email').put(email);
     }
 
     public logout() : void {

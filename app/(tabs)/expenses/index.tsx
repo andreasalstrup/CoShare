@@ -60,11 +60,10 @@ export default function SettleScreen() {
   let userGroup = '';
   gun.user(userPub).get('group').get('groupId').once((id: string) => {
     userGroup = id;
-    console.log(userGroup)
   });
 
   let username = '';
-  gun.user(userPub).get('fullName').open((name: string) => {
+  gun.user(userPub).get('fullName').once((name: string) => {
     username = name;
   });
   
