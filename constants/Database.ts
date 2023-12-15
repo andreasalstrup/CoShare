@@ -32,6 +32,5 @@ declare global {
     var userPub : string;
 }
 global.gun = gun
-global.user = gun.user()
 global.SEA = SEA
 global.userPub = ""

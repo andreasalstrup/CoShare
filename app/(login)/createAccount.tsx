@@ -28,6 +28,8 @@ export default function CreateAccountScreen() {
 
   const validatePass = (pass: string) => pass.length > 7 || pass == ''
 
+  const validateName = (name: string) => name != ''
+
   function passwordsMatch(pass: string, repPass: string) {
     let equal: boolean = pass == repPass
     let value: boolean = (pass != '' && repPass != '') && (!equal)
@@ -35,8 +37,8 @@ export default function CreateAccountScreen() {
     return equal
   }
 
-  function toggleSubmitButton(phone: string, pass: string, repPass: string) { //We need params to mitigate the async updating
-    setSubmitActive(passwordsMatch(pass, repPass) && validatePhone(phone) && validatePass(pass))
+  function toggleSubmitButton(phone: string, pass: string, repPass: string, name: string) { //We need params to mitigate the async updating
+    setSubmitActive(passwordsMatch(pass, repPass) && validatePhone(phone) && validatePass(pass) && validateName(name))
   }
 
   function redirect(ack: any): boolean {
@@ -75,7 +77,7 @@ export default function CreateAccountScreen() {
               onChangeText={
                 (newPhoneNumber) => {
                   setPhoneNumber(newPhoneNumber)
-                  toggleSubmitButton(newPhoneNumber, password, repeatPassword)
+                  toggleSubmitButton(newPhoneNumber, password, repeatPassword, fullName)
                 }}
             />
           </View>
@@ -92,7 +94,7 @@ export default function CreateAccountScreen() {
               onChangeText={
                 (newPassword) => {
                   setPassword(newPassword)
-                  toggleSubmitButton(phoneNumber, newPassword, repeatPassword)
+                  toggleSubmitButton(phoneNumber, newPassword, repeatPassword, fullName)
                 }}
             />
             <MaterialCommunityIcons
@@ -115,7 +117,7 @@ export default function CreateAccountScreen() {
               value={repeatPassword}
               onChangeText={(newRepeatPassword) => {
                 setRepeatPassword(newRepeatPassword)
-                toggleSubmitButton(phoneNumber, password, newRepeatPassword)
+                toggleSubmitButton(phoneNumber, password, newRepeatPassword, fullName)
               }}
             />
           </View>
@@ -123,12 +125,16 @@ export default function CreateAccountScreen() {
         </View>
         <View style={styles.textboxContainer}>
 
-          <Text style={styles.descriptiveText}>Full Name</Text>
+          <Text style={styles.descriptiveText}>Username*</Text>
           <View style={styles.inputBox}>
             <TextInput
               autoComplete={'name'} style={styles.inputField}
               value={fullName}
-              onChangeText={(fullName) => setFullName(fullName)}
+              onChangeText={(newFullName) =>{
+                setFullName(newFullName)
+                toggleSubmitButton(phoneNumber, password, repeatPassword, newFullName)
+              }
+            }
             />
           </View>
         </View>

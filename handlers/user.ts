@@ -6,13 +6,15 @@ interface IAuth {
 
 class UserHandle implements IAuth {
     readonly user: UserGunDB;
+    readonly gun: Gun;
 
-    constructor(private gun: Gun) {
-        this.user = this.gun.user();
+    constructor(db: Gun) {
+        this.gun = db
+        this.user = db.user();
     }
 
     public create(fullName: string, email: string, phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {
-        user.create(phoneNumber, password, (ack: any) => {
+        this.user.create(phoneNumber, password, (ack: any) => {
             if (ack.err != undefined) {
                 callback(ack,undefined)
                 return false;
@@ -29,7 +31,7 @@ class UserHandle implements IAuth {
                   this.addCredentials(fullName, email);
                 }
             }
-            callback(ack, user)  
+            callback(ack, this.user)  
         });
     }
 
@@ -43,6 +45,6 @@ class UserHandle implements IAuth {
     }
 }
 
-export function userHandle(gun: Gun): IAuth {
-    return new UserHandle(gun);
+export function userHandle(db: Gun): IAuth {
+    return new UserHandle(db);
 }
