@@ -2,7 +2,7 @@ import { Expense } from "./calculateExpenses";
 
 export const calculateBalance = (expenses: Expense[], members: string[], previousBalance: { user: string, amount: number }[]) => {
     const balanceMap: Record<string, number[]> = {};
-    const balance: { user: string, amount: number }[] = [];
+    let balance: { user: string, amount: number }[] = [];
 
     members.forEach((name) => {
         if(name){
@@ -66,8 +66,8 @@ export const calculateBalance = (expenses: Expense[], members: string[], previou
         }
     }
 
-    if(balance.length == 0){
-        balance == previousBalance;
+    if(balance.length === 0){
+        balance = previousBalance;
     }
 
     return balance;

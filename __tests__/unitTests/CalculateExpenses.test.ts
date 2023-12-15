@@ -22,7 +22,7 @@ describe('calculateExpenses', () => {
         const expectedTransactions: Transaction[] = [
             { from: 'Bob', to: 'Alice', amount: 50 },
         ];
-        const result = calculateExpenses(calculateBalance(expenses, ['Alice', 'Bob'], []));
+        const result = calculateExpenses(calculateBalance(expenses, ['Alice', 'Bob', 'Charlie'], []));
         expect(result).toEqual(expect.arrayContaining(expectedTransactions));
     });
 

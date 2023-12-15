@@ -63,6 +63,21 @@ describe('calculateBalance', () => {
         expect(result).toEqual(expect.arrayContaining(expectedBalance));
     });
 
+    it('should return previous_balance if the new balance would be empty', () => {
+        const expenses: Expense[] = [
+            new Expense('Alice', 30, JSON.stringify(['Alice', 'Bob', 'Charlie'])),
+            new Expense('Bob', 0, JSON.stringify(['Bob'])),
+            new Expense('Charlie', 0, JSON.stringify(['Charlie'])),
+        ];
+        const expectedBalance: { user: string, amount: number}[] = [
+            { user: 'Alice', amount: 20 },
+            { user: 'Bob', amount: -10 },
+            { user: 'Charlie', amount: -10 },
+        ];
+        const result = calculateBalance([], [], calculateBalance(expenses, ['Alice', 'Bob', 'Charlie'], []));
+        expect(result).toEqual(expect.arrayContaining(expectedBalance));
+    });
+
     it('should handle large numbers', () => {
         const expenses: Expense[] = [
             new Expense('Alice', Number.MAX_VALUE, JSON.stringify(['Alice', 'Bob'])),

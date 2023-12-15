@@ -54,7 +54,6 @@ class ExpensesHandle implements IExpenses{
 
     private isValidExpenseData(expense: Expense): boolean{
         return expense.id != undefined &&
-        expense.timestamp != undefined &&
         expense.user != undefined &&
         expense.amount != undefined;
     }
