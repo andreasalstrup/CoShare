@@ -9,8 +9,8 @@ class MealPlanHandle implements IMealPlan {
 
     constructor(private gun: Gun) {
             this.user = gun.user(userPub);
-            this.user.get("group").on((data: { groupId: string}) => {
-                this.groupId = data?.groupId.toString()     
+            this.user.get("group").get("groupId").on((data: string) => {
+                this.groupId = data.toString()     
             });
     }
 
