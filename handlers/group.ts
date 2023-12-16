@@ -1,4 +1,5 @@
 import 'expo-crypto'
+import { Expense } from '../helpers/calculateExpenses';
 interface IGroup {
     create(groupName: string, callback : () => void): void;
     join(uuid: string, callback : (ack: Boolean) => void): void;
@@ -22,6 +23,9 @@ class GroupHandle implements IGroup {
         context.get("members").set(userPub)
         context.get("name").put(groupName)
         user.get("groupId").put(groupId)
+        user.get('fullName').once((data: any) => {
+            gun.get('groups').get(groupId).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
+        });
         callback()
     }
 
@@ -33,7 +37,10 @@ class GroupHandle implements IGroup {
                 }else{
                     let user = this.gun.user(userPub)
                     context.get("members").set(userPub)
-                    user.get("groupId").put(uuid)                    
+                    user.get("groupId").put(uuid)                      
+                    user.get('fullName').once((data: any) => {
+                        gun.get('groups').get(uuid).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
+                    });
                     callback(true)
                 }
             }

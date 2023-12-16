@@ -1,3 +1,4 @@
+import { calculateBalance } from '../../helpers/calculateBalance';
 import { calculateExpenses, Expense, Transaction } from '../../helpers/calculateExpenses';
 
 describe('calculateExpenses', () => {
@@ -14,47 +15,48 @@ describe('calculateExpenses', () => {
     
     it('should correctly calculate the transaction between 2 people', () => {
         const expenses: Expense[] = [
-            { user: 'Alice', amount: 100 },
-            { user: 'Bob', amount: 0 },
+            new Expense('Alice', 100, JSON.stringify(['Alice', 'Bob'])),
+            new Expense('Bob', 0, JSON.stringify(['Alice', 'Bob'])),
+            new Expense('Charlie', 0, JSON.stringify(['Charlie']))
         ];
         const expectedTransactions: Transaction[] = [
             { from: 'Bob', to: 'Alice', amount: 50 },
         ];
-        const result = calculateExpenses(expenses);
+        const result = calculateExpenses(calculateBalance(expenses, ['Alice', 'Bob', 'Charlie'], []));
         expect(result).toEqual(expect.arrayContaining(expectedTransactions));
     });
 
     it('should correctly calculate the transaction between more than 2 people', () => {
         const expenses: Expense[] = [
-            { user: 'Alice', amount: 90 },
-            { user: 'Bob', amount: 45 },
-            { user: 'Charlie', amount: 30 },
+            new Expense('Alice', 90, JSON.stringify(['Alice', 'Bob', 'Charlie'])),
+            new Expense('Bob', 45, JSON.stringify(['Alice', 'Bob', 'Charlie'])),
+            new Expense('Charlie', 30, JSON.stringify(['Alice', 'Bob', 'Charlie'])),
         ];
         const expectedTransactions: Transaction[] = [
             { from: 'Bob', to: 'Alice', amount: 10 },
             { from: 'Charlie', to: 'Alice', amount: 25 },
         ];
-        const result = calculateExpenses(expenses);
+        const result = calculateExpenses(calculateBalance(expenses, ['Alice', 'Bob', 'Charlie'], []));
         expect(result).toEqual(expect.arrayContaining(expectedTransactions));
     });
 
     it('should correctly calculate transactions when decimals are involved', () => {
         const expenses: Expense[] = [
-            { user: 'Alice', amount: 49.95 },
-            { user: 'Bob', amount: 0 },
+            new Expense('Alice', 49.95, JSON.stringify(['Alice', 'Bob'])),
+            new Expense('Bob', 0, JSON.stringify(['Alice', 'Bob'])),
         ];
         const expectedTransactions: Transaction[] = [
-            { from: 'Bob', to: 'Alice', amount: 24.975 },
+            { from: 'Bob', to: 'Alice', amount: 24.98 },
         ];
-        const result = calculateExpenses(expenses);
+        const result = calculateExpenses(calculateBalance(expenses, ['Alice', 'Bob'], []));
         expect(result).toEqual(expect.arrayContaining(expectedTransactions));
     });
 
     it('should handle rounded numbers with 2 decimals', () => {
         const expenses: Expense[] = [
-            { user: 'Alice', amount: 100 },
-            { user: 'Bob', amount: 0 },
-            { user: 'Charlie', amount: 0 },
+            new Expense('Alice', 100, JSON.stringify(['Alice', 'Bob', 'Charlie'])),
+            new Expense('Bob', 0, JSON.stringify(['Alice', 'Bob', 'Charlie'])),
+            new Expense('Charlie', 0, JSON.stringify(['Alice', 'Bob', 'Charlie'])),
 
         ];
         const expectedTransactions: Transaction[] = [

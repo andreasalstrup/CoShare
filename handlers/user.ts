@@ -19,11 +19,11 @@ class UserHandle implements IAuth {
                 callback(ack)
                 return false;
             }
-            const newUser = this.gun.user(ack.soul);
+            const newUser = this.gun.user('~'+ack.pub)
             newUser.get("fullName").put(fullName);
             newUser.get("email").put(email);
-            this.login(phoneNumber,password, callback)         
-        });
+            this.login(phoneNumber,password, callback);         
+        });   
     }
 
     public login(phoneNumber: string, password: string, callback: (ack: any) => Boolean): void {        
