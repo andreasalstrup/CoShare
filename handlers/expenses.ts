@@ -14,8 +14,8 @@ class ExpensesHandle implements IExpenses{
     }
 
     public getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void{
-        
-        this.gun.get('groups').get('groupId').get(groupId).get('expenses').open((expenseData : any) =>{
+        console.log("getting expenses")
+        this.gun.get("groups").get("groupId").get(groupId).get('expenses').open((expenseData : any) =>{
             let expensesData: Expense[] = [];
             for (const key in expenseData){                
                 if (this.isValidExpenseData(expenseData[key])){
@@ -33,8 +33,9 @@ class ExpensesHandle implements IExpenses{
     }
 
     public getGroupMembers(groupId: string, callback: (users: string[]) => void): void{
+        console.log("getting members")
         let users: string[] = [];
-        this.gun.get('groups').get('groupId').get(groupId).get('members').open((data: any) => {
+        this.gun.get("groups").get("groupId").get(groupId).get('members').open((data: any) => {
             for (const key in data)
             {
                 if(data[key].members != undefined)
@@ -49,7 +50,7 @@ class ExpensesHandle implements IExpenses{
     }
 
     private settle(groupId: string, user: string, users: string[], isReceiver: boolean, amount: number): void {
-        this.gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount, JSON.stringify(users)));
+        this.gun.get("groups").get("groupId").get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount, JSON.stringify(users)));
     }
 
     private isValidExpenseData(expense: Expense): boolean{

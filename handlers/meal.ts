@@ -9,8 +9,9 @@ class MealPlanHandle implements IMealPlan {
 
     constructor(private gun: Gun) {
             this.user = gun.user();
-            this.user.get("group").on((data: any) => {
-                this.groupId = data?.groupId.toString()     
+            this.user.get("groupId").on((data: any) => {
+                console.log("hello")
+                this.groupId = data
             });
     }
 
@@ -21,7 +22,7 @@ class MealPlanHandle implements IMealPlan {
 
         const waitForweekText = async (): Promise<void> => {
             return new Promise<void>((resolve) => {
-                this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
+                this.gun.get("groups").get("groupId").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
                     const check = () => {
                         if (data || dayMeals) {
                             dayMeals = data
@@ -50,7 +51,7 @@ class MealPlanHandle implements IMealPlan {
 
     public async setWeekMealPlan(weekKey: string, newDayMeals: WeekTexts): Promise<WeekTexts> {
         await this.waitForId();
-        return await this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).put(newDayMeals);
+        return await this.gun.get("groups").get("groupId").get(this.groupId).get("mealplan").get(weekKey).put(newDayMeals);
     }
 
     private async waitForId(): Promise<void> {

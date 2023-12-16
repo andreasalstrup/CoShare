@@ -40,7 +40,7 @@ export default function BalanceScreen() {
   }
 
   let userGroup = '';
-  gun.user(userPub).get('group').get('groupId').once((id: string) => {
+  gun.user(userPub).get('groupId').once((id: string) => {
     userGroup = id;
   });
 

@@ -70,11 +70,11 @@ export default function BoughtScreen() {
 
   return (
     <View style={{flex: 1}}>
-      <FlatList
+      {/* <FlatList
         style={{marginTop: 48}}
         data={products}
         renderItem={renderItem}
-      />
+      /> */}
       <AreYouSureModal
         title='Move Item Back'
         text={`Are you sure you want to move ${products.at(itemToDelete)?.name} back?`}

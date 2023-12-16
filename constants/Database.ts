@@ -16,18 +16,19 @@ AsyncStorage.clear()
 //rad asyncstorage adapter, on Android asyncstorage has 6mb limit by default
 const asyncStore = asyncsStore({AsyncStorage});
 let gun = Gun({
-peers: ['http://130.225.39.205:8080/gun'],
+// peers: ['http://130.225.39.205:8080/gun'],
 store: asyncStore,
 radisk: true,
 localStorage: false,
 });
 
+
 declare global {
     var gun : IGunInstance<any>;
-    var user :IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>;
     var SEA : ISEA;
     var userPub : string;
 }
+gun.user().create("12345678","12345678",()=>{})
 global.gun = gun
 global.SEA = SEA
 global.userPub = ""

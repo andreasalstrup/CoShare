@@ -2,7 +2,6 @@ import 'gun/lib/mobile.js'
 import {Button, TextInput, View} from 'react-native'
 import {render, screen, fireEvent} from '@testing-library/react-native'
 import { useRef, useState } from 'react'
-import { userHandle } from '../../handlers/user'
 import Gun from 'gun/gun'
 import SEA from 'gun/sea'
 import 'gun/lib/open.js'
@@ -122,7 +121,7 @@ describe('GroupHandler', () => {
         GunDB.gun.user(userPub).get("groupId").once((id: any) => {        
           expect(id).toBeDefined() //The logged in user should now have a groupId
           testData.groupId = id
-          checkIfGroupExists(GunDB.gun.get("groups").get(id))
+          checkIfGroupExists(GunDB.gun.get("groups").get("groupId").get(id))
         })
       }
       function checkIfGroupExists(context : any){
@@ -164,7 +163,7 @@ describe('GroupHandler', () => {
             GunDB.gun.user(userPub).get("groupId").once((id: any) => {          
               expect(id).toBeDefined() //The logged in user should now have a groupId
               expect(id).toBe(groupIdToJoin) //The id should be the same as the group we wanted to join
-              checkIfGroupHasMember(GunDB.gun.get("groups").get(id))
+              checkIfGroupHasMember(GunDB.gun.get("groups").get("groupId").get(id))
             })
           }        
           function checkIfGroupHasMember(context : any){
@@ -201,7 +200,7 @@ describe('GroupHandler', () => {
             })
           } 
           function checkIfGroupExistsInGun(){
-            const context = GunDB.gun.get("groups").get(groupIdToJoin)
+            const context = GunDB.gun.get("groups").get("groupId").get(groupIdToJoin)
             context.once((data : any) => {
               expect(data).toBeUndefined() //The group id should still not exist
               done()
@@ -317,7 +316,7 @@ describe('GroupHandler', () => {
         function checkIfUserInGroup(){
           GunDB.gun.user(userPub).get("groupId").once((id: any) => {        
             expect(id).toBeDefined() //The logged in user should now have a groupId
-            checkIfGroupExists(GunDB.gun.get("groups").get(id))
+            checkIfGroupExists(GunDB.gun.get("groups").get("groupId").get(id))
           })
         }
 
@@ -339,7 +338,7 @@ describe('GroupHandler', () => {
         }
 
           function checkIfOldGroupHasMembers(context : any){
-            GunDB.gun.get("groups").get(testData.groupId).get("members").open((data : any) => {
+            GunDB.gun.get("groups").get("groupId").get(testData.groupId).get("members").open((data : any) => {
               const expectedMembers = [testData.user1.soul, testData.user2.soul]
               let actualMembers = []
               for (const key in data){
@@ -353,7 +352,7 @@ describe('GroupHandler', () => {
         function checkIfGroupHasName(context : any){
           context.get("name").once((name : any) => {
             expect(name).toBe(expectedGroupName) //The group should have the given name
-            GunDB.gun.get("groups").get(testData.groupId).get("name").once((oldName : any) => {
+            GunDB.gun.get("groups").get("groupId").get(testData.groupId).get("name").once((oldName : any) => {
               expect(oldName).toBe(expectedGroupName)
             })
             done()

@@ -60,25 +60,28 @@ export default function ToBeBoughtScreen() {
   const [itemToEdit, setItemToEdit] = useState<number | null>() 
   const [itemToDelete, setItemToDelete] = useState(0)
 
-  const swipeableRows : Swipeable[] = []  
+  const [username, setUsername] = useState('')
+  const swipeableRows : Swipeable[] = []
 
   const toggleModalAddOrEditItem = () => setIsModalAddOrEditItemVisible(() => !isModalAddOrEditItemVisible);
   const toggleModalDeleteItem = () => setIsModalDeleteVisible(() => !isModalDeleteVisible);
   const toggleModalBuyItem = () => setIsModalBuyItemVisible(() => !isModalBuyItemVisible);
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
-  let username = '';
-  gun.user(userPub).get('fullName').open((data: any) => {
-    username = data;
-  });
-
+ 
   useEffect(() =>{
+    console.log("Using effect")
     shoppingListDB.current.onListUpdate(
       (data : ListData[], ids: string[]) => {
         setProductIds(ids)
         setProducts(data)
-      }
+      }      
     )
+     
+    gun.user(userPub).get('fullName').open((data: any) => {
+      console.log("Fullnaming")
+      setUsername(data);
+    });
 
     shoppingListDB.current.onUsersUpdate(
       (data : string[]) => {
@@ -214,11 +217,11 @@ export default function ToBeBoughtScreen() {
 
   return (
     <View style={{flex: 1}}>
-      <FlatList
+      {/* <FlatList
         style={{marginTop: 48}}
         data={products}
         renderItem={renderItem}
-      />
+      /> */}
       <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddOrEditItemVisible} onBackdropPress={() => setIsModalAddOrEditItemVisible(false)} onModalHide={clearProduct}>
         <View style={ styles.addItemModal }>
           <Text>Product</Text>
