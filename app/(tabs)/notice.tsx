@@ -77,8 +77,7 @@ export default function NoticeScreen() {
             value={groupId}
             frameSize={200}
             dotColor={Colors[colorScheme].text}
-            backgroundColor={Colors[colorScheme].background}
-          />
+            backgroundColor={Colors[colorScheme].background}/>
       </Modal>
     </SafeAreaView>
   );

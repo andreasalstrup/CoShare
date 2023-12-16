@@ -79,7 +79,7 @@ class GroupHandle implements IGroup {
                     }
                 }
             )
-        } )
+        })
     }
 
     public checkIfInGroup(callback : (ack: Boolean) => void): void {
