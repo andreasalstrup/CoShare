@@ -63,7 +63,7 @@ class ShoppingListHandler implements IShoppingList {
                     {
                         if(data[key].data.users[userKey] == null){
                             delete data[key].data.users[userKey]
-                        } 
+                        }
                     }
                     ids.push(key)
                     list.push(data[key])

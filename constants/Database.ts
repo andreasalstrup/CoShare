@@ -13,19 +13,13 @@ const asyncsStore = require('gun/lib/ras.js')
 
 AsyncStorage.clear()
 
-
-let a : Int16Array = new Int16Array([1,2,3,4,5])
-crypto.getRandomValues(a)
-console.log(a)
-
 //rad asyncstorage adapter, on Android asyncstorage has 6mb limit by default
 const asyncStore = asyncsStore({AsyncStorage});
 let gun = Gun({
 peers: ['http://130.225.39.205:8080/gun'],
 store: asyncStore,
 radisk: true,
-localStorage: true,
-file: 'db/data.json',
+localStorage: false,
 });
 
 declare global {

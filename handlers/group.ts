@@ -1,4 +1,4 @@
-import {randomUUID} from 'expo-crypto';
+import 'expo-crypto'
 interface IGroup {
     create(groupName: string, callback : () => void): void;
     join(uuid: string, callback : (ack: Boolean) => void): void;
@@ -10,41 +10,39 @@ interface IGroup {
 
 class GroupHandle implements IGroup {
     readonly gun: Gun
-    constructor(private db: Gun) {
+    constructor(db: Gun) {
         this.gun = db
     }
 
     public create(groupName: string, callback : () => void): void {
         let user = this.gun.user(userPub)
-        let groupId : string = randomUUID();        
-        this.gun.get("groups").get("groupId").set({groupId: groupId})
-        let context = this.gun.get("groups").get("groupId").get(groupId)
-        context.get("members").set({members: userPub})
+        const groupId : string = crypto.randomUUID();
+        this.gun.get("groups").set(groupId)
+        let context = this.gun.get("groups").get(groupId)
+        context.get("members").set(userPub)
         context.get("name").put(groupName)
-        user.get("group").put({groupId: groupId})
+        user.get("groupId").put(groupId)
         callback()
     }
 
     public join(uuid: string, callback : (ack: Boolean) => void): void {
-        let context = this.gun.get("groups").get("groupId").get(uuid)
-        context.once(
-            function(d : string){
+        let context = this.gun.get("groups").get(uuid)   
+        context.once((d : string) => {
                 if (d == undefined){
                     callback(false)
                 }else{
-                    console.log(userPub)                    
-                    let user = gun.user(userPub)
-                    context.get("members").set({members: userPub})
-                    user.get("group").put({groupId: uuid})                    
+                    let user = this.gun.user(userPub)
+                    context.get("members").set(userPub)
+                    user.get("groupId").put(uuid)                    
                     callback(true)
-                }                
+                }
             }
         )
     }
 
     public getUUID(callback : (ack : string) => void) : void {
         let user = this.gun.user(userPub)
-        user.get("group").get("groupId").once((d : string) => {
+        user.get("groupId").once((d : string) => {
             if (d == undefined){
                 callback('')
             }else{
@@ -55,7 +53,7 @@ class GroupHandle implements IGroup {
 
     public getGName(callback : (ack : string) => void) : void {
         this.getUUID((id : string) => {
-            let groupContext = this.gun.get("groups").get("groupId").get(id)
+            let groupContext = this.gun.get("groups").get(id)
             groupContext.once(
                 function(idData : string){
                     if (idData == undefined){
@@ -78,7 +76,7 @@ class GroupHandle implements IGroup {
 
     public checkIfInGroup(callback : (ack: Boolean) => void): void {
         let user = this.gun.user(userPub)
-        user.get("group").once((ack: any) => {            
+        user.get("groupId").once((ack: any) => {     
             if (ack == undefined || ack == null) callback(false)
             else callback(true)
         })
