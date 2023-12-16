@@ -34,3 +34,8 @@ type MealPlan = {
     [key: string]: WeekTexts;
 }
 
+type User = {
+    fullName: string,
+    phoneNumber: string,
+    email: string
+}
