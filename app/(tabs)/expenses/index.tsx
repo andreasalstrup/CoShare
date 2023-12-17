@@ -102,9 +102,8 @@ export default function SettleScreen() {
     <View>
       <FlatList
         style={{marginTop: 48}}
-        data={calculateExpenses(calculateBalance(data, members, previousBalance))}
-        renderItem={renderItem}  
-        extraData={data}      
+        data={calculateExpenses(previousBalance = calculateBalance(data, members, previousBalance))}
+        renderItem={renderItem}    
       />
       <AreYouSureModal
         title='Confirm Payment'
