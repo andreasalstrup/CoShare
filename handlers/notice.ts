@@ -14,7 +14,7 @@ class NoticeHandle implements INotice {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.gun.user(userPub).get("group").get("groupId").on((data: string) => {
+        this.gun.user(userPub).get("groupId").on((data: string) => {
             this.groupId = data
         })
     }

@@ -27,8 +27,7 @@ export default function loginScreen () {
     }
     
     group.current.checkIfInGroup((ack: Boolean) => {
-      if (ack) {     
-        console.log("In a group")       
+      if (ack) {
         router.replace('/shoppingList');
       }else{
         router.replace('/group');

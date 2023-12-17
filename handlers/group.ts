@@ -23,11 +23,13 @@ class GroupHandle implements IGroup {
         let context = this.gun.get("groups").get("groupId").get(groupId)
         context.get("members").set(userPub)
         context.get("name").put(groupName)
-        user.get("group").put({groupId: groupId}) 
-        gun.user(userPub).get('fullName').once((data: string) => {
-            gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
-        });
-        callback()
+        user.get("groupId").put(groupId)
+        user.get('fullName').once((data: any) => {
+            if (data != undefined){
+                this.gun.get('groups').get("groupId").get(groupId).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
+            }
+        })
+            callback()
     }
 
     public join(uuid: string, callback : (ack: Boolean) => void): void {

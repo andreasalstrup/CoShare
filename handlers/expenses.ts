@@ -35,13 +35,14 @@ class ExpensesHandle implements IExpenses{
         this.settle(transaction.to, [transaction.from, transaction.to], true, transaction.amount);
     }
 
-    public getGroupMembers(callback: (user: string) => void): void{
+    public getGroupMembers(callback: (user: string) => void): void{        
         this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
             for (const key in data)
             {
                 if(data[key] != undefined)
                 {
-                    this.gun.user(data[key].members).get('fullName').once((name: string) => {
+                    
+                    this.gun.user(data[key]).get('fullName').once((name: string) => {
                         callback(name)
                     })
                 }

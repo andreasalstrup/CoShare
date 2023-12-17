@@ -72,7 +72,7 @@ class ShoppingListHandler implements IShoppingList {
             {
                 if(data[key] != undefined)
                 {
-                    gun.user(data[key]).get('fullName').once((name: string) => {
+                    this.gun.user(data[key]).get('fullName').once((name: string) => {
                         callback(name)
                     })
                 }
