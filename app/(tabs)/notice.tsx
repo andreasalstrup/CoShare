@@ -59,7 +59,10 @@ export default function NoticeScreen() {
             placeholder="Click to make rules"
             placeholderTextColor={'gray'}
             value={houseRules}
-            onChangeText={(text) => notice.current.updateHouseRules(text)}
+            onChangeText={(text) => {
+              notice.current.updateHouseRules(text)
+              setHouseRules(text)
+            }}
             editable
             multiline
           />
