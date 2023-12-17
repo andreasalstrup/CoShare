@@ -68,7 +68,7 @@ export default function ToBeBoughtScreen() {
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
   let username = '';
-  gun.user(userPub).get('fullName').open((data: any) => {
+  gun.user(userPub).get('fullName').once((data: string) => {
     username = data;
   });
 
