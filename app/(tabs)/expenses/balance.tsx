@@ -27,7 +27,7 @@ export default function BalanceScreen() {
   const [data, setData] = useState<Expense[]>([]);
   const [members, setMembers] = useState<string[]>([]);
 
-  function getExpenses(expenseData: Expense[]): void{ 
+  function getExpenses(expenseData: Expense[]): void{
     if (!expenseListCmp(expenseData, data)){
       setData(expenseData);
     }
@@ -45,8 +45,8 @@ export default function BalanceScreen() {
   });
 
   useEffect(() => {
-    expenses.current.getExpenses(userGroup, getExpenses);
-    expenses.current.getGroupMembers(userGroup, getGroupMembers);
+    expenses.current.getExpenses(getExpenses);
+    expenses.current.getGroupMembers(getGroupMembers);
   }, [])
 
   let previousBalance: { user: string, amount: number }[] = [];

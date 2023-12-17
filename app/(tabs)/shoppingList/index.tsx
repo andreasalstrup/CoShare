@@ -70,7 +70,6 @@ export default function ToBeBoughtScreen() {
 
  
   useEffect(() =>{
-    console.log("Using effect")
     shoppingListDB.current.onListUpdate(
       (data : ListData[], ids: string[]) => {
         setProductIds(ids)
@@ -79,7 +78,6 @@ export default function ToBeBoughtScreen() {
     )
      
     gun.user(userPub).get('fullName').open((data: any) => {
-      console.log("Fullnaming")
       setUsername(data);
     });
 
@@ -217,11 +215,11 @@ export default function ToBeBoughtScreen() {
 
   return (
     <View style={{flex: 1}}>
-      {/* <FlatList
+      <FlatList
         style={{marginTop: 48}}
         data={products}
         renderItem={renderItem}
-      /> */}
+      />
       <Modal animationIn='zoomIn' animationOut='zoomOut' isVisible={isModalAddOrEditItemVisible} onBackdropPress={() => setIsModalAddOrEditItemVisible(false)} onModalHide={clearProduct}>
         <View style={ styles.addItemModal }>
           <Text>Product</Text>

@@ -56,20 +56,10 @@ export default function SettleScreen() {
       setMembers(_members);
     }
   }
-
-  let userGroup = '';
-  gun.user(userPub).get('group').get('groupId').once((id: string) => {
-    userGroup = id;
-  });
-
-  let username = '';
-  gun.user(userPub).get('fullName').once((name: string) => {
-    username = name;
-  });
   
   useEffect(() => {
-    expenses.current.getExpenses(userGroup, getExpenses);
-    expenses.current.getGroupMembers(userGroup, getGroupMembers);
+    expenses.current.getExpenses(getExpenses);
+    expenses.current.getGroupMembers(getGroupMembers);
   }, [])
 
   let previousBalance: { user: string, amount: number }[] = [];
@@ -78,7 +68,7 @@ export default function SettleScreen() {
     return (
       <Swipeable
         ref={ref => ref != null ? swipeableRows[index] = ref : undefined}
-        friction={1.5} 
+        friction={1.5}
         overshootFriction={8}
         renderLeftActions={leftSwipeAction}
         onSwipeableOpen={() => openModal(item)}
@@ -109,11 +99,12 @@ export default function SettleScreen() {
 
   return (
     <View>
-      {/* <FlatList
+      <FlatList
         style={{marginTop: 48}}
-        data={calculateExpenses(previousBalance = calculateBalance(data, members, previousBalance))}
-        renderItem={renderItem}        
-      /> */}
+        data={calculateExpenses(calculateBalance(data, members, previousBalance))}
+        renderItem={renderItem}  
+        extraData={data}      
+      />
       <AreYouSureModal
         title='Confirm Payment'
         text={`Have you sent ${selectedItem?.amount} kr. to ${selectedItem?.to}`}
@@ -123,7 +114,7 @@ export default function SettleScreen() {
         }}
         onYes={() =>{
           if(selectedItem != null){
-            expenses.current.settleExpenses(userGroup, selectedItem);
+            expenses.current.settleExpenses(selectedItem);
           }
           closeModal()
         }}

@@ -28,7 +28,7 @@ declare global {
     var SEA : ISEA;
     var userPub : string;
 }
-gun.user().create("12345678","12345678",()=>{})
+// gun.user().create("12345678","12345678",(ack : any)=>{gun.user('~' + ack.pub).get("fullName").put("myName")})
 global.gun = gun
 global.SEA = SEA
 global.userPub = ""

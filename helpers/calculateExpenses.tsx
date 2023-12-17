@@ -51,7 +51,7 @@ export const calculateExpenses = (balance: { user: string; amount: number }[]): 
 
     // Find corresponding negative balances
     for (const negativeEntry of negativeBalances) {
-      if (remainingAmount > 0) {
+      if (remainingAmount > 0 && negativeEntry.amount < 0) {
         const transferAmount = Math.min(remainingAmount, -negativeEntry.amount);
 
         // Create a transaction
@@ -60,7 +60,7 @@ export const calculateExpenses = (balance: { user: string; amount: number }[]): 
           to: positiveEntry.user,
           amount: transferAmount,
         });
-
+        negativeEntry.amount += transferAmount;
         remainingAmount -= transferAmount;
       } else {
         break;
