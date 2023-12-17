@@ -13,7 +13,6 @@ interface IShoppingList {
 
 class ShoppingListHandler implements IShoppingList {
     readonly gun: Gun;
-    readonly user: UserGunDB;
     
     userName: string = '';
     groupId: string = '';
@@ -21,11 +20,10 @@ class ShoppingListHandler implements IShoppingList {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.user = gun.user(userPub);
-        this.user.get("group").on((data: { groupId: string }) => {
-            this.groupId = data?.groupId.toString()
+        this.gun.user(userPub).get("group").get("groupId").on((data: string) => {
+            this.groupId = data
         })
-        this.user.get("fullName").on((data: string) => {
+        this.gun.user(userPub).get("fullName").on((data: string) => {
             this.userName = data
         })
     }

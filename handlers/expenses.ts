@@ -1,37 +1,42 @@
 import { Expense, Transaction } from "../helpers/calculateExpenses";
 interface IExpenses {
-    getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void;
-    settleExpenses(groupId: string, transaction: Transaction): void;
-    getGroupMembers(groupId: string, callback: (users: string) => void): void
+    getExpenses(callback: (expenses: Expense[]) => void): void;
+    settleExpenses(transaction: Transaction): void;
+    getGroupMembers(callback: (users: string) => void): void
 }
 
 class ExpensesHandle implements IExpenses{
     readonly gun: Gun;
 
+    groupId: string = '';
+
     constructor(gun: Gun) {
         this.gun = gun;
+        this.gun.user(userPub).get("group").get("groupId").on((data: string) => {
+            this.groupId = data
+        })
     }
 
-    public getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void{
-        this.gun.get('groups').get('groupId').get(groupId).get('expenses').open((expenseData : any) =>{
+    public getExpenses(callback: (expenses: Expense[]) => void): void{
+        this.gun.get('groups').get('groupId').get(this.groupId).get('expenses').open((expenseData : any) =>{
             let expensesData: Expense[] = [];
             for (const key in expenseData){                
                 if (this.isValidExpenseData(expenseData[key])){
                     let currentExpense = new Expense(expenseData[key].user, expenseData[key].amount, expenseData[key].users, expenseData[key].timestamp, expenseData[key].id);            
                     expensesData.push(currentExpense);
-                }   
-            }      
+                }
+            }
             callback(expensesData)
         })
     }
 
-    public settleExpenses(groupId: string, transaction: Transaction): void {
-        this.settle(groupId, transaction.from, [transaction.from, transaction.to], false, transaction.amount);
-        this.settle(groupId, transaction.to, [transaction.from, transaction.to], true, transaction.amount);
+    public settleExpenses(transaction: Transaction): void {
+        this.settle(transaction.from, [transaction.from, transaction.to], false, transaction.amount);
+        this.settle(transaction.to, [transaction.from, transaction.to], true, transaction.amount);
     }
 
-    public getGroupMembers(groupId: string, callback: (user: string) => void): void{
-        this.gun.get('groups').get('groupId').get(groupId).get('members').open((data: any) => {
+    public getGroupMembers(callback: (user: string) => void): void{
+        this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
             for (const key in data)
             {
                 if(data[key].members != undefined)
@@ -44,8 +49,8 @@ class ExpensesHandle implements IExpenses{
         });
     }
 
-    private settle(groupId: string, user: string, users: string[], isReceiver: boolean, amount: number): void {
-        this.gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount, JSON.stringify(users)));
+    private settle(user: string, users: string[], isReceiver: boolean, amount: number): void {
+        this.gun.get('groups').get('groupId').get(this.groupId).get('expenses').set(new Expense(user, isReceiver? -amount : amount, JSON.stringify(users)));
     }
 
     private isValidExpenseData(expense: Expense): boolean{
