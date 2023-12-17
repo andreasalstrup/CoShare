@@ -51,10 +51,13 @@ export default function SettleScreen() {
     }
   }
 
-  function getGroupMembers(_members: string[]): void{
-    if (_members != members){
-      setMembers(_members);
-    }
+  function getGroupMembers(member: string): void{
+    setMembers(prev => {
+      if(!prev.includes(member)){
+        return [...prev, member]
+      }
+      return prev
+    })
   }
 
   let userGroup = '';

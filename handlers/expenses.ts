@@ -2,19 +2,17 @@ import { Expense, Transaction } from "../helpers/calculateExpenses";
 interface IExpenses {
     getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void;
     settleExpenses(groupId: string, transaction: Transaction): void;
-    getGroupMembers(groupId: string, callback: (users: string[]) => void): void
+    getGroupMembers(groupId: string, callback: (users: string) => void): void
 }
 
 class ExpensesHandle implements IExpenses{
     readonly gun: Gun;
-
 
     constructor(gun: Gun) {
         this.gun = gun;
     }
 
     public getExpenses(groupId: string, callback: (expenses: Expense[]) => void): void{
-        
         this.gun.get('groups').get('groupId').get(groupId).get('expenses').open((expenseData : any) =>{
             let expensesData: Expense[] = [];
             for (const key in expenseData){                
@@ -32,19 +30,17 @@ class ExpensesHandle implements IExpenses{
         this.settle(groupId, transaction.to, [transaction.from, transaction.to], true, transaction.amount);
     }
 
-    public getGroupMembers(groupId: string, callback: (users: string[]) => void): void{
-        let users: string[] = [];
+    public getGroupMembers(groupId: string, callback: (user: string) => void): void{
         this.gun.get('groups').get('groupId').get(groupId).get('members').open((data: any) => {
             for (const key in data)
             {
                 if(data[key].members != undefined)
                 {
                     this.gun.user(data[key].members).get('fullName').once((name: string) => {
-                        users.push(name);
+                        callback(name)
                     })
                 }
             }
-            callback(users)
         });
     }
 
