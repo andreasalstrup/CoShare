@@ -81,12 +81,16 @@ export default function ToBeBoughtScreen() {
     )
 
     shoppingListDB.current.onUsersUpdate(
-      (data : string[]) => {
-        setMembers(data)
-        if(members.length == 0)
-        {
-          setSelectedUsers(data)
-        }
+      (data : string) => {
+        setMembers(prev => {
+          if(!prev.includes(data)){
+            setSelectedUsers(prevSel => {
+              return [...prevSel, data]
+            })
+            return [...prev, data]
+          }
+          return prev
+        })
       }
     )
   }, [])

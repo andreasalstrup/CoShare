@@ -3,7 +3,7 @@ import { Expense } from "../helpers/calculateExpenses";
 interface IShoppingList {
     onListUpdate(callback: (data: ListData[], ids: string[]) => void): void
     onBoughtListUpdate(callback: (data: ListData[], ids: string[]) => void): void
-    onUsersUpdate(callback: (data: string[]) => void): void
+    onUsersUpdate(callback: (data: string) => void): void
     addToList(item: ListData): void;
     updateItemInList(item: ListData, id: string): void;
     deleteFromList(id: string): void;
@@ -68,19 +68,17 @@ class ShoppingListHandler implements IShoppingList {
         })
     }
 
-    public onUsersUpdate(callback: (data: string[]) => void): void {
+    public onUsersUpdate(callback: (data: string) => void): void {
         this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
-            let members: string[] = []
             for (const key in data)
             {
                 if(data[key].members != undefined)
                 {
-                    gun.user(data[key].members).get('fullName').open((name: string) => {
-                        members.push(name)
+                    this.gun.user(data[key].members).get('fullName').once((name: string) => {
+                        callback(name)
                     })
                 }
             }
-            callback(members)
         })
     }
 
