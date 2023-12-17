@@ -11,8 +11,6 @@ import { mealPlanHandle } from '../../handlers/meal';
 export default function MealScreen() {
   const mealPlan = useRef(mealPlanHandle(gun));
 
-  const [updateCount, setUpdateCount] = useState<number>(0);
-
   const [weekTexts, setWeekTexts] = useState<WeekTexts>(undefined);
   const [editableDay, setEditableDay] = useState<Weekdays | null>(null);
 
@@ -21,56 +19,38 @@ export default function MealScreen() {
   const [weekKey, setWeekKey] = useState(moment().week().toString() + moment().year().toString())
   
   useEffect(() => {
-    const fetchData = async (): Promise<WeekTexts> => {
-        return await mealPlan.current.getWeekMealPlan(weekKey);
-    };
-
-    fetchData()
-      .then((result) => {
-        setWeekTexts(result);
-        // Rerender component with meal plan data untill it is fetched
-        if (result === undefined) {
-          setUpdateCount((prevCount) => prevCount + 1);
-        }
-    }).catch((error) => {
-      console.log(error)
+    mealPlan.current.getWeekMealPlan(weekKey, (weekTexts) => {
+      setWeekTexts(weekTexts);
     });
-  },[updateCount])
+  },[weekKey])
     
-  const showPreviousWeek = async () => {
-    let newWeek = (currentWeek === 1 ? 52 : currentWeek - 1);
-    let newYear = (currentWeek <= 1 ? currentYear - 1 : currentYear);
-    let weekKey = newWeek.toString() + newYear.toString();
+  const showPreviousWeek = () => {
+    const newWeek = (currentWeek === 1 ? 52 : currentWeek - 1);
+    const newYear = (currentWeek <= 1 ? currentYear - 1 : currentYear);
+    const weekKey = newWeek.toString() + newYear.toString();
     setCurrentWeek(newWeek);
     setCurrentYear(newYear)
     setWeekKey(weekKey)
-
-    let newMealPlan = await mealPlan.current.getWeekMealPlan(weekKey);
-    setWeekTexts(newMealPlan);
   };
 
-  const showNextWeek = async () => {
-    let newWeek = (currentWeek === 52 ? 1 : currentWeek + 1);
-    let newYear = (currentWeek >= 52 ? currentYear + 1 : currentYear);
-    let weekKey = newWeek.toString() + newYear.toString();
+  const showNextWeek = () => {
+    const newWeek = (currentWeek === 52 ? 1 : currentWeek + 1);
+    const newYear = (currentWeek >= 52 ? currentYear + 1 : currentYear);
+    const weekKey = newWeek.toString() + newYear.toString();
     setCurrentWeek(newWeek);
     setCurrentYear(newYear)
     setWeekKey(weekKey)
-
-    let newMealPlan = await mealPlan.current.getWeekMealPlan(weekKey);
-    setWeekTexts(newMealPlan);
   };
   
   const handleDayClick = (day: number) => {
     setEditableDay(day);
   };
 
-  const handleTextChange = async (text: string) => {
+  const handleTextChange = (text: string) => {
     if (editableDay !== null) {
-      let newDayMeals: WeekTexts;
-      newDayMeals = {...weekTexts!, [Weekdays[editableDay]]: text}
-      setWeekTexts(newDayMeals);
-      await mealPlan.current.setWeekMealPlan(weekKey, newDayMeals);
+      let newWeekTexts: WeekTexts = {...weekTexts!, [Weekdays[editableDay]]: text}
+      mealPlan.current.setWeekMealPlan(weekKey, newWeekTexts);
+      setWeekTexts(newWeekTexts);
     }
   };
 

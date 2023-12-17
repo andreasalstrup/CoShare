@@ -1,7 +1,6 @@
 type Gun = IGunInstance<any>
 type UserGunDB = IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>
 
-
 type ListData = {
     name: string,
     data: {
@@ -18,7 +17,6 @@ type ListData = {
     }
 }
 
-// Meal Plan Types
 type WeekTexts = {
     Mon: string;
     Tue: string;
@@ -33,4 +31,3 @@ type WeekTexts = {
 type MealPlan = {
     [key: string]: WeekTexts;
 }
-
