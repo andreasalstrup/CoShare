@@ -21,7 +21,14 @@ export default function NoticeScreen() {
   useEffect(() => {
     group.current.getUUID((id) => setGroupId(id))
     group.current.getGName((name) => setGroupName(name))
-    notice.current.onUsersUpdate((data) => setUsers(data))
+    notice.current.onUsersUpdate((data: User) => { 
+      setUsers(prev => {
+        if(!prev.includes(data)){
+          return [...prev, data]
+        }
+        return prev
+      })
+    })
     notice.current.onHouseRulesUpdate((rules) => setHouseRules(rules))
   }, [])
   

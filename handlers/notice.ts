@@ -1,6 +1,6 @@
 interface INotice {
     onHouseRulesUpdate(callback: (data: string) => void): void
-    onUsersUpdate(callback: (data: User[]) => void): void
+    onUsersUpdate(callback: (data: User) => void): void 
     updateHouseRules(rules: string): void
 }
 
@@ -26,22 +26,19 @@ class NoticeHandle implements INotice {
         })
     }
 
-    public onUsersUpdate(callback: (data: User[]) => void): void {
+    public onUsersUpdate(callback: (data: User) => void): void {
         this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
-            let users: User[] = []
             for (const key in data)
             {
                 if(data[key].members != undefined)
                 {
-                    this.gun.get('~' + data[key].members).load((user: User) => {
+                    this.gun.get('~' + data[key].members).once((user: User) => {
                         if(this.isValidUser(user)){
-                            users.push(user)
-                            callback(users)
+                            callback(user)
                         }
                     })
                 }
             }
-
         })
     }
 

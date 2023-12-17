@@ -39,7 +39,7 @@ class ExpensesHandle implements IExpenses{
             {
                 if(data[key].members != undefined)
                 {
-                    this.gun.user(data[key].members).get('fullName').open((name: string) => {
+                    this.gun.user(data[key].members).get('fullName').once((name: string) => {
                         users.push(name);
                     })
                 }
