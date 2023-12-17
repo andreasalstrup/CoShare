@@ -68,7 +68,7 @@ export default function ToBeBoughtScreen() {
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
   let username = '';
-  gun.user(userPub).get('fullName').open((data: any) => {
+  gun.user(userPub).get('fullName').on((data: string) => {
     username = data;
   });
 
@@ -81,12 +81,16 @@ export default function ToBeBoughtScreen() {
     )
 
     shoppingListDB.current.onUsersUpdate(
-      (data : string[]) => {
-        setMembers(data)
-        if(members.length == 0)
-        {
-          setSelectedUsers(data)
-        }
+      (data : string) => {
+        setMembers(prev => {
+          if(!prev.includes(data)){
+            setSelectedUsers(prevSel => {
+              return [...prevSel, data]
+            })
+            return [...prev, data]
+          }
+          return prev
+        })
       }
     )
   }, [])

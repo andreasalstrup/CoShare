@@ -23,7 +23,7 @@ class GroupHandle implements IGroup {
         context.get("members").set({members: userPub})
         context.get("name").put(groupName)
         user.get("group").put({groupId: groupId}) 
-        gun.user(userPub).get('fullName').once((data: any) => {
+        gun.user(userPub).get('fullName').once((data: string) => {
             gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
         });        
         callback()
@@ -39,7 +39,7 @@ class GroupHandle implements IGroup {
                     let user = gun.user(userPub)
                     context.get("members").set({members: userPub})
                     user.get("group").put({groupId: uuid})  
-                    gun.user(userPub).get('fullName').once((data: any) => {
+                    gun.user(userPub).get('fullName').once((data: string) => {
                         gun.get('groups').get('groupId').get(uuid).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
                     });              
                     callback(true)
@@ -79,7 +79,7 @@ class GroupHandle implements IGroup {
                     }
                 }
             )
-        } )
+        })
     }
 
     public checkIfInGroup(callback : (ack: Boolean) => void): void {

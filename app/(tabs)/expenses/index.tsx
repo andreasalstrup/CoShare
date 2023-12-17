@@ -23,8 +23,6 @@ function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
   return true
 };
 
-
-
 export default function SettleScreen() {
   const expenses = useRef(expensesHandle(gun));  
   const colorScheme = useColorScheme() ?? 'light';
@@ -51,25 +49,18 @@ export default function SettleScreen() {
     }
   }
 
-  function getGroupMembers(_members: string[]): void{
-    if (_members != members){
-      setMembers(_members);
-    }
+  function getGroupMembers(member: string): void{
+    setMembers(prev => {
+      if(!prev.includes(member)){
+        return [...prev, member]
+      }
+      return prev
+    })
   }
-
-  let userGroup = '';
-  gun.user(userPub).get('group').get('groupId').once((id: string) => {
-    userGroup = id;
-  });
-
-  let username = '';
-  gun.user(userPub).get('fullName').once((name: string) => {
-    username = name;
-  });
   
   useEffect(() => {
-    expenses.current.getExpenses(userGroup, getExpenses);
-    expenses.current.getGroupMembers(userGroup, getGroupMembers);
+    expenses.current.getExpenses(getExpenses);
+    expenses.current.getGroupMembers(getGroupMembers);
   }, [])
 
   let previousBalance: { user: string, amount: number }[] = [];
@@ -123,7 +114,7 @@ export default function SettleScreen() {
         }}
         onYes={() =>{
           if(selectedItem != null){
-            expenses.current.settleExpenses(userGroup, selectedItem);
+            expenses.current.settleExpenses(selectedItem);
           }
           closeModal()
         }}

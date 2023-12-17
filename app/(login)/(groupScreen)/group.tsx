@@ -1,4 +1,3 @@
-import { Redirect } from 'expo-router';
 import { ImageBackground, Pressable, View, Text, TextInput } from 'react-native';
 import styles from '../styles';
 import { useState, useRef } from 'react';
@@ -65,7 +64,7 @@ export default function GroupScreen() {
   function getNonMainScreenTextComponent() {
     return (
       <View style={{alignItems: "center"}}>        
-        <Pressable onPress={() => setCurrentState(State.buttons)}><Text style={styles.descriptiveText}>Go back</Text></Pressable>
+        <Pressable onPress={() => setCurrentState(State.buttons)}><Text style={[styles.descriptiveText, {marginBottom: 6}]}>Go back</Text></Pressable>
         <Pressable onPress={() => logout()}><Text style={styles.descriptiveText}>Log out</Text></Pressable>
       </View>
     )
