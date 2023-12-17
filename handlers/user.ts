@@ -22,6 +22,7 @@ class UserHandle implements IAuth {
             const newUser = this.gun.user('~'+ack.pub)
             newUser.get("fullName").put(fullName);
             newUser.get("email").put(email);
+            newUser.get("phoneNumber").put(phoneNumber)
             this.login(phoneNumber,password, callback);         
         });
     }

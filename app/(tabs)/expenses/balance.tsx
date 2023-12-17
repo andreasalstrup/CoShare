@@ -20,7 +20,6 @@ function expenseListCmp(cmp1 : Expense[], cmp2 : Expense[]){
   return true
 }
 
-
 export default function BalanceScreen() {
   const expenses = useRef(expensesHandle(gun));  
   const colorScheme = useColorScheme() ?? 'light';
@@ -33,16 +32,14 @@ export default function BalanceScreen() {
     }
   }
 
-  function getGroupMembers(_members: string[]): void{
-    if (_members != members){
-      setMembers(_members);
-    }
+  function getGroupMembers(member: string): void{
+    setMembers(prev => {
+      if(!prev.includes(member)){
+        return [...prev, member]
+      }
+      return prev
+    })
   }
-
-  let userGroup = '';
-  gun.user(userPub).get('groupId').once((id: string) => {
-    userGroup = id;
-  });
 
   useEffect(() => {
     expenses.current.getExpenses(getExpenses);

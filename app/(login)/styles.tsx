@@ -100,6 +100,15 @@ const styles = StyleSheet.create({
       paddingBottom: 10,
       backgroundColor: 'transparent',
     },
+    qrCodeIcon: {
+      width: 32,
+    },
+    modalContainer: {
+      justifyContent: 'center',
+      borderRadius: 10,
+      padding: 20,
+      height: 400
+    },
   });
 
   export default styles

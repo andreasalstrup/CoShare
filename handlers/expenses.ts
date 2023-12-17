@@ -2,7 +2,7 @@ import { Expense, Transaction } from "../helpers/calculateExpenses";
 interface IExpenses {
     getExpenses(callback: (expenses: Expense[]) => void): void;
     settleExpenses(transaction: Transaction): void;
-    getGroupMembers(callback: (users: string[]) => void): void
+    getGroupMembers(callback: (users: string) => void): void
 }
 
 class ExpensesHandle implements IExpenses{
@@ -35,20 +35,18 @@ class ExpensesHandle implements IExpenses{
         this.settle(transaction.to, [transaction.from, transaction.to], true, transaction.amount);
     }
 
-    public getGroupMembers(callback: (data: string[]) => void): void {
+    public getGroupMembers(callback: (user: string) => void): void{
         this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
-            let members: string[] = []
             for (const key in data)
             {
                 if(data[key] != undefined)
                 {
-                    gun.user(data[key]).get('fullName').once((name: string) => {
-                        members.push(name)
+                    this.gun.user(data[key].members).get('fullName').once((name: string) => {
+                        callback(name)
                     })
                 }
             }
-            callback(members)
-        })
+        });
     }
 
     private settle(user: string, users: string[], isReceiver: boolean, amount: number): void {

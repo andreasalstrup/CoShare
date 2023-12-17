@@ -3,7 +3,7 @@ import { Expense } from "../helpers/calculateExpenses";
 interface IShoppingList {
     onListUpdate(callback: (data: ListData[], ids: string[]) => void): void
     onBoughtListUpdate(callback: (data: ListData[], ids: string[]) => void): void
-    onUsersUpdate(callback: (data: string[]) => void): void
+    onUsersUpdate(callback: (data: string) => void): void
     addToList(item: ListData): void;
     updateItemInList(item: ListData, id: string): void;
     deleteFromList(id: string): void;
@@ -13,7 +13,6 @@ interface IShoppingList {
 
 class ShoppingListHandler implements IShoppingList {
     readonly gun: Gun;
-    readonly user: UserGunDB;
     
     userName: string = '';
     groupId: string = '';
@@ -21,11 +20,10 @@ class ShoppingListHandler implements IShoppingList {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.user = gun.user(userPub);
-        this.user.get("groupId").on((id : any) => {
+        gun.user(userPub).get("groupId").on((id : any) => {
             this.groupId = id
         })
-        this.user.get("fullName").on((data: any) => {
+        gun.user(userPub).get("fullName").on((data: any) => {
                 this.userName = data
         })
     }
@@ -68,19 +66,17 @@ class ShoppingListHandler implements IShoppingList {
         })
     }
 
-    public onUsersUpdate(callback: (data: string[]) => void): void {
+    public onUsersUpdate(callback: (data: string) => void): void {
         this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
-            let members: string[] = []
             for (const key in data)
             {
                 if(data[key] != undefined)
                 {
                     gun.user(data[key]).get('fullName').once((name: string) => {
-                        members.push(name)
+                        callback(name)
                     })
                 }
             }
-            callback(members)
         })
     }
 
