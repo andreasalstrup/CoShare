@@ -40,10 +40,11 @@ export default function NoticeScreen() {
           <View style={styles.groupInfo}>
             <View>
               <Text>Group name: {groupName}</Text>
-              <Text selectable={true}>Group ID: {groupId}</Text>
+              <Text selectable={true}>ID: {groupId}</Text>
             </View>
-            <View style={styles.qrCodeIcon}>
+            <View style={{flex: 1}}>
               <Pressable
+                style={styles.qrCodeIcon}
                 onPress={()=>{   
                   setIsModalVisible(true)
                 }}>
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   qrCodeIcon: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modalContainer: {
     justifyContent: 'center',
