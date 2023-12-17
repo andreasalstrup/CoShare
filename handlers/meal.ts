@@ -8,14 +8,14 @@ class MealPlanHandle implements IMealPlan {
     groupId: string = "";
 
     constructor(private gun: Gun) {
-            this.user = gun.user(userPub);
-            this.user.get("group").get("groupId").on((data: string) => {
-                this.groupId = data.toString()     
+            this.user = this.gun.user(userPub);
+            this.user.get("groupId").once((data: any) => {
+                this.groupId = data
             });
     }
 
     public getWeekMealPlan(weekKey: string, callback: (weekTexts: WeekTexts) => void): void {
-        this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
+        this.gun.get("groups").get("groupId").get(this.groupId).get("mealplan").get(weekKey).open((data: WeekTexts) => {
             callback(data);
         });
 
@@ -31,7 +31,7 @@ class MealPlanHandle implements IMealPlan {
     }
 
     public setWeekMealPlan(weekKey: string, weekTexts: WeekTexts): void {
-        this.gun.get("groups").get(this.groupId).get("mealplan").get(weekKey).put(weekTexts);
+        this.gun.get("groups").get("groupId").get(this.groupId).get("mealplan").get(weekKey).put(weekTexts);
     }
 }
 
