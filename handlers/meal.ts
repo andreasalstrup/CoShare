@@ -9,7 +9,7 @@ class MealPlanHandle implements IMealPlan {
 
     constructor(private gun: Gun) {
             this.user = this.gun.user(userPub);
-            this.user.get("groupId").once((data: any) => {
+            this.user.get("groupId").once((data: string) => {
                 this.groupId = data
             });
     }

@@ -1,6 +1,6 @@
-
 import { Expense } from '../helpers/calculateExpenses';
 import { v4 as uuid } from 'uuid'
+
 interface IGroup {
     create(groupName: string, callback : () => void): void;
     join(uuid: string, callback : (ack: Boolean) => void): void;
@@ -24,7 +24,7 @@ class GroupHandle implements IGroup {
         context.get("members").set(userPub)
         context.get("name").put(groupName)
         user.get("groupId").put(groupId)
-        user.get('fullName').once((data: any) => {
+        user.get('fullName').once((data: string) => {
             if (data != undefined){
                 this.gun.get('groups').get("groupId").get(groupId).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
             }
@@ -41,7 +41,7 @@ class GroupHandle implements IGroup {
                     let user = this.gun.user(userPub)
                     context.get("members").set(userPub)
                     user.get("groupId").put(uuid)                      
-                    user.get('fullName').once((data: any) => {
+                    user.get('fullName').once((data: string) => {
                         if (data != undefined){
                             this.gun.get('groups').get("groupId").get(uuid).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
                         }

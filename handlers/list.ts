@@ -20,10 +20,10 @@ class ShoppingListHandler implements IShoppingList {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        gun.user(userPub).get("groupId").on((id : any) => {
+        gun.user(userPub).get("groupId").on((id : string) => {
             this.groupId = id
         })
-        gun.user(userPub).get("fullName").on((data: any) => {
+        gun.user(userPub).get("fullName").on((data: string) => {
                 this.userName = data
         })
     }

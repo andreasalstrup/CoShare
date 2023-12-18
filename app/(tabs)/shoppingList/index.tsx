@@ -76,7 +76,7 @@ export default function ToBeBoughtScreen() {
       }      
     )
      
-    gun.user(userPub).get('fullName').open((data: any) => {
+    gun.user(userPub).get('fullName').once((data: string) => {
       setUsername(data);
     });
 

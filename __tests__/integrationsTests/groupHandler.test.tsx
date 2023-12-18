@@ -118,7 +118,7 @@ describe('GroupHandler', () => {
     
     function callbackTest() : boolean{
       function checkIfUserInGroup(){
-        GunDB.gun.user(userPub).get("groupId").once((id: any) => {        
+        GunDB.gun.user(userPub).get("groupId").once((id: string) => {        
           expect(id).toBeDefined() //The logged in user should now have a groupId
           testData.groupId = id
           checkIfGroupExists(GunDB.gun.get("groups").get("groupId").get(id))
@@ -129,13 +129,13 @@ describe('GroupHandler', () => {
         checkIfGroupHasMember(context)
       }
       function checkIfGroupHasMember(context : any){
-        context.get("members").map().once((memberId : any) => {
+        context.get("members").map().once((memberId : string) => {
           expect(memberId).toBe(userPub) //The group should have the current user listed as a member
           checkIfGroupHasName(context)
         })
       }
       function checkIfGroupHasName(context : any){
-        context.get("name").once((name : any) => {
+        context.get("name").once((name : string) => {
           expect(name).toBe(expectedGroupName) //The group should have the given name
           testData.groupName = expectedGroupName
           done()
@@ -160,7 +160,7 @@ describe('GroupHandler', () => {
       function test(){
         function callbackTest(bool : boolean) : void{
           function checkIfUserInGroup(){
-            GunDB.gun.user(userPub).get("groupId").once((id: any) => {          
+            GunDB.gun.user(userPub).get("groupId").once((id: string) => {          
               expect(id).toBeDefined() //The logged in user should now have a groupId
               expect(id).toBe(groupIdToJoin) //The id should be the same as the group we wanted to join
               checkIfGroupHasMember(GunDB.gun.get("groups").get("groupId").get(id))
@@ -194,14 +194,14 @@ describe('GroupHandler', () => {
       function test(){
         function callbackTest(bool : boolean) : void{
           function checkIfUserInGroup(){
-            GunDB.gun.user(userPub).get("groupId").once((id: any) => {          
+            GunDB.gun.user(userPub).get("groupId").once((id: string) => {          
               expect(id).toBeUndefined() //The logged in user should now have a groupId            
               checkIfGroupExistsInGun()
             })
           } 
           function checkIfGroupExistsInGun(){
             const context = GunDB.gun.get("groups").get("groupId").get(groupIdToJoin)
-            context.once((data : any) => {
+            context.once((data : string) => {
               expect(data).toBeUndefined() //The group id should still not exist
               done()
             })
@@ -314,7 +314,7 @@ describe('GroupHandler', () => {
       
       function callbackTest() : boolean{
         function checkIfUserInGroup(){
-          GunDB.gun.user(userPub).get("groupId").once((id: any) => {        
+          GunDB.gun.user(userPub).get("groupId").once((id: string) => {        
             expect(id).toBeDefined() //The logged in user should now have a groupId
             checkIfGroupExists(GunDB.gun.get("groups").get("groupId").get(id))
           })
@@ -350,7 +350,7 @@ describe('GroupHandler', () => {
           }
         
         function checkIfGroupHasName(context : any){
-          context.get("name").once((name : any) => {
+          context.get("name").once((name : string) => {
             expect(name).toBe(expectedGroupName) //The group should have the given name
             GunDB.gun.get("groups").get("groupId").get(testData.groupId).get("name").once((oldName : any) => {
               expect(oldName).toBe(expectedGroupName)
