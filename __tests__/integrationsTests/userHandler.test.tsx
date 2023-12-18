@@ -84,7 +84,7 @@ describe('UserHandler', () => {
     render(<UserHandlerTestScreen testDb={GunDB.gun} callback={callbackTest} />)  
     fireEvent.changeText(screen.getByTestId('username'), expectedUsername)
     fireEvent.changeText(screen.getByTestId('password'), expectedPassword)
-    fireEvent.changeText(screen.getByTestId('name'), expectedEmail)
+    fireEvent.changeText(screen.getByTestId('email'), expectedEmail)
     fireEvent.changeText(screen.getByTestId('name'), expectedName)
     fireEvent.press(screen.getByText('createUser'))
   });
@@ -105,7 +105,7 @@ describe('UserHandler', () => {
     render(<UserHandlerTestScreen testDb={GunDB.gun} callback={callbackTest} />)  
     fireEvent.changeText(screen.getByTestId('username'), expectedUsername)
     fireEvent.changeText(screen.getByTestId('password'), expectedPassword)
-    fireEvent.changeText(screen.getByTestId('name'), expectedEmail)
+    fireEvent.changeText(screen.getByTestId('email'), expectedEmail)
     fireEvent.changeText(screen.getByTestId('name'), expectedName)
     fireEvent.press(screen.getByText('createUser'))
   });
