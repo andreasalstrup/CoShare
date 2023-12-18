@@ -67,17 +67,44 @@ describe('UserHandler', () => {
   it('should be able to create a user', (done) => {
     const expectedUsername = '12345678'
     const expectedPassword = 'password'
-    const expectedEmail = ''
+    const expectedEmail = 'email'
     const expectedName = 'canBeAnything'
     
     function callbackTest(ack : any) : Boolean{
       expect(ack.err).toBeUndefined() //There should be no errors during user creation
       expect(ack.soul).toBeDefined() //The user should have a public key
       expect(GunDB.user.is).toBeDefined() //The user should be logged in
-      GunDB.gun.get('~@'+expectedUsername).once((data, key)=>{ //The created user should be able to be found in the database
-        expect(data).toBeDefined()        
-        done()
+
+      function userExists () : void {
+        GunDB.gun.get('~@'+expectedUsername).once((data : string)=>{
+          //The created user should be able to be found in the database          
+          expect(data).toBeDefined()
+          userHasEmail(GunDB.gun.user(ack.soul))
       })
+      }
+
+      function userHasEmail (context) : void {
+        context.get("email").once((data : string) =>{
+          expect(data).toBe(expectedEmail)
+          userHasPhone(context)
+        })
+      }
+
+      function userHasPhone (context) : void {
+        context.get("phoneNumber").once((data : string) =>{
+          expect(data).toBe(expectedUsername)
+          userHasName(context)
+        })
+      }
+
+      function userHasName (context) : void {
+        context.get("fullName").once((data : string) =>{
+          expect(data).toBe(expectedName)
+          done()
+        })
+      }                
+
+      userExists()
       return (true)
     }
   
