@@ -54,7 +54,7 @@ export default function SettingsScreen() {
         }}/>
         <Pressable style={styles.listButton} onPress={logout}>
           <Text style={styles.leaveGroupText}>Logout</Text>          
-        </Pressable>        
+        </Pressable>
     </View>
   );
 }

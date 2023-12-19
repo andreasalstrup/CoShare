@@ -26,7 +26,7 @@ export default function BalanceScreen() {
   const [data, setData] = useState<Expense[]>([]);
   const [members, setMembers] = useState<string[]>([]);
 
-  function getExpenses(expenseData: Expense[]): void{ 
+  function getExpenses(expenseData: Expense[]): void{
     if (!expenseListCmp(expenseData, data)){
       setData(expenseData);
     }

@@ -1,5 +1,4 @@
 import 'react-native-get-random-values'
-import 'react-native-webview-crypto';
 import "gun/lib/mobile";
 import Gun from 'gun/gun';
 import SEA from 'gun/sea';
@@ -14,7 +13,6 @@ const asyncsStore = require('gun/lib/ras.js')
 
 AsyncStorage.clear()
 
-
 //rad asyncstorage adapter, on Android asyncstorage has 6mb limit by default
 const asyncStore = asyncsStore({AsyncStorage});
 let gun = Gun({
@@ -24,12 +22,13 @@ radisk: true,
 localStorage: false,
 });
 
+
 declare global {
     var gun : IGunInstance<any>;
-    var user :IGunUserInstance<any, any, any, IGunInstanceRoot<any, IGunInstance<any>>>;
     var SEA : ISEA;
     var userPub : string;
 }
+
 global.gun = gun
 global.SEA = SEA
 global.userPub = ""

@@ -1,5 +1,6 @@
-import {randomUUID} from 'expo-crypto';
 import { Expense } from '../helpers/calculateExpenses';
+import { v4 as uuid } from 'uuid'
+
 interface IGroup {
     create(groupName: string, callback : () => void): void;
     join(uuid: string, callback : (ack: Boolean) => void): void;
@@ -11,46 +12,49 @@ interface IGroup {
 
 class GroupHandle implements IGroup {
     readonly gun: Gun
-    constructor(private db: Gun) {
+    constructor(db: Gun) {
         this.gun = db
     }
 
     public create(groupName: string, callback : () => void): void {
         let user = this.gun.user(userPub)
-        let groupId : string = randomUUID();        
-        this.gun.get("groups").get("groupId").set({groupId: groupId})
+        const groupId : string = uuid();
+        this.gun.get("groups").get("groupId").set(groupId)
         let context = this.gun.get("groups").get("groupId").get(groupId)
-        context.get("members").set({members: userPub})
+        context.get("members").set(userPub)
         context.get("name").put(groupName)
-        user.get("group").put({groupId: groupId}) 
-        gun.user(userPub).get('fullName').once((data: string) => {
-            gun.get('groups').get('groupId').get(groupId).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
-        });        
-        callback()
+        user.get("groupId").put(groupId)
+        user.get('fullName').once((data: string) => {
+            if (data != undefined){
+                this.gun.get('groups').get("groupId").get(groupId).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
+            }
+        })
+            callback()
     }
 
     public join(uuid: string, callback : (ack: Boolean) => void): void {
-        let context = this.gun.get("groups").get("groupId").get(uuid)
-        context.once(
-            function(d : string){
+        let context = this.gun.get("groups").get("groupId").get(uuid)   
+        context.once((d : string) => {
                 if (d == undefined){
                     callback(false)
-                }else{                 
-                    let user = gun.user(userPub)
-                    context.get("members").set({members: userPub})
-                    user.get("group").put({groupId: uuid})  
-                    gun.user(userPub).get('fullName').once((data: string) => {
-                        gun.get('groups').get('groupId').get(uuid).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
-                    });              
-                    callback(true)
-                }                
+                }else{
+                    let user = this.gun.user(userPub)
+                    context.get("members").set(userPub)
+                    user.get("groupId").put(uuid)                      
+                    user.get('fullName').once((data: string) => {
+                        if (data != undefined){
+                            this.gun.get('groups').get("groupId").get(uuid).get('expenses').set(new Expense(data, 0, JSON.stringify([data])));
+                        }
+                        callback(true)
+                    });                    
+                }
             }
         )
     }
 
     public getUUID(callback : (ack : string) => void) : void {
         let user = this.gun.user(userPub)
-        user.get("group").get("groupId").once((d : string) => {
+        user.get("groupId").once((d : string) => {
             if (d == undefined){
                 callback('')
             }else{
@@ -84,7 +88,7 @@ class GroupHandle implements IGroup {
 
     public checkIfInGroup(callback : (ack: Boolean) => void): void {
         let user = this.gun.user(userPub)
-        user.get("group").once((ack: any) => {            
+        user.get("groupId").once((ack: any) => {
             if (ack == undefined || ack == null) callback(false)
             else callback(true)
         })

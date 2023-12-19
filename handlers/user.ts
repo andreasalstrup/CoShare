@@ -1,6 +1,6 @@
 interface IAuth {
     create(fullName: string, email: string, phoneNumber: string, password: string, callback: (ack: any) => Boolean): void;
-    login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void;
+    login(phoneNumber: string, password: string, callback: (ack: any) => Boolean): void;
     logout() : void;
 }
 
@@ -13,10 +13,10 @@ class UserHandle implements IAuth {
         this.user = db.user();
     }
 
-    public create(fullName: string, email: string, phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {
+    public create(fullName: string, email: string, phoneNumber: string, password: string, callback: (ack: any) => Boolean): void {
         this.user.create(phoneNumber, password, (ack: any) => {
             if (ack.err != undefined) {
-                callback(ack,undefined)
+                callback(ack)
                 return false;
             }
             const newUser = this.gun.user('~'+ack.pub)
@@ -24,15 +24,15 @@ class UserHandle implements IAuth {
             newUser.get("email").put(email);
             newUser.get("phoneNumber").put(phoneNumber)
             this.login(phoneNumber,password, callback);         
-        });   
+        });
     }
 
-    public login(phoneNumber: string, password: string, callback: (ack: any, user: UserGunDB) => Boolean): void {        
+    public login(phoneNumber: string, password: string, callback: (ack: any) => Boolean): void {        
         this.user.auth(phoneNumber, password, (ack: any) => {
             if (ack != undefined){
                 userPub = ack.soul
             }
-            callback(ack, this.user)  
+            callback(ack)  
         });
     }
 

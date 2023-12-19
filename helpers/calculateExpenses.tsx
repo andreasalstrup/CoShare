@@ -60,7 +60,6 @@ export const calculateExpenses = (balance: { user: string; amount: number }[]): 
           to: positiveEntry.user,
           amount: transferAmount,
         });
-
         negativeEntry.amount += transferAmount;
         remainingAmount -= transferAmount;
       } else {

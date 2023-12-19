@@ -20,11 +20,11 @@ class ShoppingListHandler implements IShoppingList {
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.gun.user(userPub).get("group").get("groupId").on((data: string) => {
-            this.groupId = data
+        gun.user(userPub).get("groupId").on((id : string) => {
+            this.groupId = id
         })
-        this.gun.user(userPub).get("fullName").on((data: string) => {
-            this.userName = data
+        gun.user(userPub).get("fullName").on((data: string) => {
+                this.userName = data
         })
     }
 
@@ -56,7 +56,7 @@ class ShoppingListHandler implements IShoppingList {
                     {
                         if(data[key].data.users[userKey] == null){
                             delete data[key].data.users[userKey]
-                        } 
+                        }
                     }
                     ids.push(key)
                     list.push(data[key])
@@ -70,9 +70,9 @@ class ShoppingListHandler implements IShoppingList {
         this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
             for (const key in data)
             {
-                if(data[key].members != undefined)
+                if(data[key] != undefined)
                 {
-                    this.gun.user(data[key].members).get('fullName').once((name: string) => {
+                    this.gun.user(data[key]).get('fullName').once((name: string) => {
                         callback(name)
                     })
                 }
@@ -85,8 +85,7 @@ class ShoppingListHandler implements IShoppingList {
     }
 
     public updateItemInList(item: ListData, id: string): void {
-        let group = this.gun.get('groups').get('groupId').get(this.groupId)
-        
+        let group = this.gun.get('groups').get('groupId').get(this.groupId)        
         group.get('shoppingList').get(id).put(item)
     }
 
@@ -109,14 +108,11 @@ class ShoppingListHandler implements IShoppingList {
     public buyFromList(item: ListData, id?: string): void {
         item.data.bought!.user = this.userName
         let group = this.gun.get('groups').get('groupId').get(this.groupId)
-
         if(id)
         {
             this.deleteFromList(id);
         }
-
         group.get('boughtList').set(item)
-
         this.gun.get('groups').get('groupId').get(this.groupId).get('expenses').set(new Expense(this.userName, item.data.bought!.price, item.data.users));
     }
 

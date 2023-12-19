@@ -12,7 +12,7 @@ class ExpensesHandle implements IExpenses{
 
     constructor(gun: Gun) {
         this.gun = gun;
-        this.gun.user(userPub).get("group").get("groupId").on((data: string) => {
+        this.gun.user(userPub).get("groupId").on((data: string) => {
             this.groupId = data
         })
     }
@@ -20,7 +20,7 @@ class ExpensesHandle implements IExpenses{
     public getExpenses(callback: (expenses: Expense[]) => void): void{
         this.gun.get('groups').get('groupId').get(this.groupId).get('expenses').open((expenseData : any) =>{
             let expensesData: Expense[] = [];
-            for (const key in expenseData){                
+            for (const key in expenseData){
                 if (this.isValidExpenseData(expenseData[key])){
                     let currentExpense = new Expense(expenseData[key].user, expenseData[key].amount, expenseData[key].users, expenseData[key].timestamp, expenseData[key].id);            
                     expensesData.push(currentExpense);
@@ -35,13 +35,14 @@ class ExpensesHandle implements IExpenses{
         this.settle(transaction.to, [transaction.from, transaction.to], true, transaction.amount);
     }
 
-    public getGroupMembers(callback: (user: string) => void): void{
+    public getGroupMembers(callback: (user: string) => void): void{        
         this.gun.get('groups').get('groupId').get(this.groupId).get('members').open((data: any) => {
             for (const key in data)
             {
-                if(data[key].members != undefined)
+                if(data[key] != undefined)
                 {
-                    this.gun.user(data[key].members).get('fullName').once((name: string) => {
+                    
+                    this.gun.user(data[key]).get('fullName').once((name: string) => {
                         callback(name)
                     })
                 }

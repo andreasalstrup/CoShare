@@ -69,7 +69,7 @@ export default function SettleScreen() {
     return (
       <Swipeable
         ref={ref => ref != null ? swipeableRows[index] = ref : undefined}
-        friction={1.5} 
+        friction={1.5}
         overshootFriction={8}
         renderLeftActions={leftSwipeAction}
         onSwipeableOpen={() => openModal(item)}
@@ -99,11 +99,11 @@ export default function SettleScreen() {
   };
 
   return (
-    <View>       
+    <View>
       <FlatList
         style={{marginTop: 48}}
         data={calculateExpenses(previousBalance = calculateBalance(data, members, previousBalance))}
-        renderItem={renderItem}        
+        renderItem={renderItem}    
       />
       <AreYouSureModal
         title='Confirm Payment'
