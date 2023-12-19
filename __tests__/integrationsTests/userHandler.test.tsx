@@ -18,7 +18,7 @@ function UserHandlerTestScreen(props : {testDb : Gun, callback? : (ack : any) =>
     <View>
       <View>
         <TextInput value={username} onChangeText={setUsername} testID="username" />
-        <TextInput value={name} onChangeText={setPassword} testID="password" />
+        <TextInput value={password} onChangeText={setPassword} testID="password" />
         <TextInput value={name} onChangeText={setName} testID="name" />
         <TextInput value={email} onChangeText={setEmail} testID="email" />
         <Button
