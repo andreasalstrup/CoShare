@@ -60,25 +60,25 @@ export default function ToBeBoughtScreen() {
   const [itemToEdit, setItemToEdit] = useState<number | null>() 
   const [itemToDelete, setItemToDelete] = useState(0)
 
-  const [username, setUsername] = useState('')
-  const swipeableRows : Swipeable[] = []
+  const swipeableRows : Swipeable[] = []  
 
   const toggleModalAddOrEditItem = () => setIsModalAddOrEditItemVisible(() => !isModalAddOrEditItemVisible);
   const toggleModalDeleteItem = () => setIsModalDeleteVisible(() => !isModalDeleteVisible);
   const toggleModalBuyItem = () => setIsModalBuyItemVisible(() => !isModalBuyItemVisible);
   const toggleCheckbox = () => setAlreadyBought(() => !alreadyBought);
 
+  let username = '';
+  gun.user(userPub).get('fullName').on((data: string) => {
+    username = data;
+  });
+
   useEffect(() =>{
     shoppingListDB.current.onListUpdate(
       (data : ListData[], ids: string[]) => {
         setProductIds(ids)
         setProducts(data)
-      }      
+      }
     )
-     
-    gun.user(userPub).get('fullName').once((data: string) => {
-      setUsername(data);
-    });
 
     shoppingListDB.current.onUsersUpdate(
       (data : string) => {
