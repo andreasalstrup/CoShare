@@ -73,7 +73,10 @@ class ShoppingListHandler implements IShoppingList {
                 if(data[key].members != undefined)
                 {
                     this.gun.user(data[key].members).get('fullName').once((name: string) => {
-                        callback(name)
+                        if (name != null)
+                        {
+                            callback(name)
+                        }
                     })
                 }
             }
@@ -137,7 +140,6 @@ class ShoppingListHandler implements IShoppingList {
         item.data.users != null &&
         item.data.bought != null;
     }
-
 }
 
 export function shoppingListHandler(gun: Gun): IShoppingList {
