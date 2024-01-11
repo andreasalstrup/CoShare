@@ -99,9 +99,8 @@ export default function SettleScreen() {
   };
 
   return (
-    <View>       
+    <View style={{flex: 1}}>       
       <FlatList
-        style={{marginTop: 48}}
         data={calculateExpenses(previousBalance = calculateBalance(data, members, previousBalance))}
         renderItem={renderItem}        
       />

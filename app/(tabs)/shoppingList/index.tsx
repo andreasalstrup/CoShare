@@ -219,7 +219,6 @@ export default function ToBeBoughtScreen() {
   return (
     <View style={{flex: 1}}>
       <FlatList
-        style={{marginTop: 48}}
         data={products}
         renderItem={renderItem}
       />

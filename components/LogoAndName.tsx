@@ -8,7 +8,7 @@ export function LogoAndName(
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={require("../assets/images/coshareLogo.png")} />
-      <Text style={styles.title}> Co-Living </Text>
+      <Text style={styles.title}> CoShare </Text>
     </View>
   );
 }

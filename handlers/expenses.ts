@@ -42,7 +42,10 @@ class ExpensesHandle implements IExpenses{
                 if(data[key].members != undefined)
                 {
                     this.gun.user(data[key].members).get('fullName').once((name: string) => {
-                        callback(name)
+                        if (name != null)
+                        {
+                            callback(name)
+                        }
                     })
                 }
             }
@@ -58,7 +61,6 @@ class ExpensesHandle implements IExpenses{
         expense.user != undefined &&
         expense.amount != undefined;
     }
-
 }
 
 export function expensesHandle(gun: Gun): IExpenses{

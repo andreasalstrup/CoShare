@@ -53,7 +53,7 @@ export default function BalanceScreen() {
       <View style={[styles.container, { backgroundColor: index % 2 == 0 ? Colors[colorScheme].listBackgroundColor1 : Colors[colorScheme].listBackgroundColor2 }]}>
         <View style={styles.item}>
           <Text style={styles.itemText}>{item.user}</Text>
-          <Text style={[styles.itemAmount, { color: item.amount >= 0 ? (item.amount == 0 ? 'black' : '#5CBCA9') : '#E35F52' }]}>
+          <Text style={[styles.itemAmount, { color: item.amount >= 0 ? (item.amount == 0 ? Colors[colorScheme].text : '#5CBCA9') : '#E35F52' }]}>
             {item.amount > 0 ? "+" + item.amount : item.amount} kr.
           </Text>
         </View>
@@ -62,9 +62,8 @@ export default function BalanceScreen() {
   };
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <FlatList
-        style={{marginTop: 48}}
         data={previousBalance = calculateBalance(data, members, previousBalance)}
         renderItem={renderItem}
       />
