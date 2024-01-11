@@ -40,9 +40,6 @@ export default function GroupScreen() {
   function getButtonsComponent() {
     return (
       <>
-          <Pressable style={styles.button}>
-            <Text style={styles.buttonText} onPress={() => {setCurrentState(State.bluetooth)}}> Join with bluetooth </Text>
-          </Pressable>
           <Pressable style={styles.button} onPress={() => {setCurrentState(State.id)}}>
             <Text style={styles.buttonText}> Join with group id </Text>
           </Pressable>
